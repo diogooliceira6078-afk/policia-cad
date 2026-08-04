@@ -1,40 +1,181 @@
-<!-- ABA: CONSULTA DE REGISTO CRIMINAL -->
-        <div id="aba-consultas" class="conteudo-aba" style="display: none;">
-            <h2>Consulta de Registo Criminal</h2>
-            <p>Pesquise o histórico de antecedentes, mandados e passagens dos cidadãos.</p>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDT Operacional - Polícia Civil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="painel-body">
+
+    <div class="sidebar">
+        <h2>POLÍCIA CIVIL / RP</h2>
+        <p class="user-cargo">Cargo: Alto Comando</p>
+        <hr style="border-color: #1f293d; margin: 20px 0;">
+        <ul>
+            <li><a href="#" class="active" onclick="mudarAba('mdt')">🔍 MDT / Consulta de Cidadão</a></li>
+            <li><a href="#" onclick="mudarAba('prisao')">📝 Registar Prisão / Ocorrência</a></li>
+            <li><a href="#" onclick="mudarAba('investigacao')">📁 Registar Investigação</a></li>
+            <li><a href="#" onclick="mudarAba('membros')">👥 Gestão de Efetivo & Patentes</a></li>
+            <li><a href="#" onclick="mudarAba('alto-comando')" style="color: #f87171;">⭐ Painel Global / Logs</a></li>
+        </ul>
+        <div style="margin-top: auto;">
+            <a href="index.html" class="btn-sair">Sair do Sistema</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- ABA 1: MDT / CONSULTA DE CIDADÃO COM FOTO E FICHA -->
+        <div id="aba-mdt" class="conteudo-aba">
+            <h2>MDT - Sistema de Identificação Criminal</h2>
+            <p>Pesquise pelo nick, passaporte ou nome do indivíduo para ver a ficha policial, foto e antecedentes.</p>
             
-            <div class="input-group" style="max-width: 400px; margin-bottom: 25px;">
-                <label>Pesquisar por Nome ou Passaporte</label>
-                <input type="text" placeholder="Digite o nome do cidadão...">
+            <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                <input type="text" id="inputPesquisa" placeholder="Digite o nome ou nick exato (Ex: JoaoSilva)" style="flex: 1; padding: 12px; background-color: #131b2e; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 14px;">
+                <button type="button" onclick="pesquisarCID()" class="btn-login" style="width: 150px; margin-top: 0;">Pesquisar Ficha</button>
             </div>
 
-            <div class="tabela-box">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Cidadão / Suspeito</th>
-                            <th>Crimes / Artigos</th>
-                            <th>Itens Apreendidos</th>
-                            <th>Oficial Responsável</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>04/08/2026</td>
-                            <td><strong>João Silva</strong> (ID: 402)</td>
-                            <td><span style="color: #f87171;">Assalto à Mão Armada</span></td>
-                            <td>1x Pistola Pesada, $5.000</td>
-                            <td>Inspetor Carlos</td>
-                        </tr>
-                        <tr>
-                            <td>03/08/2026</td>
-                            <td><strong>Marcos Vinícius</strong> (ID: 112)</td>
-                            <td><span style="color: #fbbf24;">Porte Ilegal de Droga</span></td>
-                            <td>15x Cápsulas de Cocaína</td>
-                            <td>Oficial Mendes</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- RESULTADO DA FICHA CRIMINAL (ESTILO MDT PROFISSIONAL) -->
+            <div id="fichaCriminal" style="display: none; background-color: #131b2e; border: 1px solid #1f293d; border-radius: 10px; padding: 25px;">
+                <div style="display: flex; gap: 30px; align-items: flex-start;">
+                    <!-- Foto do Suspeito -->
+                    <div style="text-align: center;">
+                        <div id="perfilFoto" style="width: 140px; height: 180px; background-color: #0b0f19; border: 2px solid #3b82f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 12px; background-size: cover; background-position: center;">
+                            [Sem Foto]
+                        </div>
+                        <p style="margin-top: 8px; font-size: 11px; color: #94a3b8;">Registo Fotográfico</p>
+                    </div>
+
+                    <!-- Dados Principais -->
+                    <div style="flex: 1;">
+                        <h3 id="perfilNome" style="font-size: 20px; color: #3b82f6; margin-bottom: 5px;">Nome do Cidadão</h3>
+                        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;">Passaporte ID: <span id="perfilID" style="color: #fff;">#0000</span> | Status: <span style="color: #f87171; font-weight: bold;">Procurado / Com Passagens</span></p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div style="background-color: #0b0f19; padding: 12px; border-radius: 6px; border: 1px solid #1f293d;">
+                                <span style="font-size: 11px; color: #94a3b8; display: block;">Mandados Ativos</span>
+                                <strong style="color: #f87171; font-size: 14px;">1x Prisão Preventiva</strong>
+                            </div>
+                            <div style="background-color: #0b0f19; padding: 12px; border-radius: 6px; border: 1px solid #1f293d;">
+                                <span style="font-size: 11px; color: #94a3b8; display: block;">Total de Passagens</span>
+                                <strong style="color: #3b82f6; font-size: 14px;">3 Ocorrências</strong>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 14px; margin-bottom: 8px; color: #cbd5e1;">Histórico de Crimes Registados:</h4>
+                        <ul style="list-style: none; font-size: 13px; color: #cbd5e1; background-color: #0b0f19; padding: 12px; border-radius: 6px; border: 1px solid #1f293d;">
+                            <li style="padding: 5px 0; border-bottom: 1px solid #1f293d;">• Assalto a Banco à Mão Armada (Art. 45) - 01/08/2026</li>
+                            <li style="padding: 5px 0;">• Desobediência e Fuga à Autoridade - 15/07/2026</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- ABA 2: REGISTAR PRISÃO -->
+        <div id="aba-prisao" class="conteudo-aba" style="display: none;">
+            <h2>Registo de Prisão e Ocorrência</h2>
+            <p>Preencha os dados do indivíduo detido, artigos violados e materiais apreendidos.</p>
+            <form class="form-cad" onsubmit="alert('Prisão registada com sucesso no MDT!'); return false;">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Nome / Nick do Suspeito</label>
+                        <input type="text" placeholder="Ex: JoaoSilva (ID: 1234)" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Tipo de Crime / Artigo</label>
+                        <input type="text" placeholder="Ex: Assalto a Banco" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Link da Foto do Rosto (Mugshot / Opcional)</label>
+                    <input type="url" placeholder="Cole aqui o link da imagem do discord/imgur do suspeito...">
+                </div>
+                <div class="input-group">
+                    <label>Armas e Itens Apreendidos</label>
+                    <textarea placeholder="Descreva pistolas, drogas ou dinheiro..." rows="3"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Relatório Detalhado</label>
+                    <textarea placeholder="Relato da abordagem..." rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn-login">Registar Prisão</button>
+            </form>
+        </div>
+
+        <!-- ABA 3: INVESTIGAÇÃO -->
+        <div id="aba-investigacao" class="conteudo-aba" style="display: none;">
+            <h2>Registo de Investigação e Casos</h2>
+            <p>Documentar pistas e alvos em aberto.</p>
+            <form class="form-cad" onsubmit="alert('Investigação guardada!'); return false;">
+                <div class="input-group">
+                    <label>Codinome do Caso</label>
+                    <input type="text" placeholder="Ex: Operação Desmanche" required>
+                </div>
+                <div class="input-group">
+                    <label>Detalhes e Pistas</label>
+                    <textarea placeholder="Informações recolhidas..." rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn-login">Salvar Investigação</button>
+            </form>
+        </div>
+
+        <!-- ABA 4: MEMBROS -->
+        <div id="aba-membros" class="conteudo-aba" style="display: none;">
+            <h2>Gestão de Efetivo e Patentes</h2>
+            <form class="form-cad" onsubmit="alert('Membro registado!'); return false;">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Nome do Policial</label>
+                        <input type="text" placeholder="Ex: Carlos" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Patente</label>
+                        <select style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
+                            <option>Recruta</option>
+                            <option>Oficial</option>
+                            <option>Investigador</option>
+                            <option>Inspetor</option>
+                            <option>Comandante</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">Registar Policial</button>
+            </form>
+        </div>
+
+        <!-- ABA 5: ALTO COMANDO -->
+        <div id="aba-alto-comando" class="conteudo-aba" style="display: none;">
+            <h2>Painel Global / Logs</h2>
+            <p style="color: #f87171;">Área restrita de auditoria da agência.</p>
+        </div>
+    </div>
+
+    <script>
+        function mudarAba(aba) {
+            document.querySelectorAll('.conteudo-aba').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.sidebar ul li a').forEach(el => el.classList.remove('active'));
+            
+            if(aba === 'mdt') document.getElementById('aba-mdt').style.display = 'block';
+            if(aba === 'prisao') document.getElementById('aba-prisao').style.display = 'block';
+            if(aba === 'investigacao') document.getElementById('aba-investigacao').style.display = 'block';
+            if(aba === 'membros') document.getElementById('aba-membros').style.display = 'block';
+            if(aba === 'alto-comando') document.getElementById('aba-alto-comando').style.display = 'block';
+            
+            event.currentTarget.classList.add('active');
+        }
+
+        function pesquisarCID() {
+            const nome = document.getElementById('inputPesquisa').value;
+            if(nome.trim() === '') {
+                alert('Escreva o nome ou nick para pesquisar!');
+                return;
+            }
+            // Simula a pesquisa e mostra a ficha com aspeto profissional
+            document.getElementById('perfilNome').innerText = nome;
+            document.getElementById('perfilID').innerText = '#' + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('fichaCriminal').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

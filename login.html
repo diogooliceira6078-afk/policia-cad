@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CAD / MDT Polícia Civil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+
+    <div class="login-container">
+        <h2>POLÍCIA CIVIL / RP</h2>
+        <p class="login-sub">Insira as suas credenciais para aceder ao sistema</p>
+        
+        <form class="form-login" onsubmit="fazerLogin(event)">
+            <div class="input-group">
+                <label>Utilizador / Nick</label>
+                <input type="text" id="loginUser" placeholder="Ex: InspetorSilva" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Palavra-Passe</label>
+                <input type="password" id="loginPass" placeholder="Sua password" required>
+            </div>
+
+            <button type="submit" class="btn-login">Aceder ao CAD</button>
+        </form>
+    </div>
+
+    <script>
+        function fazerLogin(event) {
+            event.preventDefault();
+            const usuario = document.getElementById('loginUser').value.trim();
+            const senha = document.getElementById('loginPass').value;
+
+            let oficiaisSalvos = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
+                { nome: 'admin', pass: '1234', cargo: 'Alto Comando', id: '#4020' }
+            ];
+
+            const oficialEncontrado = oficiaisSalvos.find(o => o.nome.toLowerCase() === usuario.toLowerCase() && o.pass === senha);
+
+            if (oficialEncontrado || (usuario.toLowerCase() === 'admin' && senha === '1234')) {
+                const cargoFinal = oficialEncontrado ? oficialEncontrado.cargo : 'Alto Comando';
+                
+                localStorage.setItem('agenteLogado', JSON.stringify({ nome: usuario, cargo: cargoFinal }));
+                
+                alert('Acesso autorizado! Bem-vindo, ' + usuario);
+                window.location.href = 'index.html';
+            } else {
+                alert('Utilizador ou Palavra-Passe incorretos!');
+            }
+        }
+    </script>
+</body>
+</html>

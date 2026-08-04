@@ -1,34 +1,163 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD - Sistema Policial</title>
+    <title>Painel Operacional - Polícia</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="painel-body">
 
-    <div class="login-container">
-        <div class="logo-box">
-            <!-- Podes trocar o link da imagem pelo brasão da tua polícia -->
-            <h2>POLÍCIA CIVIL / RP</h2>
-            <p>Sistema Operacional Unificado</p>
+    <div class="sidebar">
+        <h2>POLÍCIA CIVIL</h2>
+        <p class="user-cargo">Cargo: Alto Comando</p>
+        <hr style="border-color: #1f293d; margin: 20px 0;">
+        <ul>
+            <li><a href="#" class="active" onclick="mudarAba('prisao')">📝 Registar Prisão</a></li>
+            <li><a href="#" onclick="mudarAba('investigacao')">🔍 Registar Investigação</a></li>
+            <li><a href="#" onclick="mudarAba('membros')">👥 Gestão de Efetivo & Patentes</a></li>
+            <li><a href="#" onclick="mudarAba('consultas')">📂 Consultar Registos</a></li>
+            <li><a href="#" onclick="mudarAba('alto-comando')" style="color: #f87171;">⭐ Painel Global / Logs</a></li>
+        </ul>
+        <div style="margin-top: auto;">
+            <a href="index.html" class="btn-sair">Sair do Sistema</a>
         </div>
-
-        <form id="loginForm">
-            <div class="input-group">
-                <label for="email">Utilizador / Email</label>
-                <input type="text" id="email" placeholder="Digite o seu registo ou email" required>
-            </div>
-
-            <div class="input-group">
-                <label for="password">Palavra-passe</label>
-                <input type="password" id="password" placeholder="********" required>
-            </div>
-
-            <button type="submit" class="btn-login">Entrar no Sistema</button>
-        </form>
     </div>
 
+    <div class="main-content">
+        <!-- ABA 1: REGISTAR PRISÃO -->
+        <div id="aba-prisao" class="conteudo-aba">
+            <h2>Registo de Prisão e Ocorrência</h2>
+            <p>Preencha os dados do indivíduo detido, artigos violados e materiais apreendidos.</p>
+            
+            <form class="form-cad" onsubmit="alert('Prisão registada com sucesso!'); return false;">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Nome do Suspeito / Passaporte</label>
+                        <input type="text" placeholder="Ex: João Silva (ID: 1234)" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Tipo de Crime / Artigo</label>
+                        <input type="text" placeholder="Ex: Assalto a Banco / Porte Ilegal" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Armas e Itens Apreendidos (Apreensão)</label>
+                    <textarea placeholder="Descreva pistolas, fuzis, drogas ou dinheiro apreendido..." rows="3"></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Relatório Detalhado da Ocorrência</label>
+                    <textarea placeholder="Descreva como ocorreu a abordagem, perseguição e detenção..." rows="4" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-login">Registar Prisão no Sistema</button>
+            </form>
+        </div>
+
+        <!-- ABA 2: INVESTIGAÇÃO -->
+        <div id="aba-investigacao" class="conteudo-aba" style="display: none;">
+            <h2>Registo de Investigação e Casos</h2>
+            <p>Área destinada a detetives e investigadores para documentar pistas, facções e alvos.</p>
+            <form class="form-cad" onsubmit="alert('Investigação registada com sucesso!'); return false;">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Codinome / Nome da Investigação</label>
+                        <input type="text" placeholder="Ex: Operação Desmanche Zona Sul" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Investigador Responsável</label>
+                        <input type="text" placeholder="Ex: Agente Smith" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Relatório e Pistas Recolhidas</label>
+                    <textarea placeholder="Insira os detalhes, suspeitos envolvidos e provas..." rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn-login">Salvar Investigação</button>
+            </form>
+        </div>
+
+        <!-- ABA 3: GESTÃO DE EFETIVO E PATENTES -->
+        <div id="aba-membros" class="conteudo-aba" style="display: none;">
+            <h2>Gestão de Efetivo e Novos Policiais</h2>
+            <p>Registe novos membros na corporação, defina patentes e gerencie o quadro de pessoal.</p>
+            
+            <div style="background-color: #131b2e; padding: 20px; border-radius: 8px; border: 1px solid #1f293d; margin-bottom: 20px;">
+                <h3>Adicionar Novo Policial</h3>
+                <form class="form-cad" style="margin-top: 15px;" onsubmit="alert('Policial registado na corporação!'); return false;">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Nome / Identificação do Policial</label>
+                            <input type="text" placeholder="Ex: Recruta Carlos" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Patente Inicial</label>
+                            <select style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
+                                <option>Recruta</option>
+                                <option>Oficial / Patrulha</option>
+                                <option>Investigador</option>
+                                <option>Inspetor</option>
+                                <option>Comandante (Alto Comando)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-login" style="margin-top: 10px;">Registar Membro</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ABA 4: CONSULTAS -->
+        <div id="aba-consultas" class="conteudo-aba" style="display: none;">
+            <h2>Consulta de Registos Gerais</h2>
+            <p>Histórico completo de todas las prisões, apreensões e investigações da corporação.</p>
+            <div class="tabela-box">
+                <table style="width:100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="background-color: #1f293d; text-align: left;">
+                            <th style="padding: 10px;">Data</th>
+                            <th style="padding: 10px;">Tipo</th>
+                            <th style="padding: 10px;">Alvo / Suspeito</th>
+                            <th style="padding: 10px;">Responsável</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #1f293d;">
+                            <td style="padding: 10px;">04/08/2026</td>
+                            <td style="padding: 10px; color: #3b82f6;">Prisão</td>
+                            <td style="padding: 10px;">João Silva</td>
+                            <td style="padding: 10px;">Oficial Carlos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ABA 5: ALTO COMANDO -->
+        <div id="aba-alto-comando" class="conteudo-aba" style="display: none;">
+            <h2>Painel Global do Alto Comando</h2>
+            <p style="color: #f87171;">Área restrita de auditoria e controles globais de toda a agência policial.</p>
+            <div style="background-color: #131b2e; padding: 20px; border-radius: 8px; margin-top: 20px; border: 1px solid #7f1d1d;">
+                <h3>Auditoria Geral</h3>
+                <p style="margin-top: 10px; color: #94a3b8;">O alto comando tem acesso total para verificar relatórios arquivados, remover registos incorretos e promover patentes.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function mudarAba(aba) {
+            document.querySelectorAll('.conteudo-aba').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.sidebar ul li a').forEach(el => el.classList.remove('active'));
+            
+            if(aba === 'prisao') document.getElementById('aba-prisao').style.display = 'block';
+            if(aba === 'investigacao') document.getElementById('aba-investigacao').style.display = 'block';
+            if(aba === 'membros') document.getElementById('aba-membros').style.display = 'block';
+            if(aba === 'consultas') document.getElementById('aba-consultas').style.display = 'block';
+            if(aba === 'alto-comando') document.getElementById('aba-alto-comando').style.display = 'block';
+            
+            event.currentTarget.classList.add('active');
+        }
+    </script>
 </body>
 </html>

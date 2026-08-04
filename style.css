@@ -1,16 +1,103 @@
-/* Estilos extra para o Painel Interno */
+/* Reset e Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0b0f19;
+    color: #f8fafc;
+}
+
+/* Página de Login */
+.login-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-card {
+    background-color: #131b2e;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    width: 380px;
+    border: 1px solid #1f293d;
+    text-align: center;
+}
+
+.login-card h2 {
+    color: #3b82f6;
+    margin-bottom: 5px;
+}
+
+.login-card p {
+    color: #94a3b8;
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    color: #cbd5e1;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.input-group input, .input-group textarea, .input-group select {
+    width: 100%;
+    padding: 12px;
+    background-color: #0b0f19;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: #3b82f6;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    background-color: #2563eb;
+}
+
+/* Painel Interno */
 .painel-body {
     display: flex;
     height: 100vh;
-    background-color: #0b0f19;
-    color: #ffffff;
+    overflow: hidden;
 }
 
 .sidebar {
-    width: 260px;
+    width: 280px;
     background-color: #131b2e;
     border-right: 1px solid #1f293d;
-    padding: 20px;
+    padding: 25px;
     display: flex;
     flex-direction: column;
 }
@@ -30,16 +117,16 @@
 
 .sidebar ul {
     list-style: none;
-    padding: 0;
+    margin-top: 20px;
 }
 
 .sidebar ul li {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .sidebar ul li a {
     display: block;
-    padding: 10px 15px;
+    padding: 12px 15px;
     color: #cbd5e1;
     text-decoration: none;
     border-radius: 6px;
@@ -55,13 +142,14 @@
 .btn-sair {
     display: block;
     text-align: center;
-    padding: 10px;
+    padding: 12px;
     background-color: #7f1d1d;
     color: white;
     text-decoration: none;
     border-radius: 6px;
     font-size: 14px;
     font-weight: bold;
+    transition: 0.2s;
 }
 
 .btn-sair:hover {
@@ -72,35 +160,62 @@
     flex: 1;
     padding: 40px;
     overflow-y: auto;
+    background-color: #0b0f19;
 }
 
 .main-content h2 {
-    margin-bottom: 10px;
+    font-size: 22px;
+    margin-bottom: 5px;
 }
 
-.main-content p {
+.main-content > p {
     color: #94a3b8;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    font-size: 14px;
 }
 
-.form-cad .input-grid {
+.form-cad {
+    background-color: #131b2e;
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid #1f293d;
+}
+
+.input-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
-.form-cad textarea {
-    width: 100%;
-    padding: 12px;
+/* Tabelas e Registos Criminais */
+.tabela-box {
     background-color: #131b2e;
-    border: 1px solid #334155;
-    border-radius: 6px;
-    color: #ffffff;
-    font-size: 14px;
-    resize: vertical;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #1f293d;
 }
 
-.form-cad textarea:focus {
-    outline: none;
-    border-color: #3b82f6;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th {
+    background-color: #1f293d;
+    color: #3b82f6;
+    padding: 12px;
+    text-align: left;
+    font-size: 13px;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #1f293d;
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+tr:hover {
+    background-color: rgba(59, 130, 246, 0.05);
 }

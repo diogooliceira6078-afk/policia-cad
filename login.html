@@ -35,6 +35,7 @@
 
             let oficiaisSalvos = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
                 { nome: 'Proença', pass: '7576', cargo: 'Alto Comando', id: '#0005' }
+                { nome: 'Thiago', pass: '1218', cargo: 'Oficial de Patrulha', id: '#0006' }
             ];
 
             const oficialEncontrado = oficiaisSalvos.find(o => o.nome.toLowerCase() === usuario.toLowerCase() && o.pass === senha);

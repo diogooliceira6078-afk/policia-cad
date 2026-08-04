@@ -50,8 +50,13 @@
                     </div>
 
                     <div style="flex: 1;">
-                        <h3 id="perfilNome" style="font-size: 22px; color: #3b82f6; margin-bottom: 5px;">Nome do Cidadão</h3>
-                        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;">Passaporte ID: <span id="perfilID" style="color: #fff;">#4020</span> | Estado: <span id="perfilEstadoBadge" style="font-weight: bold;">Ativo</span> | Facção: <span id="perfilFaccao" style="color: #f87171;">Nenhuma</span></p>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 id="perfilNome" style="font-size: 22px; color: #3b82f6; margin-bottom: 5px;">Nome do Cidadão</h3>
+                                <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;">Passaporte ID: <span id="perfilID" style="color: #fff;">#4020</span> | Estado: <span id="perfilEstadoBadge" style="font-weight: bold;">Ativo</span> | Facção: <span id="perfilFaccao" style="color: #f87171;">Nenhuma</span></p>
+                            </div>
+                            <button type="button" onclick="eliminarCID()" style="background-color: #dc2626; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">🗑️ Eliminar do Cadastro</button>
+                        </div>
                         
                         <!-- Licenças -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
@@ -225,7 +230,7 @@
         <!-- 9. GESTÃO DE EFETIVO -->
         <div id="aba-membros" class="conteudo-aba" style="display: none;">
             <h2>👥 Gestão de Efetivo & Contas de Oficiais</h2>
-            <p>Crie credenciais de acesso individuais para cada agente e defina os respetivos cargos.</p>
+            <p>Crie credenciais de acesso individuais para cada agente e defina os respetivos cargos (Exclusivo para Alto Comando).</p>
             
             <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
                 <h3 style="font-size: 16px; color: #3b82f6; margin-bottom: 15px;">Criar / Registar Conta de Oficial</h3>
@@ -258,7 +263,7 @@
                             <th>Passaporte</th>
                             <th>Agente</th>
                             <th>Cargo</th>
-                            <th>Estado Atual</th>
+                            <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaQuadroEfetivo">
@@ -284,6 +289,8 @@
         let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
             { id: '#4020', nome: 'Proença', pass: '7576', cargo: 'Alto Comando', estado: 'Ativo' }
         ];
+
+        let cidadaoAtualPesquisado = null;
 
         function mudarAba(aba) {
             document.querySelectorAll('.conteudo-aba').forEach(el => el.style.display = 'none');
@@ -433,6 +440,14 @@
 
         function registarNovoOficial(event) {
             event.preventDefault();
+
+            // Verificação estrita de Alto Comando
+            const cargoAtual = agenteLogado.cargo.toLowerCase();
+            if (!cargoAtual.includes('alto comando') && !cargoAtual.includes('chefe de polícia')) {
+                alert('Acesso negado! Apenas elementos do Alto Comando podem adicionar novos oficiais.');
+                return;
+            }
+
             const user = document.getElementById('novoUser').value.trim();
             const pass = document.getElementById('novoPass').value;
             const cargo = document.getElementById('novoCargo').value;
@@ -455,15 +470,36 @@
             atualizarTabelaEfetivo();
         }
 
+        function eliminarOficial(index) {
+            const cargoAtual = agenteLogado.cargo.toLowerCase();
+            if (!cargoAtual.includes('alto comando') && !cargoAtual.includes('chefe de polícia')) {
+                alert('Acesso negado! Apenas elementos do Alto Comando podem remover oficiais.');
+                return;
+            }
+
+            const oficialRemover = listaOficiais[index];
+            if(confirm(`Tem a certeza que deseja eliminar o acesso do oficial ${oficialRemover.nome}?`)) {
+                listaOficiais.splice(index, 1);
+                localStorage.setItem('listaOficiaisCAD', JSON.stringify(listaOficiais));
+                atualizarTabelaEfetivo();
+                alert('Oficial removido com sucesso!');
+            }
+        }
+
         function atualizarTabelaEfetivo() {
             const tbody = document.getElementById('tabelaQuadroEfetivo');
+            if(listaOficiais.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum oficial registado.</td></tr>`;
+                return;
+            }
+
             let html = '';
-            listaOficiais.forEach(oficial => {
+            listaOficiais.forEach((oficial, index) => {
                 html += `<tr>
                     <td>${oficial.id}</td>
                     <td><strong>${oficial.nome}</strong></td>
                     <td><span style="color: #3b82f6;">${oficial.cargo}</span></td>
-                    <td><span style="color: #4ade80;">Ativo no Sistema</span></td>
+                    <td><button type="button" onclick="eliminarOficial(${index})" style="background-color: #dc2626; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">🗑️ Remover</button></td>
                 </tr>`;
             });
             tbody.innerHTML = html;
@@ -478,6 +514,7 @@
             const cidadao = baseDadosPrisoes[termo];
 
             if(cidadao) {
+                cidadaoAtualPesquisado = termo;
                 document.getElementById('perfilNome').innerText = cidadao.nome;
                 document.getElementById('perfilID').innerText = '#' + cidadao.id;
                 document.getElementById('perfilFaccao').innerText = cidadao.faccao;
@@ -512,6 +549,27 @@
             } else {
                 alert('Nenhum cidadão encontrado com esse nome no sistema.');
                 ficha.style.display = 'none';
+                cidadaoAtualPesquisado = null;
+            }
+        }
+
+        function eliminarCID() {
+            if(!cidadaoAtualPesquisado || !baseDadosPrisoes[cidadaoAtualPesquisado]) {
+                alert('Nenhum cidadão selecionado para eliminar.');
+                return;
+            }
+
+            const nomeCidadao = baseDadosPrisoes[cidadaoAtualPesquisado].nome;
+            const confirmacao = confirm(`Tem a certeza absoluta que pretende eliminar o cadastro e todo o histórico criminal de ${nomeCidadao}?`);
+
+            if(confirmacao) {
+                delete baseDadosPrisoes[cidadaoAtualPesquisado];
+                localStorage.setItem('baseDadosPrisoesCAD', JSON.stringify(baseDadosPrisoes));
+                
+                alert(`O cadastro de ${nomeCidadao} foi completamente eliminado do sistema.`);
+                document.getElementById('fichaCriminal').style.display = 'none';
+                document.getElementById('inputPesquisa').value = '';
+                cidadaoAtualPesquisado = null;
             }
         }
     </script>

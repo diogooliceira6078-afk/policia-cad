@@ -15,7 +15,7 @@
         <form onsubmit="fazerLogin(event)">
             <div class="input-group">
                 <label>Passaporte ID ou Nome do Agente</label>
-                <input type="text" id="loginUser" placeholder="Ex: #4020 ou Proença" required>
+                <input type="text" id="loginUser" placeholder="Ex: #0006 ou Thiago" required>
             </div>
             
             <div class="input-group">
@@ -27,31 +27,46 @@
         </form>
         
         <div id="loginErro" style="color: #f87171; font-size: 13px; text-align: center; margin-top: 15px; display: none;">
-            Credenciais incorretas. Tente novamente.
+            Credenciais incorretas ou utilizador não existente. Tente novamente.
         </div>
     </div>
 
     <script>
+        // Função opcional de arranque: garante apenas que o Proença e o Thiago existem se for a primeira vez que abres o site
+        function inicializarOficiaisPadrao() {
+            let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD'));
+            if (!listaOficiais || listaOficiais.length === 0) {
+                listaOficiais = [
+                    { id: '#4020', nome: 'Proença', pass: '7576', cargo: 'Alto Comando', estado: 'Ativo' },
+                    { id: '#0006', nome: 'Thiago', pass: '1218', cargo: 'Oficial de Patrulha', estado: 'Ativo' }
+                ];
+                localStorage.setItem('listaOficiaisCAD', JSON.stringify(listaOficiais));
+            }
+        }
+
+        inicializarOficiaisPadrao();
+
         function fazerLogin(event) {
             event.preventDefault();
             
             const userInput = document.getElementById('loginUser').value.trim().toLowerCase();
             const passInput = document.getElementById('loginPass').value.trim();
             
-            // Lista padrão de oficiais atualizada com o Proença e o Thiago
-            let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
-                { id: '#4020', nome: 'Proença', pass: '7576', cargo: 'Alto Comando', estado: 'Ativo' },
-                { id: '#0006', nome: 'Thiago', pass: '1218', cargo: 'Oficial de Patrulha', estado: 'Ativo' }
-            ];
+            // Lê SEMPRE a lista atualizada do localStorage (incluindo os novos criados na app)
+            let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [];
             
-            // Procurar se o utilizador corresponde ao Nome ou ao ID (e validar a password)
-            const agenteEncontrado = listaOficiais.find(oficial => 
-                (oficial.nome.toLowerCase() === userInput || oficial.id.toLowerCase() === userInput) && 
-                oficial.pass === passInput
-            );
+            // Procura o oficial comparando o nome ou o ID
+            const agenteEncontrado = listaOficiais.find(oficial => {
+                const idLimpo = oficial.id.toLowerCase().replace('#', '');
+                const userLimpo = userInput.replace('#', '');
+                
+                const correspondeUser = (oficial.nome.toLowerCase() === userInput || idLimpo === userLimpo);
+                const correspondePass = (oficial.pass.trim() === passInput);
+                
+                return correspondeUser && correspondePass;
+            });
             
             if (agenteEncontrado) {
-                // Guarda o agente logado no localStorage e redireciona para o painel principal
                 localStorage.setItem('agenteLogado', JSON.stringify(agenteEncontrado));
                 window.location.href = 'index.html';
             } else {

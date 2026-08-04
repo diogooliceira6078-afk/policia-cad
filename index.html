@@ -40,7 +40,7 @@
             </div>
 
             <div id="fichaCriminal" style="display: none; background-color: #131b2e; border: 1px solid #1f293d; border-radius: 10px; padding: 25px;">
-                <div style="display: flex; gap: 30px; align-items: flex-start;">
+                <div style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
                     <!-- Foto -->
                     <div style="text-align: center;">
                         <div id="perfilFotoBox" style="width: 140px; height: 180px; background-color: #0b0f19; border: 2px solid #3b82f6; border-radius: 8px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 11px;">
@@ -49,7 +49,7 @@
                         <p style="margin-top: 8px; font-size: 11px; color: #94a3b8;">Mugshot Oficial</p>
                     </div>
 
-                    <div style="flex: 1;">
+                    <div style="flex: 1; min-width: 250px;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
                                 <h3 id="perfilNome" style="font-size: 22px; color: #3b82f6; margin-bottom: 5px;">Nome do Cidadão</h3>
@@ -82,7 +82,6 @@
         <!-- 2. REGISTAR PRISÃO -->
         <div id="aba-prisao" class="conteudo-aba" style="display: none;">
             <h2>Registar Prisão, Pena e Inteligência</h2>
-            <p>Preencha os dados completos da detenção. Ficará registada com a sua assinatura profissional.</p>
             <form class="form-cad" onsubmit="registarPrisao(event)">
                 <div class="input-grid">
                     <div class="input-group"><label>Nome / Nick do Suspeito</label><input type="text" id="regNome" placeholder="Ex: JoaoSilva" required></div>
@@ -119,7 +118,7 @@
                     </div>
                 </div>
                 <div class="input-group"><label>Link Direto da Foto (Mugshot)</label><input type="url" id="regFoto" placeholder="https://exemplo.com/foto.png" required></div>
-                <div class="input-group"><label>Relatório Detalhado & Apreensões</label><textarea id="regRelatorio" rows="3" required placeholder="Relato da abordagem e itens apreendidos..."></textarea></div>
+                <div class="input-group"><label>Relatório Detalhado & Apreensões</label><textarea id="regRelatorio" rows="3" required placeholder="Relato da abordagem..."></textarea></div>
                 <button type="submit" class="btn-login">Concluir Registo Criminal</button>
             </form>
         </div>
@@ -127,14 +126,23 @@
         <!-- 3. MULTAS -->
         <div id="aba-multas" class="conteudo-aba" style="display: none;">
             <h2>Emissão de Multa Isolada</h2>
-            <form class="form-cad" onsubmit="alert('Multa emitida com sucesso!'); return false;">
+            <form class="form-cad" onsubmit="registarMultaIsolada(event)">
                 <div class="input-grid">
-                    <div class="input-group"><label>Nome do Cidadão</label><input type="text" placeholder="Ex: PedroSantos" required></div>
-                    <div class="input-group"><label>Valor ($)</label><input type="text" placeholder="Ex: $5.000" required></div>
+                    <div class="input-group"><label>Nome do Cidadão</label><input type="text" id="multaNome" placeholder="Ex: PedroSantos" required></div>
+                    <div class="input-group"><label>Valor ($)</label><input type="text" id="multaValor" placeholder="Ex: $5.000" required></div>
                 </div>
-                <div class="input-group"><label>Motivo</label><input type="text" placeholder="Ex: Excesso de Velocidade" required></div>
-                <button type="submit" class="btn-login">Emitir Multa</button>
+                <div class="input-group"><label>Motivo da Multa</label><input type="text" id="multaMotivo" placeholder="Ex: Excesso de Velocidade" required></div>
+                <button type="submit" class="btn-login">Emitir e Registar Multa</button>
             </form>
+            <h3 style="font-size: 16px; color: #cbd5e1; margin-top: 25px; margin-bottom: 15px;">Histórico de Multas Emitidas</h3>
+            <div class="tabela-box">
+                <table>
+                    <thead><tr><th>Data</th><th>Agente</th><th>Cidadão</th><th>Valor</th><th>Motivo</th></tr></thead>
+                    <tbody id="tabelaHistoricoMultas">
+                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Sem multas registadas.</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- 4. MANDADOS -->
@@ -142,9 +150,9 @@
             <h2>Mandados de Prisão Ativos</h2>
             <div class="tabela-box">
                 <table>
-                    <thead><tr><th>Alvo</th><th>Motivo</th><th>Estado</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Carlos Mendes</strong></td><td>Fuga à Prisão</td><td><span style="color: #f87171;">Procurado</span></td></tr>
+                    <thead><tr><th>Alvo</th><th>Motivo / Crime</th><th>Estado</th></tr></thead>
+                    <tbody id="tabelaMandadosAtivos">
+                        <tr><td colspan="3" style="text-align: center; color: #94a3b8;">A carregar mandados...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -153,51 +161,60 @@
         <!-- 5. VEÍCULOS E GARAGEM -->
         <div id="aba-veiculos" class="conteudo-aba" style="display: none;">
             <h2>Garagem & Veículos Apreendidos</h2>
-            <form class="form-cad" style="margin-bottom: 20px;" onsubmit="alert('Veículo registado!'); return false;">
+            <form class="form-cad" style="margin-bottom: 20px;" onsubmit="registarVeiculo(event)">
                 <div class="input-grid">
-                    <div class="input-group"><label>Modelo do Veículo</label><input type="text" placeholder="Ex: Sultan" required></div>
-                    <div class="input-group"><label>Matrícula / Placa</label><input type="text" placeholder="Ex: 40ABC123" required></div>
+                    <div class="input-group"><label>Modelo do Veículo</label><input type="text" id="veiculoModelo" placeholder="Ex: Sultan" required></div>
+                    <div class="input-group"><label>Matrícula / Placa</label><input type="text" id="veiculoPlaca" placeholder="Ex: 40ABC123" required></div>
                 </div>
-                <div class="input-group"><label>Proprietário / Dono</label><input type="text" placeholder="Ex: JoaoSilva" required></div>
+                <div class="input-group"><label>Proprietário / Dono</label><input type="text" id="veiculoDono" placeholder="Ex: JoaoSilva" required></div>
                 <button type="submit" class="btn-login" style="margin-top: 10px;">Registar Veículo</button>
             </form>
+            <div class="tabela-box">
+                <table>
+                    <thead><tr><th>Placa</th><th>Modelo</th><th>Proprietário</th><th>Ação</th></tr></thead>
+                    <tbody id="tabelaListaVeiculos">
+                        <tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum veículo registado.</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- 6. INVESTIGAÇÃO -->
         <div id="aba-investigacao" class="conteudo-aba" style="display: none;">
-            <h2>Registo de Investigação</h2>
-            <form class="form-cad" onsubmit="alert('Guardado!'); return false;">
-                <div class="input-group"><label>Codinome</label><input type="text" required></div>
-                <div class="input-group"><label>Detalhes</label><textarea rows="4" required></textarea></div>
-                <button type="submit" class="btn-login">Guardar</button>
+            <h2>Registo de Investigação & Inteligência</h2>
+            <form class="form-cad" style="margin-bottom: 20px;" onsubmit="registarInvestigacao(event)">
+                <div class="input-grid">
+                    <div class="input-group"><label>Codinome / Alvo da Investigação</label><input type="text" id="invCodinome" placeholder="Ex: Operação Fantasma" required></div>
+                    <div class="input-group"><label>Responsável</label><input type="text" id="invResponsavel" placeholder="Ex: Inspetor Silva" required></div>
+                </div>
+                <div class="input-group"><label>Detalhes, Pistas & Notas da Investigação</label><textarea id="invDetalhes" rows="4" required placeholder="Escreva as anotações confidenciais..."></textarea></div>
+                <button type="submit" class="btn-login">Guardar Investigação</button>
             </form>
+            <div class="tabela-box">
+                <table>
+                    <thead><tr><th>Data</th><th>Codinome</th><th>Responsável</th><th>Detalhes</th><th>Ação</th></tr></thead>
+                    <tbody id="tabelaListaInvestigacoes">
+                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Nenhuma investigação registada.</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- 7. BATER PONTO (TURNO) -->
         <div id="aba-ponto" class="conteudo-aba" style="display: none;">
             <h2>Controlo de Turno & Bater Ponto</h2>
-            <p>Registe a entrada e saída do seu turno de patrulhamento.</p>
             <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 25px;">
                 <h3 id="statusPontoText" style="color: #f87171; margin-bottom: 20px;">Estado Atual: Fora de Serviço</h3>
-                <div style="display: flex; justify-content: center; gap: 20px;">
-                    <button type="button" onclick="baterPonto('Entrada')" class="btn-login" style="background-color: #16a34a; width: 200px; margin-top: 0;">🟢 Iniciar Turno (Entrada)</button>
-                    <button type="button" onclick="baterPonto('Saida')" class="btn-login" style="background-color: #dc2626; width: 200px; margin-top: 0;">🔴 Terminar Turno (Saída)</button>
+                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                    <button type="button" onclick="baterPonto('Entrada')" class="btn-login" style="background-color: #16a34a; width: 200px; margin-top: 0;">🟢 Iniciar Turno</button>
+                    <button type="button" onclick="baterPonto('Saida')" class="btn-login" style="background-color: #dc2626; width: 200px; margin-top: 0;">🔴 Terminar Turno</button>
                 </div>
             </div>
-
-            <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Registo Global de Todos os Turnos (Entradas e Saídas)</h3>
             <div class="tabela-box">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Data e Hora</th>
-                            <th>Agente</th>
-                            <th>Cargo</th>
-                            <th>Ação / Estado</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Data e Hora</th><th>Agente</th><th>Cargo</th><th>Ação</th></tr></thead>
                     <tbody id="tabelaGlobalPontos">
-                        <tr><td colspan="4" style="text-align: center; color: #94a3b8;">A carregar registos de ponto...</td></tr>
+                        <tr><td colspan="4" style="text-align: center; color: #94a3b8;">A carregar...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -205,43 +222,52 @@
 
         <!-- 8. ZONA DO ALTO COMANDO -->
         <div id="aba-altocomando" class="conteudo-aba" style="display: none;">
-            <h2>⭐ Zona do Alto Comando - Auditoria de Relatórios</h2>
-            <p>Veja em detalhe todas as prisões efetuadas, qual o oficial responsável e o relatório completo.</p>
-            <div class="tabela-box">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Oficial Responsável</th>
-                            <th>Suspeito Preso</th>
-                            <th>Crime / Artigos</th>
-                            <th>Relatório Completo</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaAuditoriaAltoComando">
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: #94a3b8;">A carregar registos de auditoria...</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div id="conteudoProtegidoAC">
+                <h2>⭐ Zona do Alto Comando - Auditoria & Histórico por Oficial</h2>
+                <p>Pesquise por um oficial para visualizar tudo o que ele fez no sistema (prisões, relatórios, etc.).</p>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                    <input type="text" id="pesquisaOficialInput" placeholder="Ex: Proença" style="flex: 1; padding: 12px; background-color: #131b2e; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 14px;">
+                    <button type="button" onclick="pesquisarAtividadeOficial()" class="btn-login" style="width: 180px; margin-top: 0;">Pesquisar Oficial</button>
+                </div>
+
+                <div id="resultadoAtividadeOficial" style="display: none; background-color: #131b2e; border: 1px solid #1f293d; border-radius: 10px; padding: 20px; margin-bottom: 25px;">
+                    <h3 id="nomeOficialPesquisado" style="color: #3b82f6; margin-bottom: 10px; font-size: 18px;">Atividade do Oficial</h3>
+                    <div id="listaAtividadesOficial" style="max-height: 200px; overflow-y: auto; font-size: 12px; color: #cbd5e1;"></div>
+                </div>
+
+                <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Auditoria Geral de Prisões & Ocorrências</h3>
+                <div class="tabela-box">
+                    <table>
+                        <thead><tr><th>Data</th><th>Oficial</th><th>Crime / Alvo</th><th>Tempo</th><th>Relatório</th></tr></thead>
+                        <tbody id="tabelaAuditoriaAltoComando">
+                            <tr><td colspan="5" style="text-align: center; color: #94a3b8;">A carregar...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="mensagemBloqueioAC" style="display: none; background-color: #131b2e; border: 1px solid #dc2626; padding: 30px; border-radius: 10px; text-align: center;">
+                <h3 style="color: #dc2626; font-size: 20px; margin-bottom: 10px;">⛔ Acesso Restrito</h3>
+                <p style="color: #94a3b8; font-size: 14px;">Esta área é exclusiva para membros do **Alto Comando** e **Chefe de Polícia**.</p>
             </div>
         </div>
 
         <!-- 9. GESTÃO DE EFETIVO -->
         <div id="aba-membros" class="conteudo-aba" style="display: none;">
             <h2>👥 Gestão de Efetivo & Contas de Oficiais</h2>
-            <p>Crie credenciais de acesso individuais para cada agente e defina os respetivos cargos (Exclusivo para Alto Comando).</p>
+            <p>Crie credenciais ou remova oficiais incorretos.</p>
             
             <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
-                <h3 style="font-size: 16px; color: #3b82f6; margin-bottom: 15px;">Criar / Registar Conta de Oficial</h3>
+                <h3 style="font-size: 16px; color: #3b82f6; margin-bottom: 15px;">Criar Conta de Oficial</h3>
                 <form class="form-cad" onsubmit="registarNovoOficial(event)">
                     <div class="input-grid">
-                        <div class="input-group"><label>Nome de Utilizador / Nick</label><input type="text" id="novoUser" placeholder="Ex: InspetorSilva" required></div>
-                        <div class="input-group"><label>Password de Acesso</label><input type="password" id="novoPass" placeholder="Palavra-passe secreta" required></div>
+                        <div class="input-group"><label>Nome / Nick</label><input type="text" id="novoUser" placeholder="Ex: InspetorSilva" required></div>
+                        <div class="input-group"><label>Password</label><input type="password" id="novoPass" required></div>
                     </div>
                     <div class="input-grid">
                         <div class="input-group">
-                            <label>Cargo / Patente</label>
+                            <label>Cargo</label>
                             <select id="novoCargo" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
                                 <option value="Oficial de Patrulha">Oficial de Patrulha</option>
                                 <option value="Investigador">Investigador</option>
@@ -251,33 +277,26 @@
                         </div>
                         <div class="input-group"><label>Passaporte ID</label><input type="text" id="novoID" placeholder="Ex: #9921" required></div>
                     </div>
-                    <button type="submit" class="btn-login" style="margin-top: 10px;">Criar Credencial do Agente</button>
+                    <button type="submit" class="btn-login" style="margin-top: 10px;">Criar Credencial</button>
                 </form>
             </div>
 
-            <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Quadro de Agentes Registados no Sistema</h3>
+            <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Quadro de Agentes Registados</h3>
             <div class="tabela-box">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Passaporte</th>
-                            <th>Agente</th>
-                            <th>Cargo</th>
-                            <th>Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaQuadroEfetivo">
-                        <!-- Preenchido dinamicamente -->
-                    </tbody>
+                    <thead><tr><th>Passaporte</th><th>Agente</th><th>Cargo</th><th>Ação</th></tr></thead>
+                    <tbody id="tabelaQuadroEfetivo"></tbody>
                 </table>
             </div>
+            
+            <button type="button" onclick="reporListaOficiais()" style="margin-top: 20px; background-color: #475569; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 12px;">🔄 Repor Lista Padrão de Oficiais</button>
         </div>
     </div>
 
     <script>
         let agenteLogado = JSON.parse(localStorage.getItem('agenteLogado'));
         if (!agenteLogado) {
-            alert('Acesso negado! Por favor, faça login primeiro.');
+            alert('Faça login primeiro.');
             window.location.href = 'login.html';
         } else {
             document.getElementById('sidebarAgente').innerText = `Agente: ${agenteLogado.nome} (${agenteLogado.cargo})`;
@@ -286,6 +305,9 @@
         let baseDadosPrisoes = JSON.parse(localStorage.getItem('baseDadosPrisoesCAD')) || {};
         let historicoAuditoria = JSON.parse(localStorage.getItem('historicoAuditoriaCAD')) || [];
         let historicoPontos = JSON.parse(localStorage.getItem('historicoPontosCAD')) || [];
+        let historicoMultas = JSON.parse(localStorage.getItem('historicoMultasCAD')) || [];
+        let listaVeiculos = JSON.parse(localStorage.getItem('listaVeiculosCAD')) || [];
+        let listaInvestigacoes = JSON.parse(localStorage.getItem('listaInvestigacoesCAD')) || [];
         let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
             { id: '#4020', nome: 'Proença', pass: '7576', cargo: 'Alto Comando', estado: 'Ativo' }
         ];
@@ -298,69 +320,47 @@
             
             if(aba === 'mdt') document.getElementById('aba-mdt').style.display = 'block';
             if(aba === 'prisao') document.getElementById('aba-prisao').style.display = 'block';
-            if(aba === 'multas') document.getElementById('aba-multas').style.display = 'block';
-            if(aba === 'mandados') document.getElementById('aba-mandados').style.display = 'block';
-            if(aba === 'veiculos') document.getElementById('aba-veiculos').style.display = 'block';
-            if(aba === 'investigacao') document.getElementById('aba-investigacao').style.display = 'block';
-            if(aba === 'ponto') {
-                document.getElementById('aba-ponto').style.display = 'block';
-                atualizarTabelaPontos();
-            }
+            if(aba === 'multas') { document.getElementById('aba-multas').style.display = 'block'; atualizarTabelaMultas(); }
+            if(aba === 'mandados') { document.getElementById('aba-mandados').style.display = 'block'; atualizarMandadosAtivos(); }
+            if(aba === 'veiculos') { document.getElementById('aba-veiculos').style.display = 'block'; atualizarTabelaVeiculos(); }
+            if(aba === 'investigacao') { document.getElementById('aba-investigacao').style.display = 'block'; atualizarTabelaInvestigacoes(); }
+            if(aba === 'ponto') { document.getElementById('aba-ponto').style.display = 'block'; atualizarTabelaPontos(); }
             if(aba === 'altocomando') {
                 document.getElementById('aba-altocomando').style.display = 'block';
-                atualizarTabelaAuditoria();
+                verificarPermissaoAltoComando();
             }
-            if(aba === 'membros') {
-                document.getElementById('aba-membros').style.display = 'block';
-                atualizarTabelaEfetivo();
-            }
+            if(aba === 'membros') { document.getElementById('aba-membros').style.display = 'block'; atualizarTabelaEfetivo(); }
             
             event.currentTarget.classList.add('active');
         }
 
-        function baterPonto(tipo) {
-            const textoStatus = document.getElementById('statusPontoText');
-            const dataAtual = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            const registoPonto = {
-                data: dataAtual,
-                agente: agenteLogado.nome,
-                cargo: agenteLogado.cargo,
-                tipo: tipo
-            };
-
-            historicoPontos.unshift(registoPonto);
-            localStorage.setItem('historicoPontosCAD', JSON.stringify(historicoPontos));
-
-            if(tipo === 'Entrada') {
-                textoStatus.innerText = 'Estado Atual: Em Serviço (🟢 Em Patrulha)';
-                textoStatus.style.color = '#4ade80';
-                alert('Ponto de ENTRADA registado com sucesso!');
+        function verificarPermissaoAltoComando() {
+            const cargo = (agenteLogado.cargo || '').toLowerCase();
+            const temAcesso = cargo.includes('alto comando') || cargo.includes('chefe de polícia') || cargo.includes('chefe de policia');
+            if(temAcesso) {
+                document.getElementById('conteudoProtegidoAC').style.display = 'block';
+                document.getElementById('mensagemBloqueioAC').style.display = 'none';
+                atualizarTabelaAuditoria();
             } else {
-                textoStatus.innerText = 'Estado Atual: Fora de Serviço (🔴 Turno Terminado)';
-                textoStatus.style.color = '#f87171';
-                alert('Ponto de SAÍDA registado com sucesso!');
+                document.getElementById('conteudoProtegidoAC').style.display = 'none';
+                document.getElementById('mensagemBloqueioAC').style.display = 'block';
             }
+        }
+
+        function baterPonto(tipo) {
+            const dataAtual = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            historicoPontos.unshift({ data: dataAtual, agente: agenteLogado.nome, cargo: agenteLogado.cargo, tipo: tipo });
+            localStorage.setItem('historicoPontosCAD', JSON.stringify(historicoPontos));
+            alert('Ponto registado com sucesso!');
             atualizarTabelaPontos();
         }
 
         function atualizarTabelaPontos() {
             const tbody = document.getElementById('tabelaGlobalPontos');
-            if(historicoPontos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Ainda não existem pontos registados.</td></tr>`;
-                return;
-            }
-
+            if(historicoPontos.length === 0) { tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Sem registos.</td></tr>`; return; }
             let html = '';
             historicoPontos.forEach(p => {
-                const corBadge = p.tipo === 'Entrada' ? '#4ade80' : '#f87171';
-                const textoAcao = p.tipo === 'Entrada' ? '🟢 Início de Turno (Entrada)' : '🔴 Fim de Turno (Saída)';
-                html += `<tr>
-                    <td>${p.data}</td>
-                    <td><strong>${p.agente}</strong></td>
-                    <td><span style="color: #3b82f6;">${p.cargo}</span></td>
-                    <td><span style="color: ${corBadge}; font-weight: bold;">${textoAcao}</span></td>
-                </tr>`;
+                html += `<tr><td>${p.data}</td><td><strong>${p.agente}</strong></td><td>${p.cargo}</td><td>${p.tipo}</td></tr>`;
             });
             tbody.innerHTML = html;
         }
@@ -368,117 +368,193 @@
         function registarPrisao(event) {
             event.preventDefault();
             const nome = document.getElementById('regNome').value.trim();
-            const crime = document.getElementById('regCrime').value;
-            const tempo = document.getElementById('regTempo').value;
-            const multa = document.getElementById('regMulta').value;
-            const estado = document.getElementById('regEstado').value;
-            const faccao = document.getElementById('regFaccao').value || 'Nenhuma';
-            const carta = document.getElementById('regCarta').value;
-            const porte = document.getElementById('regPorte').value;
-            const foto = document.getElementById('regFoto').value;
-            const relatorio = document.getElementById('regRelatorio').value;
-
-            const dataAtual = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
             const novaPassagem = {
-                data: dataAtual,
+                data: new Date().toLocaleDateString(),
                 oficial: agenteLogado.nome + ' (' + agenteLogado.cargo + ')',
-                crime: crime,
-                tempo: tempo,
-                multa: multa,
-                relatorio: relatorio
+                oficialNome: agenteLogado.nome,
+                crime: document.getElementById('regCrime').value,
+                tempo: document.getElementById('regTempo').value,
+                multa: document.getElementById('regMulta').value,
+                relatorio: document.getElementById('regRelatorio').value
             };
-
             historicoAuditoria.unshift(novaPassagem);
             localStorage.setItem('historicoAuditoriaCAD', JSON.stringify(historicoAuditoria));
 
             if(!baseDadosPrisoes[nome.toLowerCase()]) {
                 baseDadosPrisoes[nome.toLowerCase()] = {
-                    nome: nome,
-                    id: Math.floor(1000 + Math.random() * 9000),
-                    foto: foto,
-                    estado: estado,
-                    faccao: faccao,
-                    carta: carta,
-                    porte: porte,
+                    nome: nome, id: Math.floor(1000 + Math.random() * 9000),
+                    foto: document.getElementById('regFoto').value,
+                    estado: document.getElementById('regEstado').value,
+                    faccao: document.getElementById('regFaccao').value || 'Nenhuma',
+                    carta: document.getElementById('regCarta').value,
+                    porte: document.getElementById('regPorte').value,
                     passagens: []
                 };
+            } else {
+                baseDadosPrisoes[nome.toLowerCase()].estado = document.getElementById('regEstado').value;
             }
-
             baseDadosPrisoes[nome.toLowerCase()].passagens.push(novaPassagem);
-            baseDadosPrisoes[nome.toLowerCase()].estado = estado;
-            baseDadosPrisoes[nome.toLowerCase()].carta = carta;
-            baseDadosPrisoes[nome.toLowerCase()].porte = porte;
-            baseDadosPrisoes[nome.toLowerCase()].faccao = faccao;
-
             localStorage.setItem('baseDadosPrisoesCAD', JSON.stringify(baseDadosPrisoes));
-
-            alert('Prisão de ' + nome + ' registada com sucesso e assinada por ' + agenteLogado.nome + '!');
-            document.querySelector('.form-cad').reset();
+            alert('Prisão registada com sucesso!');
             mudarAba('mdt');
         }
 
-        function atualizarTabelaAuditoria() {
-            const tbody = document.getElementById('tabelaAuditoriaAltoComando');
-            if(historicoAuditoria.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Ainda não existem prisões registadas no sistema.</td></tr>`;
-                return;
-            }
+        function registarMultaIsolada(event) {
+            event.preventDefault();
+            const novaMulta = {
+                data: new Date().toLocaleDateString(),
+                agente: agenteLogado.nome,
+                cidadao: document.getElementById('multaNome').value.trim(),
+                valor: document.getElementById('multaValor').value.trim(),
+                motivo: document.getElementById('multaMotivo').value.trim()
+            };
+            historicoMultas.unshift(novaMulta);
+            localStorage.setItem('historicoMultasCAD', JSON.stringify(historicoMultas));
+            alert('Multa emitida e registada com sucesso!');
+            document.querySelector('#aba-multas form').reset();
+            atualizarTabelaMultas();
+        }
 
+        function atualizarTabelaMultas() {
+            const tbody = document.getElementById('tabelaHistoricoMultas');
+            if(historicoMultas.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Sem multas registadas.</td></tr>`; return; }
             let html = '';
-            historicoAuditoria.forEach(item => {
-                html += `<tr>
-                    <td>${item.data}</td>
-                    <td><strong style="color: #3b82f6;">${item.oficial}</strong></td>
-                    <td>${item.crime}</td>
-                    <td><span style="color: #f87171;">Pena: ${item.tempo} | Multa: ${item.multa}</span></td>
-                    <td style="font-size: 12px; color: #cbd5e1;">${item.relatorio}</td>
-                </tr>`;
+            historicoMultas.forEach(m => {
+                html += `<tr><td>${m.data}</td><td>${m.agente}</td><td><strong>${m.cidadao}</strong></td><td>${m.valor}</td><td>${m.motivo}</td></tr>`;
             });
             tbody.innerHTML = html;
         }
 
+        function atualizarMandadosAtivos() {
+            const tbody = document.getElementById('tabelaMandadosAtivos');
+            let html = '';
+            let encontrados = false;
+            for(let key in baseDadosPrisoes) {
+                let cid = baseDadosPrisoes[key];
+                if(cid.estado === 'Procurado') {
+                    encontrados = true;
+                    let ultimaPassagem = cid.passagens[cid.passagens.length - 1] ? cid.passagens[cid.passagens.length - 1].crime : 'Mandado Ativo';
+                    html += `<tr><td><strong>${cid.nome}</strong> (#${cid.id})</td><td>${ultimaPassagem}</td><td><span style="color: #f87171; font-weight: bold;">Procurado</span></td></tr>`;
+                }
+            }
+            tbody.innerHTML = encontrados ? html : `<tr><td colspan="3" style="text-align: center; color: #94a3b8;">Nenhum mandado ativo de momento.</td></tr>`;
+        }
+
+        function registarVeiculo(event) {
+            event.preventDefault();
+            listaVeiculos.push({
+                modelo: document.getElementById('veiculoModelo').value.trim(),
+                placa: document.getElementById('veiculoPlaca').value.trim(),
+                dono: document.getElementById('veiculoDono').value.trim()
+            });
+            localStorage.setItem('listaVeiculosCAD', JSON.stringify(listaVeiculos));
+            alert('Veículo registado com sucesso!');
+            document.querySelector('#aba-veiculos form').reset();
+            atualizarTabelaVeiculos();
+        }
+
+        function atualizarTabelaVeiculos() {
+            const tbody = document.getElementById('tabelaListaVeiculos');
+            if(listaVeiculos.length === 0) { tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Nenhum veículo registado.</td></tr>`; return; }
+            let html = '';
+            listaVeiculos.forEach((v, index) => {
+                html += `<tr><td><strong>${v.placa}</strong></td><td>${v.modelo}</td><td>${v.dono}</td><td><button type="button" onclick="removerVeiculo(${index})" style="background-color: #dc2626; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">Remover</button></td></tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function removerVeiculo(index) {
+            listaVeiculos.splice(index, 1);
+            localStorage.setItem('listaVeiculosCAD', JSON.stringify(listaVeiculos));
+            atualizarTabelaVeiculos();
+        }
+
+        function registarInvestigacao(event) {
+            event.preventDefault();
+            const novaInv = {
+                data: new Date().toLocaleDateString(),
+                codinome: document.getElementById('invCodinome').value.trim(),
+                responsavel: document.getElementById('invResponsavel').value.trim(),
+                detalhes: document.getElementById('invDetalhes').value.trim()
+            };
+            listaInvestigacoes.unshift(novaInv);
+            localStorage.setItem('listaInvestigacoesCAD', JSON.stringify(listaInvestigacoes));
+            alert('Investigação guardada com sucesso!');
+            document.querySelector('#aba-investigacao form').reset();
+            atualizarTabelaInvestigacoes();
+        }
+
+        function atualizarTabelaInvestigacoes() {
+            const tbody = document.getElementById('tabelaListaInvestigacoes');
+            if(listaInvestigacoes.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhuma investigação registada.</td></tr>`; return; }
+            let html = '';
+            listaInvestigacoes.forEach((inv, index) => {
+                html += `<tr><td>${inv.data}</td><td><strong>${inv.codinome}</strong></td><td>${inv.responsavel}</td><td>${inv.detalhes}</td><td><button type="button" onclick="removerInvestigacao(${index})" style="background-color: #dc2626; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">Apagar</button></td></tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function removerInvestigacao(index) {
+            listaInvestigacoes.splice(index, 1);
+            localStorage.setItem('listaInvestigacoesCAD', JSON.stringify(listaInvestigacoes));
+            atualizarTabelaInvestigacoes();
+        }
+
+        function atualizarTabelaAuditoria() {
+            const tbody = document.getElementById('tabelaAuditoriaAltoComando');
+            if(historicoAuditoria.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Sem registos.</td></tr>`; return; }
+            let html = '';
+            historicoAuditoria.forEach(item => {
+                html += `<tr><td>${item.data}</td><td>${item.oficial}</td><td>${item.crime}</td><td>${item.tempo}</td><td>${item.relatorio}</td></tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function pesquisarAtividadeOficial() {
+            const termo = document.getElementById('pesquisaOficialInput').value.trim().toLowerCase();
+            const boxResult = document.getElementById('resultadoAtividadeOficial');
+            const listaBox = document.getElementById('listaAtividadesOficial');
+            const nomeBox = document.getElementById('nomeOficialPesquisado');
+
+            if(!termo) { alert('Insira o nome de um oficial para pesquisar.'); return; }
+
+            let atividadesEncontradas = historicoAuditoria.filter(item => item.oficial.toLowerCase().includes(termo));
+            
+            if(atividadesEncontradas.length > 0) {
+                nomeBox.innerText = `Atividade do Oficial: ${atividadesEncontradas[0].oficial}`;
+                let html = '';
+                atividadesEncontradas.forEach((at, idx) => {
+                    html += `<div style="margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #1f293d;">
+                        <b>#${idx+1} [${at.data}]</b> - Crime: <b>${at.crime}</b> (Pena: ${at.tempo})<br>
+                        Relatório: ${at.relatorio}
+                    </div>`;
+                });
+                listaBox.innerHTML = html;
+                boxResult.style.display = 'block';
+            } else {
+                nomeBox.innerText = 'Nenhum registo encontrado para este oficial.';
+                listaBox.innerHTML = '';
+                boxResult.style.display = 'block';
+            }
+        }
+
         function registarNovoOficial(event) {
             event.preventDefault();
-
-            // Verificação estrita de Alto Comando
-            const cargoAtual = agenteLogado.cargo.toLowerCase();
-            if (!cargoAtual.includes('alto comando') && !cargoAtual.includes('chefe de polícia')) {
-                alert('Acesso negado! Apenas elementos do Alto Comando podem adicionar novos oficiais.');
-                return;
-            }
-
-            const user = document.getElementById('novoUser').value.trim();
-            const pass = document.getElementById('novoPass').value;
-            const cargo = document.getElementById('novoCargo').value;
-            const passaporte = document.getElementById('novoID').value.trim();
-
             listaOficiais.push({
-                id: passaporte,
-                nome: user,
-                pass: pass,
-                cargo: cargo,
+                id: document.getElementById('novoID').value.trim(),
+                nome: document.getElementById('novoUser').value.trim(),
+                pass: document.getElementById('novoPass').value,
+                cargo: document.getElementById('novoCargo').value,
                 estado: 'Ativo'
             });
-
             localStorage.setItem('listaOficiaisCAD', JSON.stringify(listaOficiais));
-
-            alert('Credencial criada com sucesso para o agente ' + user + ' (' + cargo + ')!');
-            document.getElementById('novoUser').value = '';
-            document.getElementById('novoPass').value = '';
-            document.getElementById('novoID').value = '';
+            alert('Oficial adicionado com sucesso!');
+            document.querySelector('#aba-membros form').reset();
             atualizarTabelaEfetivo();
         }
 
         function eliminarOficial(index) {
-            const cargoAtual = agenteLogado.cargo.toLowerCase();
-            if (!cargoAtual.includes('alto comando') && !cargoAtual.includes('chefe de polícia')) {
-                alert('Acesso negado! Apenas elementos do Alto Comando podem remover oficiais.');
-                return;
-            }
-
-            const oficialRemover = listaOficiais[index];
-            if(confirm(`Tem a certeza que deseja eliminar o acesso do oficial ${oficialRemover.nome}?`)) {
+            if(confirm('Tem a certeza que deseja remover este oficial?')) {
                 listaOficiais.splice(index, 1);
                 localStorage.setItem('listaOficiaisCAD', JSON.stringify(listaOficiais));
                 atualizarTabelaEfetivo();
@@ -486,20 +562,25 @@
             }
         }
 
+        function reporListaOficiais() {
+            if(confirm('Deseja limpar os oficiais adicionados e repor a lista inicial?')) {
+                localStorage.removeItem('listaOficiaisCAD');
+                listaOficiais = [{ id: '#4020', nome: 'Proença', pass: '7576', cargo: 'Alto Comando', estado: 'Ativo' }];
+                atualizarTabelaEfetivo();
+                alert('Lista reposta com sucesso!');
+            }
+        }
+
         function atualizarTabelaEfetivo() {
             const tbody = document.getElementById('tabelaQuadroEfetivo');
-            if(listaOficiais.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum oficial registado.</td></tr>`;
-                return;
-            }
-
+            if(listaOficiais.length === 0) { tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Nenhum oficial.</td></tr>`; return; }
             let html = '';
             listaOficiais.forEach((oficial, index) => {
                 html += `<tr>
                     <td>${oficial.id}</td>
                     <td><strong>${oficial.nome}</strong></td>
-                    <td><span style="color: #3b82f6;">${oficial.cargo}</span></td>
-                    <td><button type="button" onclick="eliminarOficial(${index})" style="background-color: #dc2626; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">🗑️ Remover</button></td>
+                    <td>${oficial.cargo}</td>
+                    <td><button type="button" onclick="eliminarOficial(${index})" style="background-color: #dc2626; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">🗑️ Remover</button></td>
                 </tr>`;
             });
             tbody.innerHTML = html;
@@ -507,69 +588,34 @@
 
         function pesquisarCID() {
             const termo = document.getElementById('inputPesquisa').value.trim().toLowerCase();
-            const ficha = document.getElementById('fichaCriminal');
-
-            if(termo === '') { alert('Escreva o nome do cidadão!'); return; }
-
             const cidadao = baseDadosPrisoes[termo];
-
             if(cidadao) {
                 cidadaoAtualPesquisado = termo;
                 document.getElementById('perfilNome').innerText = cidadao.nome;
                 document.getElementById('perfilID').innerText = '#' + cidadao.id;
                 document.getElementById('perfilFaccao').innerText = cidadao.faccao;
+                document.getElementById('perfilEstadoBadge').innerText = cidadao.estado;
+                document.getElementById('perfilFotoBox').style.backgroundImage = `url('${cidadao.foto}')`;
+                document.getElementById('perfilFotoBox').innerText = '';
                 
-                const badge = document.getElementById('perfilEstadoBadge');
-                badge.innerText = cidadao.estado;
-                badge.style.color = (cidadao.estado === 'Procurado') ? '#f87171' : '#4ade80';
-
-                const cartaElem = document.getElementById('perfilCarta');
-                cartaElem.innerText = cidadao.carta;
-                cartaElem.style.color = (cidadao.carta === 'Ativa') ? '#4ade80' : '#f87171';
-
-                const porteElem = document.getElementById('perfilPorte');
-                porteElem.innerText = cidadao.porte;
-                porteElem.style.color = (cidadao.porte === 'Ativo') ? '#4ade80' : '#f87171';
-
-                const fotoBox = document.getElementById('perfilFotoBox');
-                fotoBox.style.backgroundImage = `url('${cidadao.foto}')`;
-                fotoBox.innerText = '';
-
                 let htmlPassagens = '';
-                cidadao.passagens.forEach((p, index) => {
-                    htmlPassagens += `<div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #1f293d;">
-                        <strong>Passagem #${index + 1} (${p.data})</strong> - <span style="color: #3b82f6;">Por: ${p.oficial}</span><br>
-                        Crime: <span style="color: #f87171;">${p.crime}</span> | Pena: ${p.tempo} | Multa: ${p.multa}<br>
-                        <em>Relatório:</em> ${p.relatorio}
-                    </div>`;
+                cidadao.passagens.forEach((p, i) => {
+                    htmlPassagens += `<div><b>#${i+1}</b> - ${p.crime} (${p.tempo}) | Relatório: ${p.relatorio}</div><hr style="border-color:#1f293d; margin:5,0px 0;">`;
                 });
                 document.getElementById('perfilHistorico').innerHTML = htmlPassagens;
-
-                ficha.style.display = 'block';
+                document.getElementById('fichaCriminal').style.display = 'block';
             } else {
-                alert('Nenhum cidadão encontrado com esse nome no sistema.');
-                ficha.style.display = 'none';
-                cidadaoAtualPesquisado = null;
+                alert('Cidadão não encontrado.');
+                document.getElementById('fichaCriminal').style.display = 'none';
             }
         }
 
         function eliminarCID() {
-            if(!cidadaoAtualPesquisado || !baseDadosPrisoes[cidadaoAtualPesquisado]) {
-                alert('Nenhum cidadão selecionado para eliminar.');
-                return;
-            }
-
-            const nomeCidadao = baseDadosPrisoes[cidadaoAtualPesquisado].nome;
-            const confirmacao = confirm(`Tem a certeza absoluta que pretende eliminar o cadastro e todo o histórico criminal de ${nomeCidadao}?`);
-
-            if(confirmacao) {
+            if(cidadaoAtualPesquisado && confirm('Eliminar cidadão do cadastro?')) {
                 delete baseDadosPrisoes[cidadaoAtualPesquisado];
                 localStorage.setItem('baseDadosPrisoesCAD', JSON.stringify(baseDadosPrisoes));
-                
-                alert(`O cadastro de ${nomeCidadao} foi completamente eliminado do sistema.`);
+                alert('Cidadão eliminado!');
                 document.getElementById('fichaCriminal').style.display = 'none';
-                document.getElementById('inputPesquisa').value = '';
-                cidadaoAtualPesquisado = null;
             }
         }
     </script>

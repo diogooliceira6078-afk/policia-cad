@@ -15,7 +15,7 @@
         <form class="form-login" onsubmit="fazerLogin(event)">
             <div class="input-group">
                 <label>Utilizador / Nick</label>
-                <input type="text" id="loginUser" placeholder="Ex: admin" required>
+                <input type="text" id="loginUser" placeholder="Ex: Proença" required>
             </div>
             
             <div class="input-group">
@@ -34,12 +34,12 @@
             const senha = document.getElementById('loginPass').value;
 
             let oficiaisSalvos = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
-                { nome: 'admin', pass: '1234', cargo: 'Alto Comando', id: '#4020' }
+                { nome: 'Proença', pass: '7576', cargo: 'Alto Comando', id: '#0005' }
             ];
 
             const oficialEncontrado = oficiaisSalvos.find(o => o.nome.toLowerCase() === usuario.toLowerCase() && o.pass === senha);
 
-            if (oficialEncontrado || (usuario.toLowerCase() === 'admin' && senha === '1234')) {
+            if (oficialEncontrado || (usuario.toLowerCase() === 'proença' && senha === '7576')) {
                 const cargoFinal = oficialEncontrado ? oficialEncontrado.cargo : 'Alto Comando';
                 
                 localStorage.setItem('agenteLogado', JSON.stringify({ nome: usuario, cargo: cargoFinal }));

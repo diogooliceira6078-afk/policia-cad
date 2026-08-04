@@ -20,7 +20,9 @@
             <li><a href="#" onclick="mudarAba('veiculos')">🚗 Garagem & Veículos</a></li>
             <li><a href="#" onclick="mudarAba('dispatch')">📻 Central de Alertas</a></li>
             <li><a href="#" onclick="mudarAba('investigacao')">📁 Registar Investigação</a></li>
-            <li><a href="#" onclick="mudarAba('membros')">👥 Gestão de Efetivo</a></li>
+            <li><a href="#" onclick="mudarAba('ponto')">⏱️ Bater Ponto (Turno)</a></li>
+            <li><a href="#" onclick="mudarAba('altocomando')">⭐ Zona do Alto Comando</a></li>
+            <li><a href="#" onclick="mudarAba('membros')">👥 Oficiais Online & Gestão</a></li>
         </ul>
         <div style="margin-top: auto;">
             <a href="index.html" class="btn-sair">Sair do Sistema</a>
@@ -76,7 +78,7 @@
         <!-- 2. REGISTAR PRISÃO -->
         <div id="aba-prisao" class="conteudo-aba" style="display: none;">
             <h2>Registar Prisão, Pena e Inteligência</h2>
-            <p>Preencha os dados completos da detenção, licenças e ligação a facções.</p>
+            <p>Preencha os dados completos da detenção. Ficará registada com a sua assinatura profissional.</p>
             <form class="form-cad" onsubmit="registarPrisao(event)">
                 <div class="input-grid">
                     <div class="input-group"><label>Nome / Nick do Suspeito</label><input type="text" id="regNome" placeholder="Ex: JoaoSilva" required></div>
@@ -177,15 +179,105 @@
             </form>
         </div>
 
-        <!-- 8. MEMBROS -->
+        <!-- 8. BATER PONTO (TURNO) -->
+        <div id="aba-ponto" class="conteudo-aba" style="display: none;">
+            <h2>Controlo de Turno & Bater Ponto</h2>
+            <p>Registe a entrada e saída do seu turno de patrulhamento.</p>
+            <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 25px; border-radius: 10px; text-align: center;">
+                <h3 id="statusPontoText" style="color: #f87171; margin-bottom: 20px;">Estado Atual: Fora de Serviço</h3>
+                <div style="display: flex; justify-content: center; gap: 20px;">
+                    <button type="button" onclick="baterPonto('Entrada')" class="btn-login" style="background-color: #16a34a; width: 200px;">🟢 Iniciar Turno (Entrada)</button>
+                    <button type="button" onclick="baterPonto('Saida')" class="btn-login" style="background-color: #dc2626; width: 200px;">🔴 Terminar Turno (Saída)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. ZONA DO ALTO COMANDO (AUDITORIA DE RELATÓRIOS) -->
+        <div id="aba-altocomando" class="conteudo-aba" style="display: none;">
+            <h2>⭐ Zona do Alto Comando - Auditoria de Relatórios</h2>
+            <p>Veja em detalhe todas as prisões efetuadas, qual o oficial responsável por cada uma e o relatório completo.</p>
+            <div class="tabela-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Oficial Responsável</th>
+                            <th>Suspeito Preso</th>
+                            <th>Crime / Artigos</th>
+                            <th>Relatório Completo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaAuditoriaAltoComando">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #94a3b8;">A carregar registos de auditoria...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 10. GESTÃO DE EFETIVO, OFICIAIS ONLINE E CRIAÇÃO DE PASSWORDS -->
         <div id="aba-membros" class="conteudo-aba" style="display: none;">
-            <h2>Gestão de Efetivo</h2>
-            <p>Quadro de agentes ativos.</p>
+            <h2>👥 Gestão de Efetivo & Contas de Oficiais</h2>
+            <p>Crie credenciais de acesso individuais para cada agente e defina os respetivos cargos.</p>
+            
+            <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                <h3 style="font-size: 16px; color: #3b82f6; margin-bottom: 15px;">Criar / Registar Conta de Oficial</h3>
+                <form class="form-cad" onsubmit="registarNovoOficial(event)">
+                    <div class="input-grid">
+                        <div class="input-group"><label>Nome de Utilizador / Nick</label><input type="text" id="novoUser" placeholder="Ex: InspetorSilva" required></div>
+                        <div class="input-group"><label>Password de Acesso</label><input type="password" id="novoPass" placeholder="Palavra-passe secreta" required></div>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Cargo / Patente</label>
+                            <select id="novoCargo" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
+                                <option value="Oficial de Patrulha">Oficial de Patrulha</option>
+                                <option value="Investigador">Investigador</option>
+                                <option value="Alto Comando">Alto Comando</option>
+                                <option value="Chefe de Polícia">Chefe de Polícia</option>
+                            </select>
+                        </div>
+                        <div class="input-group"><label>Passaporte ID</label><input type="text" id="novoID" placeholder="Ex: #9921" required></div>
+                    </div>
+                    <button type="submit" class="btn-login" style="margin-top: 10px;">Criar Credencial do Agente</button>
+                </form>
+            </div>
+
+            <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Quadro de Agentes Registados no Sistema</h3>
+            <div class="tabela-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Passaporte</th>
+                            <th>Agente</th>
+                            <th>Cargo</th>
+                            <th>Estado Atual</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaQuadroEfetivo">
+                        <!-- Preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
         let baseDadosPrisoes = {};
+        let historicoAuditoria = [];
+        let listaOficiais = [
+            { id: '#4020', nome: 'Admin / Alto Comando', cargo: 'Alto Comando', estado: 'Em Serviço' }
+        ];
+
+        // Simulação do agente atualmente logado (pode vir a ser ligado ao login real)
+        let agenteLogado = {
+            nome: 'Inspetor Silva',
+            cargo: 'Alto Comando'
+        };
+
+        // Atualiza a sidebar com o nome do agente logado
+        document.getElementById('sidebarAgente').innerText = `Agente: ${agenteLogado.nome} (${agenteLogado.cargo})`;
 
         function mudarAba(aba) {
             document.querySelectorAll('.conteudo-aba').forEach(el => el.style.display = 'none');
@@ -198,9 +290,30 @@
             if(aba === 'veiculos') document.getElementById('aba-veiculos').style.display = 'block';
             if(aba === 'dispatch') document.getElementById('aba-dispatch').style.display = 'block';
             if(aba === 'investigacao') document.getElementById('aba-investigacao').style.display = 'block';
-            if(aba === 'membros') document.getElementById('aba-membros').style.display = 'block';
+            if(aba === 'ponto') document.getElementById('aba-ponto').style.display = 'block';
+            if(aba === 'altocomando') {
+                document.getElementById('aba-altocomando').style.display = 'block';
+                atualizarTabelaAuditoria();
+            }
+            if(aba === 'membros') {
+                document.getElementById('aba-membros').style.display = 'block';
+                atualizarTabelaEfetivo();
+            }
             
             event.currentTarget.classList.add('active');
+        }
+
+        function baterPonto(tipo) {
+            const textoStatus = document.getElementById('statusPontoText');
+            if(tipo === 'Entrada') {
+                textoStatus.innerText = 'Estado Atual: Em Serviço (🟢 Em Patrulha)';
+                textoStatus.style.color = '#4ade80';
+                alert('Ponto de ENTRADA registado com sucesso!');
+            } else {
+                textoStatus.innerText = 'Estado Atual: Fora de Serviço (🔴 Turno Terminado)';
+                textoStatus.style.color = '#f87171';
+                alert('Ponto de SAÍDA registado com sucesso!');
+            }
         }
 
         function registarPrisao(event) {
@@ -216,13 +329,19 @@
             const foto = document.getElementById('regFoto').value;
             const relatorio = document.getElementById('regRelatorio').value;
 
+            const dataAtual = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
             const novaPassagem = {
-                data: new Date().toLocaleDateString(),
+                data: dataAtual,
+                oficial: agenteLogado.nome + ' (' + agenteLogado.cargo + ')',
                 crime: crime,
                 tempo: tempo,
                 multa: multa,
                 relatorio: relatorio
             };
+
+            // Adiciona ao registo geral de auditoria do Alto Comando
+            historicoAuditoria.unshift(novaPassagem);
 
             if(!baseDadosPrisoes[nome.toLowerCase()]) {
                 baseDadosPrisoes[nome.toLowerCase()] = {
@@ -237,16 +356,70 @@
                 };
             }
 
-            // Adiciona ao histórico de passagens
             baseDadosPrisoes[nome.toLowerCase()].passagens.push(novaPassagem);
-            baseDadosPrisoes[nome.toLowerCase()].estado = estado; // Atualiza estado atual
+            baseDadosPrisoes[nome.toLowerCase()].estado = estado;
             baseDadosPrisoes[nome.toLowerCase()].carta = carta;
             baseDadosPrisoes[nome.toLowerCase()].porte = porte;
             baseDadosPrisoes[nome.toLowerCase()].faccao = faccao;
 
-            alert('Prisão de ' + nome + ' registada com sucesso no histórico!');
+            alert('Prisão de ' + nome + ' registada com sucesso e assinada por ' + agenteLogado.nome + '!');
             document.querySelector('.form-cad').reset();
             mudarAba('mdt');
+        }
+
+        function atualizarTabelaAuditoria() {
+            const tbody = document.getElementById('tabelaAuditoriaAltoComando');
+            if(historicoAuditoria.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Ainda não existem prisões registadas no sistema.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            historicoAuditoria.forEach(item => {
+                html += `<tr>
+                    <td>${item.data}</td>
+                    <td><strong style="color: #3b82f6;">${item.oficial}</strong></td>
+                    <td>${item.crime}</td>
+                    <td><span style="color: #f87171;">Pena: ${item.tempo} | Multa: ${item.multa}</span></td>
+                    <td style="font-size: 12px; color: #cbd5e1;">${item.relatorio}</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function registarNovoOficial(event) {
+            event.preventDefault();
+            const user = document.getElementById('novoUser').value.trim();
+            const pass = document.getElementById('novoPass').value;
+            const cargo = document.getElementById('novoCargo').value;
+            const passaporte = document.getElementById('novoID').value.trim();
+
+            listaOficiais.push({
+                id: passaporte,
+                nome: user,
+                cargo: cargo,
+                estado: 'Offline'
+            });
+
+            alert('Credencial criada com sucesso para o agente ' + user + ' (' + cargo + ')!');
+            document.getElementById('novoUser').value = '';
+            document.getElementById('novoPass').value = '';
+            document.getElementById('novoID').value = '';
+            atualizarTabelaEfetivo();
+        }
+
+        function atualizarTabelaEfetivo() {
+            const tbody = document.getElementById('tabelaQuadroEfetivo');
+            let html = '';
+            listaOficiais.forEach(oficial => {
+                html += `<tr>
+                    <td>${oficial.id}</td>
+                    <td><strong>${oficial.nome}</strong></td>
+                    <td><span style="color: #3b82f6;">${oficial.cargo}</span></td>
+                    <td><span style="color: #4ade80;">Registado no Sistema</span></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
         }
 
         function pesquisarCID() {
@@ -278,11 +451,10 @@
                 fotoBox.style.backgroundImage = `url('${cidadao.foto}')`;
                 fotoBox.innerText = '';
 
-                // Montar histórico de passagens em lista
                 let htmlPassagens = '';
                 cidadao.passagens.forEach((p, index) => {
                     htmlPassagens += `<div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #1f293d;">
-                        <strong>Passagem #${index + 1} (${p.data})</strong><br>
+                        <strong>Passagem #${index + 1} (${p.data})</strong> - <span style="color: #3b82f6;">Por: ${p.oficial}</span><br>
                         Crime: <span style="color: #f87171;">${p.crime}</span> | Pena: ${p.tempo} | Multa: ${p.multa}<br>
                         <em>Relatório:</em> ${p.relatorio}
                     </div>`;

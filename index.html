@@ -255,41 +255,48 @@
 
         <!-- 9. GESTÃO DE EFETIVO -->
         <div id="aba-membros" class="conteudo-aba" style="display: none;">
-            <h2>👥 Gestão de Efetivo & Contas de Oficiais</h2>
-            <p>Crie credenciais ou remova oficiais incorretos.</p>
-            
-            <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
-                <h3 style="font-size: 16px; color: #3b82f6; margin-bottom: 15px;">Criar Conta de Oficial</h3>
-                <form class="form-cad" onsubmit="registarNovoOficial(event)">
-                    <div class="input-grid">
-                        <div class="input-group"><label>Nome / Nick</label><input type="text" id="novoUser" placeholder="Ex: InspetorSilva" required></div>
-                        <div class="input-group"><label>Password</label><input type="password" id="novoPass" required></div>
-                    </div>
-                    <div class="input-grid">
-                        <div class="input-group">
-                            <label>Cargo</label>
-                            <select id="novoCargo" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
-                                <option value="Oficial de Patrulha">Oficial de Patrulha</option>
-                                <option value="Investigador">Investigador</option>
-                                <option value="Alto Comando">Alto Comando</option>
-                                <option value="Chefe de Polícia">Chefe de Polícia</option>
-                            </select>
+            <div id="conteudoProtegidoGestao">
+                <h2>👥 Oficiais Online & Gestão de Efetivo</h2>
+                <p>Crie credenciais ou remova oficiais incorretos.</p>
+                
+                <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                    <h3 style="font-size: 16px; color: #3b82f6; margin-bottom: 15px;">Criar Conta de Oficial</h3>
+                    <form class="form-cad" onsubmit="registarNovoOficial(event)">
+                        <div class="input-grid">
+                            <div class="input-group"><label>Nome / Nick</label><input type="text" id="novoUser" placeholder="Ex: InspetorSilva" required></div>
+                            <div class="input-group"><label>Password</label><input type="password" id="novoPass" required></div>
                         </div>
-                        <div class="input-group"><label>Passaporte ID</label><input type="text" id="novoID" placeholder="Ex: #9921" required></div>
-                    </div>
-                    <button type="submit" class="btn-login" style="margin-top: 10px;">Criar Credencial</button>
-                </form>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label>Cargo</label>
+                                <select id="novoCargo" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
+                                    <option value="Oficial de Patrulha">Oficial de Patrulha</option>
+                                    <option value="Investigador">Investigador</option>
+                                    <option value="Alto Comando">Alto Comando</option>
+                                    <option value="Chefe de Polícia">Chefe de Polícia</option>
+                                </select>
+                            </div>
+                            <div class="input-group"><label>Passaporte ID</label><input type="text" id="novoID" placeholder="Ex: #9921" required></div>
+                        </div>
+                        <button type="submit" class="btn-login" style="margin-top: 10px;">Criar Credencial</button>
+                    </form>
+                </div>
+
+                <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Quadro de Agentes Registados</h3>
+                <div class="tabela-box">
+                    <table>
+                        <thead><tr><th>Passaporte</th><th>Agente</th><th>Cargo</th><th>Ação</th></tr></thead>
+                        <tbody id="tabelaQuadroEfetivo"></tbody>
+                    </table>
+                </div>
+                
+                <button type="button" onclick="reporListaOficiais()" style="margin-top: 20px; background-color: #475569; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 12px;">🔄 Repor Lista Padrão de Oficiais</button>
             </div>
 
-            <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Quadro de Agentes Registados</h3>
-            <div class="tabela-box">
-                <table>
-                    <thead><tr><th>Passaporte</th><th>Agente</th><th>Cargo</th><th>Ação</th></tr></thead>
-                    <tbody id="tabelaQuadroEfetivo"></tbody>
-                </table>
+            <div id="mensagemBloqueioGestao" style="display: none; background-color: #131b2e; border: 1px solid #dc2626; padding: 30px; border-radius: 10px; text-align: center;">
+                <h3 style="color: #dc2626; font-size: 20px; margin-bottom: 10px;">⛔ Acesso Restrito</h3>
+                <p style="color: #94a3b8; font-size: 14px;">A área de gestão de oficiais é exclusiva para membros do **Alto Comando** e **Chefe de Polícia**.</p>
             </div>
-            
-            <button type="button" onclick="reporListaOficiais()" style="margin-top: 20px; background-color: #475569; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 12px;">🔄 Repor Lista Padrão de Oficiais</button>
         </div>
     </div>
 
@@ -329,7 +336,10 @@
                 document.getElementById('aba-altocomando').style.display = 'block';
                 verificarPermissaoAltoComando();
             }
-            if(aba === 'membros') { document.getElementById('aba-membros').style.display = 'block'; atualizarTabelaEfetivo(); }
+            if(aba === 'membros') {
+                document.getElementById('aba-membros').style.display = 'block';
+                verificarPermissaoGestao();
+            }
             
             event.currentTarget.classList.add('active');
         }
@@ -344,6 +354,19 @@
             } else {
                 document.getElementById('conteudoProtegidoAC').style.display = 'none';
                 document.getElementById('mensagemBloqueioAC').style.display = 'block';
+            }
+        }
+
+        function verificarPermissaoGestao() {
+            const cargo = (agenteLogado.cargo || '').toLowerCase();
+            const temAcesso = cargo.includes('alto comando') || cargo.includes('chefe de polícia') || cargo.includes('chefe de policia');
+            if(temAcesso) {
+                document.getElementById('conteudoProtegidoGestao').style.display = 'block';
+                document.getElementById('mensagemBloqueioGestao').style.display = 'none';
+                atualizarTabelaEfetivo();
+            } else {
+                document.getElementById('conteudoProtegidoGestao').style.display = 'none';
+                document.getElementById('mensagemBloqueioGestao').style.display = 'block';
             }
         }
 

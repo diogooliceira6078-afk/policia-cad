@@ -31,65 +31,73 @@
         <!-- 1. MDT / CONSULTA DE CIDADÃO -->
         <div id="aba-mdt" class="conteudo-aba">
             <h2>MDT - Sistema de Identificação Criminal</h2>
-            <p>Pesquise pelo nick ou passaporte para ver a ficha completa, foto e antecedentes.</p>
+            <p>Pesquise pelo nome ou nick exato para carregar a ficha policial com registo fotográfico.</p>
+            
             <div style="display: flex; gap: 15px; margin-bottom: 25px;">
-                <input type="text" id="inputPesquisa" placeholder="Digite o nome exato (Ex: JoaoSilva)" style="flex: 1; padding: 12px; background-color: #131b2e; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 14px;">
-                <button type="button" onclick="pesquisarCID()" class="btn-login" style="width: 150px; margin-top: 0;">Pesquisar Ficha</button>
+                <input type="text" id="inputPesquisa" placeholder="Ex: JoaoSilva" style="flex: 1; padding: 12px; background-color: #131b2e; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 14px;">
+                <button type="button" onclick="pesquisarCID()" class="btn-login" style="width: 160px; margin-top: 0;">Pesquisar Cidadão</button>
             </div>
 
             <div id="fichaCriminal" style="display: none; background-color: #131b2e; border: 1px solid #1f293d; border-radius: 10px; padding: 25px;">
                 <div style="display: flex; gap: 30px; align-items: flex-start;">
+                    <!-- Foto Dinâmica do Suspeito -->
                     <div style="text-align: center;">
-                        <div id="perfilFoto" style="width: 140px; height: 180px; background-color: #0b0f19; border: 2px solid #3b82f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 12px;">[Foto do Rosto]</div>
+                        <div id="perfilFotoBox" style="width: 140px; height: 180px; background-color: #0b0f19; border: 2px solid #3b82f6; border-radius: 8px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 11px;">
+                            [Sem Foto]
+                        </div>
+                        <p style="margin-top: 8px; font-size: 11px; color: #94a3b8;">Mugshot Oficial</p>
                     </div>
+
                     <div style="flex: 1;">
-                        <h3 id="perfilNome" style="font-size: 20px; color: #3b82f6; margin-bottom: 5px;">Nome do Cidadão</h3>
+                        <h3 id="perfilNome" style="font-size: 22px; color: #3b82f6; margin-bottom: 5px;">Nome do Cidadão</h3>
                         <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;">Passaporte ID: <span id="perfilID" style="color: #fff;">#4020</span> | Estado: <span style="color: #f87171; font-weight: bold;">Procurado</span></p>
+                        
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div style="background-color: #0b0f19; padding: 12px; border-radius: 6px; border: 1px solid #1f293d;">
-                                <span style="font-size: 11px; color: #94a3b8; display: block;">Mandados Ativos</span>
-                                <strong style="color: #f87171; font-size: 14px;">1x Prisão Pendente</strong>
+                                <span style="font-size: 11px; color: #94a3b8; display: block;">Crimes Registados</span>
+                                <strong id="perfilCrime" style="color: #f87171; font-size: 13px;">Nenhum registo recente</strong>
                             </div>
                             <div style="background-color: #0b0f19; padding: 12px; border-radius: 6px; border: 1px solid #1f293d;">
-                                <span style="font-size: 11px; color: #94a3b8; display: block;">Multas por Pagar</span>
-                                <strong style="color: #fbbf24; font-size: 14px;">$12.500</strong>
+                                <span style="font-size: 11px; color: #94a3b8; display: block;">Itens Apreendidos</span>
+                                <strong id="perfilApreensao" style="color: #fbbf24; font-size: 13px;">Nenhum</strong>
                             </div>
                         </div>
-                        <h4 style="font-size: 14px; margin-bottom: 8px; color: #cbd5e1;">Histórico Criminal:</h4>
-                        <ul style="list-style: none; font-size: 13px; color: #cbd5e1; background-color: #0b0f19; padding: 12px; border-radius: 6px; border: 1px solid #1f293d;">
-                            <li>• Porte Ilegal de Arma Pesada - 02/08/2026</li>
-                        </ul>
+
+                        <h4 style="font-size: 14px; margin-bottom: 8px; color: #cbd5e1;">Relatório da Última Ocorrência:</h4>
+                        <p id="perfilRelatorio" style="font-size: 13px; color: #cbd5e1; background-color: #0b0f19; padding: 12px; border-radius: 6px; border: 1px solid #1f293d; margin: 0;"></p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. REGISTAR PRISÃO -->
+        <!-- 2. REGISTAR PRISÃO COM FOTO -->
         <div id="aba-prisao" class="conteudo-aba" style="display: none;">
             <h2>Registar Prisão e Ocorrência</h2>
-            <p>Registe o suspeito, apreensões e relatório.</p>
-            <form class="form-cad" onsubmit="alert('Prisão registada com sucesso!'); return false;">
+            <p>Preencha os dados e o link da imagem do rosto para atualizar automaticamente o MDT.</p>
+            <form class="form-cad" onsubmit="registarPrisao(event)">
                 <div class="input-grid">
-                    <div class="input-group"><label>Nome / Nick do Suspeito</label><input type="text" placeholder="Ex: JoaoSilva" required></div>
-                    <div class="input-group"><label>Artigos / Crimes</label><input type="text" placeholder="Ex: Roubo a Loja" required></div>
+                    <div class="input-group"><label>Nome / Nick do Suspeito</label><input type="text" id="regNome" placeholder="Ex: JoaoSilva" required></div>
+                    <div class="input-group"><label>Artigos / Crimes</label><input type="text" id="regCrime" placeholder="Ex: Roubo a Loja" required></div>
                 </div>
-                <div class="input-group"><label>Link da Foto (Mugshot)</label><input type="url" placeholder="URL da imagem do suspeito..."></div>
-                <div class="input-group"><label>Itens e Armas Apreendidas</label><textarea rows="2" placeholder="Drogas, armas, dinheiro..."></textarea></div>
-                <div class="input-group"><label>Relatório da Abordagem</label><textarea rows="3" required placeholder="Como aconteceu..."></textarea></div>
-                <button type="submit" class="btn-login">Concluir Prisão</button>
+                <div class="input-group">
+                    <label>Link Direto da Foto (Discord, Imgur, etc.)</label>
+                    <input type="url" id="regFoto" placeholder="https://exemplo.com/foto.png" required>
+                </div>
+                <div class="input-group"><label>Itens e Armas Apreendidas</label><textarea id="regApreensao" rows="2" placeholder="Drogas, armas, dinheiro..."></textarea></div>
+                <div class="input-group"><label>Relatório da Abordagem</label><textarea id="regRelatorio" rows="3" required placeholder="Como aconteceu a detenção..."></textarea></div>
+                <button type="submit" class="btn-login">Concluir e Guardar no MDT</button>
             </form>
         </div>
 
-        <!-- 3. PASSAR MULTA / COIMA -->
+        <!-- 3. PASSAR MULTA -->
         <div id="aba-multas" class="conteudo-aba" style="display: none;">
             <h2>Emissão de Multa / Coima</h2>
-            <p>Passe uma coima oficial diretamente para o cadastro do cidadão.</p>
-            <form class="form-cad" onsubmit="alert('Multa emitida e registada no sistema!'); return false;">
+            <form class="form-cad" onsubmit="alert('Multa emitida com sucesso!'); return false;">
                 <div class="input-grid">
                     <div class="input-group"><label>Nome do Cidadão</label><input type="text" placeholder="Ex: PedroSantos" required></div>
                     <div class="input-group"><label>Valor da Multa ($)</label><input type="number" placeholder="Ex: 5000" required></div>
                 </div>
-                <div class="input-group"><label>Motivo da Inração</label><input type="text" placeholder="Ex: Concessão Perigosa / Excesso de Velocidade" required></div>
+                <div class="input-group"><label>Motivo</label><input type="text" placeholder="Ex: Excesso de velocidade" required></div>
                 <button type="submit" class="btn-login">Aplicar Multa</button>
             </form>
         </div>
@@ -97,12 +105,11 @@
         <!-- 4. MANDADOS ATIVOS -->
         <div id="aba-mandados" class="conteudo-aba" style="display: none;">
             <h2>Mandados de Prisão Ativos</h2>
-            <p>Lista de indivíduos com ordem de captura pendente pela corporação.</p>
             <div class="tabela-box">
                 <table>
-                    <thead><tr><th>Alvo</th><th>Motivo do Mandado</th><th>Emitido por</th><th>Ação</th></tr></thead>
+                    <thead><tr><th>Alvo</th><th>Motivo</th><th>Emitido por</th></tr></thead>
                     <tbody>
-                        <tr><td><strong>Carlos Mendes</strong></td><td><span style="color: #f87171;">Fuga à Prisão & Sequestro</span></td><td>Inspetor Silva</td><td><button style="background: #3b82f6; border:none; color:#fff; padding:5px 10px; border-radius:4px; cursor:pointer;">Atuar</button></td></tr>
+                        <tr><td><strong>Carlos Mendes</strong></td><td><span style="color: #f87171;">Fuga à Prisão</span></td><td>Inspetor Silva</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -111,28 +118,22 @@
         <!-- 5. VIATURAS APREENDIDAS -->
         <div id="aba-veiculos" class="conteudo-aba" style="display: none;">
             <h2>Pátio de Viaturas Apreendidas</h2>
-            <p>Registo de veículos confiscados em operações.</p>
-            <form class="form-cad" style="margin-bottom: 20px;" onsubmit="alert('Veículo apreendido registado!'); return false;">
+            <form class="form-cad" onsubmit="alert('Veículo registado no pátio!'); return false;">
                 <div class="input-grid">
-                    <div class="input-group"><label>Modelo da Viatura</label><input type="text" placeholder="Ex: Sultan RS" required></div>
-                    <div class="input-group"><label>Matrícula / Placa</label><input type="text" placeholder="Ex: 40ABC123" required></div>
+                    <div class="input-group"><label>Modelo</label><input type="text" required></div>
+                    <div class="input-group"><label>Matrícula</label><input type="text" required></div>
                 </div>
-                <div class="input-group"><label>Motivo da Apreensão</label><input type="text" placeholder="Ex: Utilizado em assalto / Sem documentos" required></div>
-                <button type="submit" class="btn-login" style="margin-top: 10px;">Registar Apreensão de Veículo</button>
+                <div class="input-group"><label>Motivo</label><input type="text" required></div>
+                <button type="submit" class="btn-login" style="margin-top: 10px;">Registar Apreensão</button>
             </form>
         </div>
 
-        <!-- 6. DISPATCH / RÁDIO DE ALERTAS -->
+        <!-- 6. DISPATCH -->
         <div id="aba-dispatch" class="conteudo-aba" style="display: none;">
-            <h2>Central de Alertas (Dispatch / Rádio)</h2>
-            <p>Canal de comunicação rápida e chamadas de emergência em tempo real.</p>
-            <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="font-size: 15px; color: #3b82f6; margin-bottom: 10px;">🔴 Alertas Ativos na Cidade</h3>
+            <h2>Central de Alertas (Dispatch)</h2>
+            <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 8px;">
                 <div style="background: #0b0f19; padding: 12px; border-radius: 6px; border-left: 4px solid #f87171; margin-bottom: 10px;">
-                    <strong>[10-90] Disparos de Arma de Fogo</strong> - Região: Praça Central (Há 3 minutos)
-                </div>
-                <div style="background: #0b0f19; padding: 12px; border-radius: 6px; border-left: 4px solid #fbbf24;">
-                    <strong>[10-31] Roubo a Loja de Conveniência</strong> - Região: Auto-estrada Norte (Há 10 minutos)
+                    <strong>[10-90] Disparos</strong> - Praça Central
                 </div>
             </div>
         </div>
@@ -140,8 +141,8 @@
         <!-- 7. INVESTIGAÇÃO -->
         <div id="aba-investigacao" class="conteudo-aba" style="display: none;">
             <h2>Registo de Investigação</h2>
-            <form class="form-cad" onsubmit="alert('Salvo!'); return false;">
-                <div class="input-group"><label>Codinome</label><input type="text" placeholder="Operação..." required></div>
+            <form class="form-cad" onsubmit="alert('Guardado!'); return false;">
+                <div class="input-group"><label>Codinome</label><input type="text" required></div>
                 <div class="input-group"><label>Detalhes</label><textarea rows="4" required></textarea></div>
                 <button type="submit" class="btn-login">Guardar</button>
             </form>
@@ -150,11 +151,14 @@
         <!-- 8. MEMBROS -->
         <div id="aba-membros" class="conteudo-aba" style="display: none;">
             <h2>Gestão de Efetivo</h2>
-            <p>Quadro geral de agentes operacionais.</p>
+            <p>Quadro de agentes ativos.</p>
         </div>
     </div>
 
     <script>
+        // Memória temporária para guardar os registos de prisões com foto
+        let baseDadosPrisoes = {};
+
         function mudarAba(aba) {
             document.querySelectorAll('.conteudo-aba').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.sidebar ul li a').forEach(el => el.classList.remove('active'));
@@ -171,11 +175,56 @@
             event.currentTarget.classList.add('active');
         }
 
+        function registarPrisao(event) {
+            event.preventDefault();
+            const nome = document.getElementById('regNome').value.trim();
+            const crime = document.getElementById('regCrime').value;
+            const foto = document.getElementById('regFoto').value;
+            const apreensao = document.getElementById('regApreensao').value;
+            const relatorio = document.getElementById('regRelatorio').value;
+
+            // Guarda na "base de dados" local
+            baseDadosPrisoes[nome.toLowerCase()] = {
+                nome: nome,
+                crime: crime,
+                foto: foto,
+                apreensao: apreensao || 'Nenhum',
+                relatorio: relatorio,
+                id: Math.floor(1000 + Math.random() * 9000)
+            };
+
+            alert('Prisão de ' + nome + ' registada com sucesso no MDT!');
+            document.querySelector('.form-cad').reset();
+            mudarAba('mdt');
+        }
+
         function pesquisarCID() {
-            const nome = document.getElementById('inputPesquisa').value;
-            if(nome.trim() === '') { alert('Digite um nome!'); return; }
-            document.getElementById('perfilNome').innerText = nome;
-            document.getElementById('fichaCriminal').style.display = 'block';
+            const termo = document.getElementById('inputPesquisa').value.trim().toLowerCase();
+            const ficha = document.getElementById('fichaCriminal');
+
+            if(termo === '') {
+                alert('Escreva o nome do cidadão para pesquisar!');
+                return;
+            }
+
+            const cidadao = baseDadosPrisoes[termo];
+
+            if(cidadao) {
+                document.getElementById('perfilNome').innerText = cidadao.nome;
+                document.getElementById('perfilID').innerText = '#' + cidadao.id;
+                document.getElementById('perfilCrime').innerText = cidadao.crime;
+                document.getElementById('perfilApreensao').innerText = cidadao.apreensao;
+                document.getElementById('perfilRelatorio').innerText = cidadao.relatorio;
+                
+                const fotoBox = document.getElementById('perfilFotoBox');
+                fotoBox.style.backgroundImage = `url('${cidadao.foto}')`;
+                fotoBox.innerText = ''; // Limpa o texto "[Sem Foto]"
+
+                ficha.style.display = 'block';
+            } else {
+                alert('Nenhum registo criminal encontrado para este cidadão. Registe a prisão primeiro!');
+                ficha.style.display = 'none';
+            }
         }
     </script>
 </body>

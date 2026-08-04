@@ -3,55 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - CAD / MDT Polícia Civil</title>
+    <title>MDT / CAD Avançado - Polícia Civil</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="login-body">
+<body class="painel-body">
 
-    <div class="login-container">
+    <div class="sidebar">
         <h2>POLÍCIA CIVIL / RP</h2>
-        <p class="login-sub">Insira as suas credenciais para aceder ao sistema</p>
-        
-        <form class="form-login" onsubmit="fazerLogin(event)">
-            <div class="input-group">
-                <label>Utilizador / Nick</label>
-                <input type="text" id="loginUser" placeholder="Ex: InspetorSilva" required>
-            </div>
+        <p id="sidebarAgente" class="user-cargo">Agente: A carregar...</p>
+        <hr style="border-color: #1f293d; margin: 15px 0;">
+        <ul>
+            <li><a href="#" class="active" onclick="mudarAba('mdt')">🔍 Consulta MDT & Ficha</a></li>
+            <li><a href="#" onclick="mudarAba('prisao')">📝 Registar Prisão & Pena</a></li>
+            <li><a href="#" onclick="mudarAba('multas')">💵 Passar Multa Isolada</a></li>
+            <li><a href="#" onclick="mudarAba('mandados')">🚨 Mandados Ativos</a></li>
+            <li><a href="#" onclick="mudarAba('veiculos')">🚗 Garagem & Veículos</a></li>
+            <li><a href="#" onclick="mudarAba('dispatch')">📻 Central de Alertas</a></li>
+            <li><a href="#" onclick="mudarAba('investigacao')">📁 Registar Investigação</a></li>
+            <li><a href="#" onclick="mudarAba('ponto')">⏱️ Bater Ponto (Turno)</a></li>
+            <li><a href="#" onclick="mudarAba('altocomando')">⭐ Zona do Alto Comando</a></li>
+            <li><a href="#" onclick="mudarAba('membros')">👥 Oficiais Online & Gestão</a></li>
+        </ul>
+        <div style="margin-top: auto;">
+            <a href="index.html" class="btn-sair" onclick="localStorage.removeItem('agenteLogado')">Sair do Sistema</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- 1. MDT / CONSULTA DE CIDADÃO -->
+        <div id="aba-mdt" class="conteudo-aba">
+            <h2>MDT - Sistema de Identificação Criminal & Licenças</h2>
+            <p>Pesquise pelo nome para ver o histórico de passagens, licenças e facções.</p>
             
-            <div class="input-group">
-                <label>Palavra-Passe</label>
-                <input type="password" id="loginPass" placeholder="Sua password" required>
+            <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                <input type="text" id="inputPesquisa" placeholder="Ex: JoaoSilva" style="flex: 1; padding: 12px; background-color: #131b2e; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 14px;">
+                <button type="button" onclick="pesquisarCID()" class="btn-login" style="width: 160px; margin-top: 0;">Pesquisar Cidadão</button>
             </div>
 
-            <button type="submit" class="btn-login">Aceder ao CAD</button>
-        </form>
+            <div id="fichaCriminal" style="display: none; background-color: #131b2e; border: 1px solid #1f293d; border-radius: 10px; padding: 25px;">
+                <div style="display: flex; gap: 30px; align-items: flex-start;">
+                    <!-- Foto -->
+                    <div style="text-align: center;">
+                        <div id="perfilFotoBox" style="width: 140px; height: 180px; background-color: #0b0f19; border: 2px solid #3b82f6; border-radius: 8px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 11px;">
+                            [Sem Foto]
+                        </div>
+                        <p style="margin-top: 8px; font-size: 11px; color: #94a3b8;">Mugshot Oficial</p>
+                    </div>
+
+                    <div style="flex: 1;">
+                        <h3 id="perfilNome" style="font-size: 22px; color: #3b82f6; margin-bottom: 5px;">Nome do Cidadão</h3>
+                        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;">Passaporte ID: <span id="perfilID" style="color: #fff;">#4020</span> | Estado: <span id="perfilEstadoBadge" style="font-weight: bold;">Ativo</span> | Facção: <span id="perfilFaccao" style="color: #f87171;">Nenhuma</span></p>
+                        
+                        <!-- Licenças -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
+                            <div style="background-color: #0b0f19; padding: 10px; border-radius: 6px; border: 1px solid #1f293d;">
+                                <span style="font-size: 11px; color: #94a3b8; display: block;">Carta de Condução</span>
+                                <strong id="perfilCarta" style="color: #4ade80; font-size: 13px;">Ativa</strong>
+                            </div>
+                            <div style="background-color: #0b0f19; padding: 10px; border-radius: 6px; border: 1px solid #1f293d;">
+                                <span style="font-size: 11px; color: #94a3b8; display: block;">Porte de Armas</span>
+                                <strong id="perfilPorte" style="color: #f87171; font-size: 13px;">Revogado</strong>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 13px; margin-bottom: 5px; color: #cbd5e1;">Histórico de Passagens & Ocorrências:</h4>
+                        <div id="perfilHistorico" style="max-height: 150px; overflow-y: auto; background-color: #0b0f19; padding: 10px; border-radius: 6px; border: 1px solid #1f293d; font-size: 12px; color: #cbd5e1;">
+                            Nenhum registo encontrado.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. REGISTAR PRISÃO -->
+        <div id="aba-prisao" class="conteudo-aba" style="display: none;">
+            <h2>Registar Prisão, Pena e Inteligência</h2>
+            <p>Preencha os dados completos da detenção. Ficará registada com a sua assinatura profissional.</p>
+            <form class="form-cad" onsubmit="registarPrisao(event)">
+                <div class="input-grid">
+                    <div class="input-group"><label>Nome / Nick do Suspeito</label><input type="text" id="regNome" placeholder="Ex: JoaoSilva" required></div>
+                    <div class="input-group"><label>Artigos / Crimes</label><input type="text" id="regCrime" placeholder="Ex: Assalto a Banco" required></div>
+                </div>
+                <div class="input-grid">
+                    <div class="input-group"><label>Tempo de Prisão</label><input type="text" id="regTempo" placeholder="Ex: 80 Meses" required></div>
+                    <div class="input-group"><label>Valor da Multa ($)</label><input type="text" id="regMulta" placeholder="Ex: $15.000" required></div>
+                </div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Estado do Cidadão</label>
+                        <select id="regEstado" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
+                            <option value="Procurado">🚨 Procurado (Mandado Ativo)</option>
+                            <option value="Cumpriu Pena">✅ Em liberdade / Cumpriu Pena</option>
+                        </select>
+                    </div>
+                    <div class="input-group"><label>Facção / Organização (Opcional)</label><input type="text" id="regFaccao" placeholder="Ex: Cartel / Sem Facção"></div>
+                </div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Carta de Condução</label>
+                        <select id="regCarta" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
+                            <option value="Ativa">Ativa</option>
+                            <option value="Apreendida / Suspensa">Apreendida / Suspensa</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Porte de Armas</label>
+                        <select id="regPorte" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
+                            <option value="Ativo">Ativo</option>
+                            <option value="Revogado">Revogado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group"><label>Link Direto da Foto (Mugshot)</label><input type="url" id="regFoto" placeholder="https://exemplo.com/foto.png" required></div>
+                <div class="input-group"><label>Relatório Detalhado & Apreensões</label><textarea id="regRelatorio" rows="3" required placeholder="Relato da abordagem e itens apreendidos..."></textarea></div>
+                <button type="submit" class="btn-login">Concluir Registo Criminal</button>
+            </form>
+        </div>
+
+        <!-- 3. MULTAS -->
+        <div id="aba-multas" class="conteudo-aba" style="display: none;">
+            <h2>Emissão de Multa Isolada</h2>
+            <form class="form-cad" onsubmit="alert('Multa emitida com sucesso!'); return false;">
+                <div class="input-grid">
+                    <div class="input-group"><label>Nome do Cidadão</label><input type="text" placeholder="Ex: PedroSantos" required></div>
+                    <div class="input-group"><label>Valor ($)</label><input type="text" placeholder="Ex: $5.000" required></div>
+                </div>
+                <div class="input-group"><label>Motivo</label><input type="text" placeholder="Ex: Excesso de Velocidade" required></div>
+                <button type="submit" class="btn-login">Emitir Multa</button>
+            </form>
+        </div>
+
+        <!-- 4. MANDADOS -->
+        <div id="aba-mandados" class="conteudo-aba" style="display: none;">
+            <h2>Mandados de Prisão Ativos</h2>
+            <div class="tabela-box">
+                <table>
+                    <thead><tr><th>Alvo</th><th>Motivo</th><th>Estado</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Carlos Mendes</strong></td><td>Fuga à Prisão</td><td><span style="color: #f87171;">Procurado</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. VEÍCULOS E GARAGEM -->
+        <div id="aba-veiculos" class="conteudo-aba" style="display: none;">
+            <h2>Garagem & Veículos Apreendidos</h2>
+            <form class="form-cad" style="margin-bottom: 20px;" onsubmit="alert('Veículo registado!'); return false;">
+                <div class="input-grid">
+                    <div class="input-group"><label>Modelo do Veículo</label><input type="text" placeholder="Ex: Sultan" required></div>
+                    <div class="input-group"><label>Matrícula / Placa</label><input type="text" placeholder="Ex: 40ABC123" required></div>
+                </div>
+                <div class="input-group"><label>Proprietário / Dono</label><input type="text" placeholder="Ex: JoaoSilva" required></div>
+                <button type="submit" class="btn-login" style="margin-top: 10px;">Registar Veículo</button>
+            </form>
+        </div>
+
+        <!-- 6. DISPATCH -->
+        <div id="aba-dispatch" class="conteudo-aba" style="display: none;">
+            <h2>Central de Alertas (Dispatch)</h2>
+            <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 8px;">
+                <div style="background: #0b0f19; padding: 12px; border-radius: 6px; border-left: 4px solid #f87171; margin-bottom: 10px;">
+                    <strong>[10-90] Disparos de Arma</strong> - Praça Central
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. INVESTIGAÇÃO -->
+        <div id="aba-investigacao" class="conteudo-aba" style="display: none;">
+            <h2>Registo de Investigação</h2>
+            <form class="form-cad" onsubmit="alert('Guardado!'); return false;">
+                <div class="input-group"><label>Codinome</label><input type="text" required></div>
+                <div class="input-group"><label>Detalhes</label><textarea rows="4" required></textarea></div>
+                <button type="submit" class="btn-login">Guardar</button>
+            </form>
+        </div>
+
+        <!-- 8. BATER PONTO (TURNO) -->
+        <div id="aba-ponto" class="conteudo-aba" style="display: none;">
+            <h2>Controlo de Turno & Bater Ponto</h2>
+            <p>Registe a entrada e saída do seu turno de patrulhamento.</p>
+            <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 25px; border-radius: 10px; text-align: center;">
+                <h3 id="statusPontoText" style="color: #f87171; margin-bottom: 20px;">Estado Atual: Fora de Serviço</h3>
+                <div style="display: flex; justify-content: center; gap: 20px;">
+                    <button type="button" onclick="baterPonto('Entrada')" class="btn-login" style="background-color: #16a34a; width: 200px;">🟢 Iniciar Turno (Entrada)</button>
+                    <button type="button" onclick="baterPonto('Saida')" class="btn-login" style="background-color: #dc2626; width: 200px;">🔴 Terminar Turno (Saída)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. ZONA DO ALTO COMANDO -->
+        <div id="aba-altocomando" class="conteudo-aba" style="display: none;">
+            <h2>⭐ Zona do Alto Comando - Auditoria de Relatórios</h2>
+            <p>Veja em detalhe todas as prisões efetuadas, qual o oficial responsável e o relatório completo.</p>
+            <div class="tabela-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Oficial Responsável</th>
+                            <th>Suspeito Preso</th>
+                            <th>Crime / Artigos</th>
+                            <th>Relatório Completo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaAuditoriaAltoComando">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #94a3b8;">A carregar registos de auditoria...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 10. GESTÃO DE EFETIVO -->
+        <div id="aba-membros" class="conteudo-aba" style="display: none;">
+            <h2>👥 Gestão de Efetivo & Contas de Oficiais</h2>
+            <p>Crie credenciais de acesso individuais para cada agente e defina os respetivos cargos.</p>
+            
+            <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                <h3 style="font-size: 16px; color: #3b82f6; margin-bottom: 15px;">Criar / Registar Conta de Oficial</h3>
+                <form class="form-cad" onsubmit="registarNovoOficial(event)">
+                    <div class="input-grid">
+                        <div class="input-group"><label>Nome de Utilizador / Nick</label><input type="text" id="novoUser" placeholder="Ex: InspetorSilva" required></div>
+                        <div class="input-group"><label>Password de Acesso</label><input type="password" id="novoPass" placeholder="Palavra-passe secreta" required></div>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Cargo / Patente</label>
+                            <select id="novoCargo" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
+                                <option value="Oficial de Patrulha">Oficial de Patrulha</option>
+                                <option value="Investigador">Investigador</option>
+                                <option value="Alto Comando">Alto Comando</option>
+                                <option value="Chefe de Polícia">Chefe de Polícia</option>
+                            </select>
+                        </div>
+                        <div class="input-group"><label>Passaporte ID</label><input type="text" id="novoID" placeholder="Ex: #9921" required></div>
+                    </div>
+                    <button type="submit" class="btn-login" style="margin-top: 10px;">Criar Credencial do Agente</button>
+                </form>
+            </div>
+
+            <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Quadro de Agentes Registados no Sistema</h3>
+            <div class="tabela-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Passaporte</th>
+                            <th>Agente</th>
+                            <th>Cargo</th>
+                            <th>Estado Atual</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaQuadroEfetivo">
+                        <!-- Preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script>
-        function fazerLogin(event) {
-            event.preventDefault();
-            const usuario = document.getElementById('loginUser').value.trim();
-            const senha = document.getElementById('loginPass').value;
+        // Sistema de Proteção: Se não houver login feito, expulsa para o index.html
+        let agenteLogado = JSON.parse(localStorage.getItem('agenteLogado'));
+        if (!agenteLogado) {
+            alert('Acesso negado! Por favor, faça login primeiro.');
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('sidebarAgente').innerText = `Agente: ${agenteLogado.nome} (${agenteLogado.cargo})`;
+        }
 
-            // Contas predefinidas de teste + as contas guardadas no navegador
-            let oficiaisSalvos = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
-                { nome: 'admin', pass: '1234', cargo: 'Alto Comando', id: '#4020' },
-                { nome: 'inspetorsilva', pass: 'admin', cargo: 'Alto Comando', id: '#1001' }
-            ];
+        let baseDadosPrisoes = JSON.parse(localStorage.getItem('baseDadosPrisoesCAD')) || {};
+        let historicoAuditoria = JSON.parse(localStorage.getItem('historicoAuditoriaCAD')) || [];
+        let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
+            { id: '#4020', nome: 'Admin', cargo: 'Alto Comando', estado: 'Em Serviço' }
+        ];
 
-            // Procura se o utilizador existe na lista
-            const oficialEncontrado = oficiaisSalvos.find(o => o.nome.toLowerCase() === usuario.toLowerCase() && o.pass === senha);
+        function mudarAba(aba) {
+            document.querySelectorAll('.conteudo-aba').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.sidebar ul li a').forEach(el => el.classList.remove('active'));
+            
+            if(aba === 'mdt') document.getElementById('aba-mdt').style.display = 'block';
+            if(aba === 'prisao') document.getElementById('aba-prisao').style.display = 'block';
+            if(aba === 'multas') document.getElementById('aba-multas').style.display = 'block';
+            if(aba === 'mandados') document.getElementById('aba-mandados').style.display = 'block';
+            if(aba === 'veiculos') document.getElementById('aba-veiculos').style.display = 'block';
+            if(aba === 'dispatch') document.getElementById('aba-dispatch').style.display = 'block';
+            if(aba === 'investigacao') document.getElementById('aba-investigacao').style.display = 'block';
+            if(aba === 'ponto') document.getElementById('aba-ponto').style.display = 'block';
+            if(aba === 'altocomando') {
+                document.getElementById('aba-altocomando').style.display = 'block';
+                atualizarTabelaAuditoria();
+            }
+            if(aba === 'membros') {
+                document.getElementById('aba-membros').style.display = 'block';
+                atualizarTabelaEfetivo();
+            }
+            
+            event.currentTarget.classList.add('active');
+        }
 
-            if (oficialEncontrado || (usuario.toLowerCase() === 'admin' && senha === '1234')) {
-                const cargoFinal = oficialEncontrado ? oficialEncontrado.cargo : 'Alto Comando';
-                
-                // Guarda quem fez login para usar no painel
-                localStorage.setItem('agenteLogado', JSON.stringify({ nome: usuario, cargo: cargoFinal }));
-                
-                alert('Acesso autorizado! Bem-vindo, ' + usuario);
-                window.location.href = 'painel.html';
+        function baterPonto(tipo) {
+            const textoStatus = document.getElementById('statusPontoText');
+            if(tipo === 'Entrada') {
+                textoStatus.innerText = 'Estado Atual: Em Serviço (🟢 Em Patrulha)';
+                textoStatus.style.color = '#4ade80';
+                alert('Ponto de ENTRADA registado com sucesso!');
             } else {
-                alert('Utilizador ou Palavra-Passe incorretos!');
+                textoStatus.innerText = 'Estado Atual: Fora de Serviço (🔴 Turno Terminado)';
+                textoStatus.style.color = '#f87171';
+                alert('Ponto de SAÍDA registado com sucesso!');
+            }
+        }
+
+        function registarPrisao(event) {
+            event.preventDefault();
+            const nome = document.getElementById('regNome').value.trim();
+            const crime = document.getElementById('regCrime').value;
+            const tempo = document.getElementById('regTempo').value;
+            const multa = document.getElementById('regMulta').value;
+            const estado = document.getElementById('regEstado').value;
+            const faccao = document.getElementById('regFaccao').value || 'Nenhuma';
+            const carta = document.getElementById('regCarta').value;
+            const porte = document.getElementById('regPorte').value;
+            const foto = document.getElementById('regFoto').value;
+            const relatorio = document.getElementById('regRelatorio').value;
+
+            const dataAtual = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            const novaPassagem = {
+                data: dataAtual,
+                oficial: agenteLogado.nome + ' (' + agenteLogado.cargo + ')',
+                crime: crime,
+                tempo: tempo,
+                multa: multa,
+                relatorio: relatorio
+            };
+
+            historicoAuditoria.unshift(novaPassagem);
+            localStorage.setItem('historicoAuditoriaCAD', JSON.stringify(historicoAuditoria));
+
+            if(!baseDadosPrisoes[nome.toLowerCase()]) {
+                baseDadosPrisoes[nome.toLowerCase()] = {
+                    nome: nome,
+                    id: Math.floor(1000 + Math.random() * 9000),
+                    foto: foto,
+                    estado: estado,
+                    faccao: faccao,
+                    carta: carta,
+                    porte: porte,
+                    passagens: []
+                };
+            }
+
+            baseDadosPrisoes[nome.toLowerCase()].passagens.push(novaPassagem);
+            baseDadosPrisoes[nome.toLowerCase()].estado = estado;
+            baseDadosPrisoes[nome.toLowerCase()].carta = carta;
+            baseDadosPrisoes[nome.toLowerCase()].porte = porte;
+            baseDadosPrisoes[nome.toLowerCase()].faccao = faccao;
+
+            localStorage.setItem('baseDadosPrisoesCAD', JSON.stringify(baseDadosPrisoes));
+
+            alert('Prisão de ' + nome + ' registada com sucesso e assinada por ' + agenteLogado.nome + '!');
+            document.querySelector('.form-cad').reset();
+            mudarAba('mdt');
+        }
+
+        function atualizarTabelaAuditoria() {
+            const tbody = document.getElementById('tabelaAuditoriaAltoComando');
+            if(historicoAuditoria.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Ainda não existem prisões registadas no sistema.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            historicoAuditoria.forEach(item => {
+                html += `<tr>
+                    <td>${item.data}</td>
+                    <td><strong style="color: #3b82f6;">${item.oficial}</strong></td>
+                    <td>${item.crime}</td>
+                    <td><span style="color: #f87171;">Pena: ${item.tempo} | Multa: ${item.multa}</span></td>
+                    <td style="font-size: 12px; color: #cbd5e1;">${item.relatorio}</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function registarNovoOficial(event) {
+            event.preventDefault();
+            const user = document.getElementById('novoUser').value.trim();
+            const pass = document.getElementById('novoPass').value;
+            const cargo = document.getElementById('novoCargo').value;
+            const passaporte = document.getElementById('novoID').value.trim();
+
+            listaOficiais.push({
+                id: passaporte,
+                nome: user,
+                pass: pass,
+                cargo: cargo,
+                estado: 'Offline'
+            });
+
+            localStorage.setItem('listaOficiaisCAD', JSON.stringify(listaOficiais));
+
+            alert('Credencial criada com sucesso para o agente ' + user + ' (' + cargo + ')!');
+            document.getElementById('novoUser').value = '';
+            document.getElementById('novoPass').value = '';
+            document.getElementById('novoID').value = '';
+            atualizarTabelaEfetivo();
+        }
+
+        function atualizarTabelaEfetivo() {
+            const tbody = document.getElementById('tabelaQuadroEfetivo');
+            let html = '';
+            listaOficiais.forEach(oficial => {
+                html += `<tr>
+                    <td>${oficial.id}</td>
+                    <td><strong>${oficial.nome}</strong></td>
+                    <td><span style="color: #3b82f6;">${oficial.cargo}</span></td>
+                    <td><span style="color: #4ade80;">Ativo no Sistema</span></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function pesquisarCID() {
+            const termo = document.getElementById('inputPesquisa').value.trim().toLowerCase();
+            const ficha = document.getElementById('fichaCriminal');
+
+            if(termo === '') { alert('Escreva o nome do cidadão!'); return; }
+
+            const cidadao = baseDadosPrisoes[termo];
+
+            if(cidadao) {
+                document.getElementById('perfilNome').innerText = cidadao.nome;
+                document.getElementById('perfilID').innerText = '#' + cidadao.id;
+                document.getElementById('perfilFaccao').innerText = cidadao.faccao;
+                
+                const badge = document.getElementById('perfilEstadoBadge');
+                badge.innerText = cidadao.estado;
+                badge.style.color = (cidadao.estado === 'Procurado') ? '#f87171' : '#4ade80';
+
+                const cartaElem = document.getElementById('perfilCarta');
+                cartaElem.innerText = cidadao.carta;
+                cartaElem.style.color = (cidadao.carta === 'Ativa') ? '#4ade80' : '#f87171';
+
+                const porteElem = document.getElementById('perfilPorte');
+                porteElem.innerText = cidadao.porte;
+                porteElem.style.color = (cidadao.porte === 'Ativo') ? '#4ade80' : '#f87171';
+
+                const fotoBox = document.getElementById('perfilFotoBox');
+                fotoBox.style.backgroundImage = `url('${cidadao.foto}')`;
+                fotoBox.innerText = '';
+
+                let htmlPassagens = '';
+                cidadao.passagens.forEach((p, index) => {
+                    htmlPassagens += `<div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #1f293d;">
+                        <strong>Passagem #${index + 1} (${p.data})</strong> - <span style="color: #3b82f6;">Por: ${p.oficial}</span><br>
+                        Crime: <span style="color: #f87171;">${p.crime}</span> | Pena: ${p.tempo} | Multa: ${p.multa}<br>
+                        <em>Relatório:</em> ${p.relatorio}
+                    </div>`;
+                });
+                document.getElementById('perfilHistorico').innerHTML = htmlPassagens;
+
+                ficha.style.display = 'block';
+            } else {
+                alert('Nenhum cidadão encontrado com esse nome no sistema.');
+                ficha.style.display = 'none';
             }
         }
     </script>

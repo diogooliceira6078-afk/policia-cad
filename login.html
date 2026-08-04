@@ -3,52 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - CAD / MDT Polícia Civil</title>
+    <title>Login - MDT / CAD Polícia Civil</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="login-body">
 
     <div class="login-container">
         <h2>POLÍCIA CIVIL / RP</h2>
-        <p class="login-sub">Insira as suas credenciais para aceder ao sistema</p>
+        <p class="login-subtitle">Insira as suas credenciais para aceder ao sistema</p>
         
-        <form class="form-login" onsubmit="fazerLogin(event)">
+        <form onsubmit="fazerLogin(event)">
             <div class="input-group">
-                <label>Utilizador / Nick</label>
-                <input type="text" id="loginUser" placeholder="Ex: Proença" required>
+                <label>Passaporte ID ou Nome do Agente</label>
+                <input type="text" id="loginUser" placeholder="Ex: #4020 ou Proença" required>
             </div>
             
             <div class="input-group">
-                <label>Palavra-Passe</label>
-                <input type="password" id="loginPass" placeholder="Sua password" required>
+                <label>Password (PIN)</label>
+                <input type="password" id="loginPass" placeholder="Insira a password" required>
             </div>
-
-            <button type="submit" class="btn-login">Aceder ao CAD</button>
+            
+            <button type="submit" class="btn-login">Entrar no Sistema</button>
         </form>
+        
+        <div id="loginErro" style="color: #f87171; font-size: 13px; text-align: center; margin-top: 15px; display: none;">
+            Credenciais incorretas. Tente novamente.
+        </div>
     </div>
 
     <script>
         function fazerLogin(event) {
             event.preventDefault();
-            const usuario = document.getElementById('loginUser').value.trim();
-            const senha = document.getElementById('loginPass').value;
-
-            let oficiaisSalvos = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
-                { nome: 'Proença', pass: '7576', cargo: 'Alto Comando', id: '#0005' }
-                { nome: 'Thiago', pass: '1218', cargo: 'Oficial de Patrulha', id: '#0006' }
+            
+            const userInput = document.getElementById('loginUser').value.trim().toLowerCase();
+            const passInput = document.getElementById('loginPass').value.trim();
+            
+            // Lista padrão de oficiais atualizada com o Proença e o Thiago
+            let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
+                { id: '#4020', nome: 'Proença', pass: '7576', cargo: 'Alto Comando', estado: 'Ativo' },
+                { id: '#0006', nome: 'Thiago', pass: '1218', cargo: 'Oficial de Patrulha', estado: 'Ativo' }
             ];
-
-            const oficialEncontrado = oficiaisSalvos.find(o => o.nome.toLowerCase() === usuario.toLowerCase() && o.pass === senha);
-
-            if (oficialEncontrado || (usuario.toLowerCase() === 'proença' && senha === '7576')) {
-                const cargoFinal = oficialEncontrado ? oficialEncontrado.cargo : 'Alto Comando';
-                
-                localStorage.setItem('agenteLogado', JSON.stringify({ nome: usuario, cargo: cargoFinal }));
-                
-                alert('Acesso autorizado! Bem-vindo, ' + usuario);
+            
+            // Procurar se o utilizador corresponde ao Nome ou ao ID (e validar a password)
+            const agenteEncontrado = listaOficiais.find(oficial => 
+                (oficial.nome.toLowerCase() === userInput || oficial.id.toLowerCase() === userInput) && 
+                oficial.pass === passInput
+            );
+            
+            if (agenteEncontrado) {
+                // Guarda o agente logado no localStorage e redireciona para o painel principal
+                localStorage.setItem('agenteLogado', JSON.stringify(agenteEncontrado));
                 window.location.href = 'index.html';
             } else {
-                alert('Utilizador ou Palavra-Passe incorretos!');
+                document.getElementById('loginErro').style.display = 'block';
             }
         }
     </script>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAD - Alto Comando</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white p-10">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+            <h1 class="text-3xl font-bold text-red-400">Painel do Alto Comando (Confidencial)</h1>
+            <a href="dashboard.html" class="bg-slate-700 px-4 py-2 rounded hover:bg-slate-600">Voltar ao CAD</a>
+        </div>
+
+        <!-- Gestão de Cargos e Palavras-Passe -->
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-blue-300">Registar / Atualizar Membro e Palavra-Passe</h2>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <input type="text" placeholder="Nome do Agente" class="bg-slate-700 border border-slate-600 rounded p-2">
+                <input type="text" placeholder="Cargo (Ex: Capitão / Inspetor)" class="bg-slate-700 border border-slate-600 rounded p-2">
+                <input type="password" placeholder="Nova Palavra-Passe" class="bg-slate-700 border border-slate-600 rounded p-2">
+            </div>
+            <button onclick="alert('Credenciais atualizadas com sucesso!')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-bold">Salvar Credenciais</button>
+        </div>
+
+        <!-- Consulta de Atividade por Agente -->
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-blue-300">Pesquisar Atividade de Polícia</h2>
+            <div class="flex gap-4 mb-4">
+                <input type="text" id="pesquisaAgente" placeholder="Nome do Agente (Ex: Silva)" class="flex-1 bg-slate-700 border border-slate-600 rounded p-2">
+                <button onclick="alert('A carregar histórico do agente...')" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded font-bold">Pesquisar</button>
+            </div>
+            <div class="bg-slate-900 p-4 rounded border border-slate-700 text-slate-400 text-sm">
+                Resultados da pesquisa aparecerão aqui (Prisões efetuadas, multas passadas, horas de serviço).
+            </div>
+        </div>
+
+        <!-- Zona de Logs -->
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700">
+            <h2 class="text-xl font-semibold mb-4 text-red-300">Zona de Logs do Sistema</h2>
+            <div class="bg-slate-900 p-4 rounded border border-slate-700 font-mono text-xs text-green-400 space-y-1 h-40 overflow-y-auto">
+                <p>[2026-06-07 20:15:00] - PM Silva entrou em serviço.</p>
+                <p>[2026-06-07 20:20:12] - PC Santos emitiu mandado para ID 45.</p>
+                <p>[2026-06-07 20:30:45] - PRF Costa aplicou multa de R$ 5.000.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

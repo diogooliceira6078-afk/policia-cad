@@ -3,106 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD Policial - Painel</title>
+    <title>CAD Policial - Painel Operacional</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-white flex h-screen">
+<body class="bg-slate-950 text-white flex h-screen overflow-hidden">
 
-    <!-- Menu Lateral -->
-    <div class="w-64 bg-slate-800 border-r border-slate-700 flex flex-col justify-between">
+    <!-- Menu Lateral Completo -->
+    <div class="w-72 bg-slate-900 border-r border-slate-800 flex flex-col justify-between">
         <div>
-            <div class="p-5 text-xl font-bold border-b border-slate-700 text-blue-400">CAD UNIFICADO</div>
-            <nav class="p-4 space-y-2">
-                <button onclick="mudarAba('prisoes')" class="w-full text-left p-2 rounded hover:bg-slate-700 transition">Registo de Prisão</button>
-                <button onclick="mudarAba('mandados')" class="w-full text-left p-2 rounded hover:bg-slate-700 transition">Mandados</button>
-                <button onclick="mudarAba('multas')" class="w-full text-left p-2 rounded hover:bg-slate-700 transition">Emitir Multa</button>
-                <button onclick="mudarAba('ponto')" class="w-full text-left p-2 rounded hover:bg-slate-700 transition">Bater Ponto</button>
+            <div class="p-6 border-b border-slate-800">
+                <h2 class="text-xl font-black text-blue-500 tracking-wider">CAD UNIFICADO</h2>
+                <p id="infoCorpHeader" class="text-xs text-slate-400 mt-1 uppercase font-semibold"></p>
+            </div>
+            
+            <nav class="p-4 space-y-1.5 overflow-y-auto max-h-[calc(100vh-200px)]">
+                <button onclick="mudarAba('procurados')" class="w-full text-left p-3 rounded-lg hover:bg-slate-800 transition font-medium flex items-center gap-3">🚨 Galeria de Procurados</button>
+                <button onclick="mudarAba('prisoes')" class="w-full text-left p-3 rounded-lg hover:bg-slate-800 transition font-medium flex items-center gap-3">🔒 Registo de Prisão</button>
+                <button onclick="mudarAba('mandados')" class="w-full text-left p-3 rounded-lg hover:bg-slate-800 transition font-medium flex items-center gap-3">📜 Gestão de Mandados</button>
+                <button onclick="mudarAba('multas')" class="w-full text-left p-3 rounded-lg hover:bg-slate-800 transition font-medium flex items-center gap-3">📄 Emitir Multa</button>
+                <button onclick="mudarAba('ponto')" class="w-full text-left p-3 rounded-lg hover:bg-slate-800 transition font-medium flex items-center gap-3">⏱️ Controlo de Ponto</button>
                 
-                <!-- Botão exclusivo visível apenas para o Alto Comando / Admin -->
-                <a href="admin.html" id="btnAdmin" class="hidden block w-full text-left p-2 rounded bg-red-900/50 hover:bg-red-900 transition text-red-300 font-semibold mt-6">Painel Alto Comando</a>
+                <div class="pt-4 mt-4 border-t border-slate-800">
+                    <a href="admin.html" id="btnAdmin" class="hidden block w-full text-left p-3 rounded-lg bg-red-950/60 border border-red-800/50 hover:bg-red-900/60 transition text-red-300 font-bold text-center">⚙️ Painel Alto Comando</a>
+                </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-700 text-sm">
-            <p id="userInfo" class="text-slate-400"></p>
-            <button onclick="logout()" class="mt-2 text-red-400 hover:underline text-xs">Terminar Sessão</button>
+
+        <div class="p-4 border-t border-slate-800 bg-slate-900/50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p id="userInfo" class="text-sm font-bold text-slate-200"></p>
+                    <p id="userCargo" class="text-xs text-blue-400"></p>
+                </div>
+                <button onclick="logout()" class="text-red-400 hover:text-red-300 text-xs font-bold px-3 py-2 bg-red-950/40 rounded-lg border border-red-900/50">Sair</button>
+            </div>
         </div>
     </div>
 
-    <!-- Área de Conteúdo Dinâmico -->
-    <div class="flex-1 p-10 overflow-y-auto">
+    <!-- Conteúdo Principal Dinâmico -->
+    <div class="flex-1 p-10 overflow-y-auto bg-slate-950">
         
-        <!-- SECÇÃO: PRISÕES -->
-        <div id="sec-prisoes" class="aba-conteudo">
-            <h2 class="text-2xl font-bold mb-4">Registo de Prisão</h2>
-            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 max-w-2xl">
-                <form class="space-y-4" onsubmit="event.preventDefault(); alert('Prisão registada com sucesso!');">
-                    <div>
-                        <label class="block text-sm mb-1">Nome do Cidadão</label>
-                        <input type="text" required class="w-full bg-slate-700 border border-slate-600 rounded p-2" placeholder="Nome completo">
+        <!-- SECÇÃO: PROCURADOS COM FOTO -->
+        <div id="sec-procurados" class="aba-conteudo">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-black">Base de Dados de Procurados / Foragidos</h2>
+                    <p class="text-slate-400 text-sm">Visualização em tempo real de alvos perigosos procurados pelas forças policiais.</p>
+                </div>
+                <button onclick="abrirModalProcurado()" class="bg-blue-600 hover:bg-blue-500 font-bold px-4 py-2 rounded-lg text-sm transition">+ Adicionar Procurado</button>
+            </div>
+
+            <!-- Grelha de Procurados -->
+            <div id="grelhaProcurados" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Preenchido via JavaScript -->
+            </div>
+        </div>
+
+        <!-- SECÇÃO: REGISTO DE PRISÃO -->
+        <div id="sec-prisoes" class="aba-conteudo hidden">
+            <h2 class="text-2xl font-black mb-2">Registo Oficial de Prisão</h2>
+            <p class="text-slate-400 text-sm mb-6">Registe formalmente o suspeito detido, crimes imputados e o tempo de reclusão.</p>
+            
+            <div class="bg-slate-900 p-8 rounded-2xl border border-slate-800 max-w-3xl">
+                <form id="formPrisao" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Nome do Cidadão Detido</label>
+                            <input type="text" id="pres_nome" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">RG / ID do Cidadão</label>
+                            <input type="text" id="pres_id" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white" placeholder="Ex: 4521">
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-sm mb-1">Crimes / Artigos</label>
-                        <textarea required class="w-full bg-slate-700 border border-slate-600 rounded p-2" placeholder="Descreva os crimes cometidos..."></textarea>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Crimes / Artigos Praticados</label>
+                        <textarea id="pres_crimes" required rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white" placeholder="Ex: Artigo 121 (Homicídio), Porte ilegal de arma..."></textarea>
                     </div>
-                    <div>
-                        <label class="block text-sm mb-1">Tempo de Pena / Multa (R$)</label>
-                        <input type="text" required class="w-full bg-slate-700 border border-slate-600 rounded p-2" placeholder="Ex: 50 meses / 10.000 R$">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Tempo de Pena (Meses / Anos)</label>
+                            <input type="text" id="pres_pena" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white" placeholder="Ex: 48 Meses">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Valor da Multa (R$)</label>
+                            <input type="text" id="pres_multa" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white" placeholder="Ex: R$ 15.000">
+                        </div>
                     </div>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-bold">Registar Prisão</button>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 font-bold p-3 rounded-lg transition mt-4">Registar Prisão Definitiva</button>
                 </form>
             </div>
         </div>
 
         <!-- SECÇÃO: MANDADOS -->
         <div id="sec-mandados" class="aba-conteudo hidden">
-            <h2 class="text-2xl font-bold mb-4">Gestão de Mandados</h2>
-            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700">
-                <h3 class="text-lg font-semibold mb-2 text-blue-300">Emitir Novo Mandado de Prisão/Busca</h3>
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <input type="text" placeholder="Nome do Alvo" class="bg-slate-700 border border-slate-600 rounded p-2">
-                    <input type="text" placeholder="Motivo / Justificativa" class="bg-slate-700 border border-slate-600 rounded p-2">
-                </div>
-                <button onclick="alert('Mandado emitido com sucesso!')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-bold">Emitir Mandado</button>
+            <h2 class="text-2xl font-black mb-2">Emissão e Consulta de Mandados</h2>
+            <p class="text-slate-400 text-sm mb-6">Emita mandados de prisão preventiva ou busca e apreensão.</p>
+            
+            <div class="bg-slate-900 p-8 rounded-2xl border border-slate-800 mb-8 max-w-3xl">
+                <h3 class="text-lg font-bold text-blue-400 mb-4">Emitir Novo Mandado</h3>
+                <form id="formMandado" class="space-y-4">
+                    <input type="text" id="mand_alvo" required placeholder="Nome Completo do Alvo" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                    <select id="mand_tipo" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                        <option value="Prisão Preventiva">Mandado de Prisão Preventiva</option>
+                        <option value="Busca e Apreensão">Mandado de Busca e Apreensão</option>
+                    </select>
+                    <textarea id="mand_motivo" required placeholder="Fundamentação legal / Motivo detalhado..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white" rows="2"></textarea>
+                    <button type="submit" class="bg-green-600 hover:bg-green-500 font-bold px-6 py-3 rounded-lg transition">Emitir Mandado Oficial</button>
+                </form>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4">Mandados Ativos no Sistema</h3>
+            <div id="listaMandadosAtivos" class="space-y-3 max-w-3xl">
+                <!-- Dinâmico -->
             </div>
         </div>
 
         <!-- SECÇÃO: MULTAS -->
         <div id="sec-multas" class="aba-conteudo hidden">
-            <h2 class="text-2xl font-bold mb-4">Emitir Multa</h2>
-            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 max-w-2xl">
-                <form class="space-y-4" onsubmit="event.preventDefault(); alert('Multa aplicada com sucesso!');">
-                    <input type="text" required placeholder="Nome do Condutor / Cidadão" class="w-full bg-slate-700 border border-slate-600 rounded p-2">
-                    <input type="text" required placeholder="Motivo da Infração (Ex: Excesso de velocidade)" class="w-full bg-slate-700 border border-slate-600 rounded p-2">
-                    <input type="number" required placeholder="Valor (R$)" class="w-full bg-slate-700 border border-slate-600 rounded p-2">
-                    <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded font-bold text-slate-900">Aplicar Multa</button>
+            <h2 class="text-2xl font-black mb-2">Emissão de Multas de Trânsito / Penais</h2>
+            <p class="text-slate-400 text-sm mb-6">Aplicação direta de coimas e sanções a condutores ou cidadãos.</p>
+            
+            <div class="bg-slate-900 p-8 rounded-2xl border border-slate-800 max-w-2xl">
+                <form id="formMulta" class="space-y-4">
+                    <input type="text" id="mult_condutor" required placeholder="Nome do Cidadão / Condutor" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                    <input type="text" id="mult_infracao" required placeholder="Descrição da Infração (Ex: Condução perigosa / Excesso de velocidade)" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                    <input type="number" id="mult_valor" required placeholder="Valor da Multa em R$ (Ex: 3500)" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                    <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-500 font-bold p-3 rounded-lg text-slate-950 transition">Emitir e Aplicar Multa</button>
                 </form>
             </div>
         </div>
 
         <!-- SECÇÃO: BATER PONTO -->
         <div id="sec-ponto" class="aba-conteudo hidden">
-            <h2 class="text-2xl font-bold mb-4">Controlo de Ponto</h2>
-            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 flex gap-4">
-                <button onclick="alert('Entrada em serviço registada!')" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded font-bold">🟢 Iniciar Turno (Entrar em Serviço)</button>
-                <button onclick="alert('Saída de serviço registada!')" class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded font-bold">🔴 Terminar Turno (Sair)</button>
+            <h2 class="text-2xl font-black mb-2">Controlo de Assiduidade e Turnos</h2>
+            <p class="text-slate-400 text-sm mb-6">Registe o seu início e fim de serviço para contabilização de horas.</p>
+            
+            <div class="bg-slate-900 p-8 rounded-2xl border border-slate-800 max-w-xl flex gap-4">
+                <button onclick="baterPonto('ENTRADA')" class="flex-1 bg-green-600 hover:bg-green-500 font-bold p-4 rounded-xl text-center transition shadow-lg shadow-green-900/20">🟢 Iniciar Turno (Entrar)</button>
+                <button onclick="baterPonto('SAIDA')" class="flex-1 bg-red-600 hover:bg-red-500 font-bold p-4 rounded-xl text-center transition shadow-lg shadow-red-900/20">🔴 Terminar Turno (Sair)</button>
             </div>
+            <div id="estadoPontoAtual" class="mt-4 text-sm font-semibold text-slate-400"></div>
         </div>
 
     </div>
 
+    <!-- MODAL ADICIONAR PROCURADO -->
+    <div id="modalProcurado" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 p-8 rounded-2xl border border-slate-800 w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4 text-blue-400">Adicionar Novo Procurado</h3>
+            <form id="formNovoProcurado" class="space-y-4">
+                <input type="text" id="np_nome" required placeholder="Nome e Alcunha (Ex: Carlos 'Falcão')" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                <input type="url" id="np_foto" required placeholder="Link Direto da Foto (URL da imagem)" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                <input type="text" id="np_crimes" required placeholder="Crimes Cometidos" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                <select id="np_perigo" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                    <option value="Baixa">Periculosidade: Baixa</option>
+                    <option value="Média">Periculosidade: Média</option>
+                    <option value="Alta">Periculosidade: Alta</option>
+                    <option value="Extrema">Periculosidade: Extrema</option>
+                </select>
+                <input type="text" id="np_recompensa" required placeholder="Recompensa (Ex: R$ 20.000)" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+                
+                <div class="flex gap-4 mt-6">
+                    <button type="button" onclick="fecharModalProcurado()" class="flex-1 bg-slate-800 hover:bg-slate-700 py-3 rounded-lg font-bold">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-500 py-3 rounded-lg font-bold">Salvar Procurado</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Proteger a página contra acesso direto sem login
-        const user = localStorage.getItem('cad_user');
-        const corp = localStorage.getItem('cad_corp');
-        const cargo = localStorage.getItem('cad_cargo');
+        const user = localStorage.getItem('cad_user_logado');
+        const corp = localStorage.getItem('cad_corp_logada');
+        const cargo = localStorage.getItem('cad_cargo_logado');
 
-        if (!user) {
-            window.location.href = 'index.html';
-        }
+        if (!user) window.location.href = 'index.html';
 
-        document.getElementById('userInfo').innerHTML = `Logado: <b>${user}</b><br><span class="text-xs text-blue-400">${corp} - ${cargo || 'Agente'}</span>`;
+        document.getElementById('userInfo').textContent = user;
+        document.getElementById('userCargo').textContent = `${cargo} (${corp})`;
+        document.getElementById('infoCorpHeader').textContent = `Divisão: ${corp}`;
 
-        // Mostrar o painel de administração apenas se for a conta Admin ou se tiver cargo de comando
         if (corp === 'ADMIN' || user.toLowerCase() === 'admin') {
             document.getElementById('btnAdmin').classList.remove('hidden');
         }
@@ -110,12 +190,169 @@
         function mudarAba(abaID) {
             document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.add('hidden'));
             document.getElementById('sec-' + abaID).classList.remove('hidden');
+            if(abaID === 'procurados') carregarProcurados();
+            if(abaID === 'mandados') carregarMandados();
+        }
+
+        // Gestão de Procurados
+        function carregarProcurados() {
+            const lista = JSON.parse(localStorage.getItem('cad_procurados') || '[]');
+            const grelha = document.getElementById('grelhaProcurados');
+            grelha.innerHTML = '';
+
+            if(lista.length === 0) {
+                grelha.innerHTML = '<p class="text-slate-500 col-span-3">Nenhum procurado registado no sistema.</p>';
+                return;
+            }
+
+            lista.forEach((p, index) => {
+                let corPerigo = p.periculosidade === 'Extrema' ? 'bg-red-950 text-red-400 border-red-800' : 'bg-yellow-950 text-yellow-400 border-yellow-800';
+                grelha.innerHTML += `
+                    <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl flex flex-col justify-between">
+                        <div>
+                            <div class="h-56 w-full overflow-hidden bg-slate-950 relative">
+                                <img src="${p.foto}" alt="${p.nome}" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold border ${corPerigo}">${p.periculosidade}</span>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="text-xl font-bold mb-1">${p.nome}</h3>
+                                <p class="text-xs text-slate-400 mb-3"><b class="text-slate-300">Crimes:</b> ${p.crimes}</p>
+                                <p class="text-sm font-bold text-green-400">Recompensa: ${p.recompensa}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-slate-950/50 border-t border-slate-800 flex justify-end">
+                            <button onclick="removerProcurado(${index})" class="text-red-400 hover:text-red-300 text-xs font-bold">Apagar Registo</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function abrirModalProcurado() { document.getElementById('modalProcurado').classList.remove('hidden'); }
+        function fecharModalProcurado() { document.getElementById('modalProcurado').classList.add('hidden'); }
+
+        document.getElementById('formNovoProcurado').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let lista = JSON.parse(localStorage.getItem('cad_procurados') || '[]');
+            lista.push({
+                nome: document.getElementById('np_nome').value,
+                foto: document.getElementById('np_foto').value,
+                crimes: document.getElementById('np_crimes').value,
+                periculosidade: document.getElementById('np_perigo').value,
+                recompensa: document.getElementById('np_recompensa').value
+            });
+            localStorage.setItem('cad_procurados', JSON.stringify(lista));
+            registarLog(`Agente ${user} adicionou procurado: ${document.getElementById('np_nome').value}`);
+            fecharModalProcurado();
+            carregarProcurados();
+            this.reset();
+        });
+
+        function removerProcurado(index) {
+            let lista = JSON.parse(localStorage.getItem('cad_procurados') || '[]');
+            lista.splice(index, 1);
+            localStorage.setItem('cad_procurados', JSON.stringify(lista));
+            carregarProcurados();
+        }
+
+        // Registo de Prisões
+        document.getElementById('formPrisao').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let dadosPrisao = {
+                agente: user,
+                corp: corp,
+                nome: document.getElementById('pres_nome').value,
+                idCidadao: document.getElementById('pres_id').value,
+                crimes: document.getElementById('pres_crimes').value,
+                pena: document.getElementById('pres_pena').value,
+                multa: document.getElementById('pres_multa').value,
+                data: new Date().toLocaleString()
+            };
+            let prisoes = JSON.parse(localStorage.getItem('cad_historico_prisoes') || '[]');
+            prisoes.push(dadosPrisao);
+            localStorage.setItem('cad_historico_prisoes', JSON.stringify(prisoes));
+            registarLog(`Prisão efetuada por ${user} (${corp}) ao cidadão ${dadosPrisao.nome}`);
+            alert('Prisão registada com sucesso na base de dados global!');
+            this.reset();
+        });
+
+        // Mandados
+        document.getElementById('formMandado').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let mandados = JSON.parse(localStorage.getItem('cad_mandados') || '[]');
+            mandados.push({
+                alvo: document.getElementById('mand_alvo').value,
+                tipo: document.getElementById('mand_tipo').value,
+                motivo: document.getElementById('mand_motivo').value,
+                emitidoPor: `${user} (${corp})`,
+                data: new Date().toLocaleDateString()
+            });
+            localStorage.setItem('cad_mandados', JSON.stringify(mandados));
+            registarLog(`Mandado emitido por ${user} contra ${document.getElementById('mand_alvo').value}`);
+            alert('Mandado emitido com sucesso!');
+            this.reset();
+            carregarMandados();
+        });
+
+        function carregarMandados() {
+            let mandados = JSON.parse(localStorage.getItem('cad_mandados') || '[]');
+            let container = document.getElementById('listaMandadosAtivos');
+            container.innerHTML = '';
+            if(mandados.length === 0) {
+                container.innerHTML = '<p class="text-slate-500">Sem mandados ativos neste momento.</p>';
+                return;
+            }
+            mandados.forEach((m, idx) => {
+                container.innerHTML += `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-blue-400">${m.alvo} - <span class="text-xs text-slate-300">${m.tipo}</span></h4>
+                            <p class="text-xs text-slate-400 mt-1">Motivo: ${m.motivo}</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Emitido por: ${m.emitidoPor} em ${m.data}</p>
+                        </div>
+                        <button onclick="removerMandado(${idx})" class="bg-red-950 text-red-400 border border-red-900 px-3 py-1.5 rounded-lg text-xs font-bold">Arquivar</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removerMandado(idx) {
+            let mandados = JSON.parse(localStorage.getItem('cad_mandados') || '[]');
+            mandados.splice(idx, 1);
+            localStorage.setItem('cad_mandados', JSON.stringify(mandados));
+            carregarMandados();
+        }
+
+        // Multas
+        document.getElementById('formMulta').addEventListener('submit', function(e) {
+            e.preventDefault();
+            registarLog(`Multa emitida por ${user} (${corp}) a ${document.getElementById('mult_condutor').value} no valor de R$ ${document.getElementById('mult_valor').value}`);
+            alert('Multa aplicada e registada com sucesso!');
+            this.reset();
+        });
+
+        // Controlo de Ponto
+        function baterPonto(tipo) {
+            registarLog(`Agente ${user} (${corp}) registrou ${tipo === 'ENTRADA' ? 'Entrada em Serviço' : 'Saída de Serviço'}`);
+            document.getElementById('estadoPontoAtual').innerHTML = `Último registo efetuado com sucesso: <b>${tipo}</b> às ${new Date().toLocaleTimeString()}`;
+            alert(`Registo de ${tipo} efetuado com sucesso!`);
+        }
+
+        function registarLog(texto) {
+            let logs = JSON.parse(localStorage.getItem('cad_logs') || '[]');
+            logs.unshift(`[${new Date().toLocaleString()}] ${texto}`);
+            localStorage.setItem('cad_logs', JSON.stringify(logs));
         }
 
         function logout() {
-            localStorage.clear();
+            localStorage.removeItem('cad_user_logado');
+            localStorage.removeItem('cad_corp_logada');
+            localStorage.removeItem('cad_cargo_logado');
             window.location.href = 'index.html';
         }
+
+        // Inicializar aba padrão
+        mudarAba('procurados');
     </script>
 </body>
 </html>

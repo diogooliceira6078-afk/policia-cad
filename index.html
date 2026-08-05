@@ -39,17 +39,23 @@
     </div>
 
     <script>
-        // Lista padrão de utilizadores globais predefinidos para testes em qualquer telemóvel
+        // Lista de utilizadores padrão partilhados universalmente no código
         const utilizadoresPredefinidos = [
             { corp: "ADMIN", nome: "admin", senha: "6323", cargo: "Alto Comando" },
             { corp: "PM", nome: "Comandante Silva", senha: "1234", cargo: "Coronel" },
-            { corp: "PC", nome: "Agente Mendes", senha: "1234", cargo: "Investigador" }
+            { corp: "PC", nome: "Thiago", senha: "1218", cargo: "Capitão" }
         ];
 
-        // Inicializar o localStorage se não existir
-        if (!localStorage.getItem('cad_utilizadores')) {
-            localStorage.setItem('cad_utilizadores', JSON.stringify(utilizadoresPredefinidos));
-        }
+        // Se o localStorage ainda não tiver a lista ou precisar de reset, atualiza com os oficiais correntes
+        let usersAtuais = JSON.parse(localStorage.getItem('cad_utilizadores') || '[]');
+        
+        // Garantir que o Thiago e os oficiais base estão sempre presentes em qualquer dispositivo
+        utilizadoresPredefinidos.forEach(def => {
+            if (!usersAtuais.some(u => u.corp === def.corp && u.nome.toLowerCase() === def.nome.toLowerCase())) {
+                usersAtuais.push(def);
+            }
+        });
+        localStorage.setItem('cad_utilizadores', JSON.stringify(usersAtuais));
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -59,7 +65,6 @@
             
             let users = JSON.parse(localStorage.getItem('cad_utilizadores'));
 
-            // Procurar correspondência
             const match = users.find(u => u.corp === corp && u.nome.toLowerCase() === nome.toLowerCase() && u.senha === senha);
 
             if (match) {
@@ -69,7 +74,7 @@
                 window.location.href = 'dashboard.html';
             } else {
                 const erro = document.getElementById('erroMsg');
-                erro.textContent = "Credenciais inválidas ou utilizador não registado neste dispositivo!";
+                erro.textContent = "Credenciais inválidas! Verifique o nome, corporação e palavra-passe.";
                 erro.classList.remove('hidden');
             }
         });

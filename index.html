@@ -2,12 +2,12 @@
 <html lang="pt" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CAD Policial | Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 flex items-center justify-center h-screen">
-    <div class="bg-slate-900 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-800 space-y-6">
+<body class="bg-slate-950 text-slate-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-slate-900 p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-800 space-y-6">
         <div class="text-center">
             <h1 class="text-2xl font-black text-white">CAD POLICIAL</h1>
             <p class="text-xs text-slate-400 mt-1">Terminal de Acesso Seguro</p>
@@ -28,7 +28,7 @@
             </div>
             <div>
                 <label class="block text-xs font-bold text-slate-400 mb-1">Nome / Patente</label>
-                <input type="text" id="nome" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-blue-500 outline-none" placeholder="Ex: Capitão Silva">
+                <input type="text" id="nome" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-blue-500 outline-none" placeholder="Ex: Thiago">
             </div>
             <div>
                 <label class="block text-xs font-bold text-slate-400 mb-1">Palavra-Passe</label>
@@ -39,17 +39,13 @@
     </div>
 
     <script>
-        // Lista de utilizadores padrão partilhados universalmente no código
         const utilizadoresPredefinidos = [
             { corp: "ADMIN", nome: "admin", senha: "6323", cargo: "Alto Comando" },
             { corp: "PM", nome: "Comandante Silva", senha: "1234", cargo: "Coronel" },
             { corp: "PC", nome: "Thiago", senha: "1218", cargo: "Capitão" }
         ];
 
-        // Se o localStorage ainda não tiver a lista ou precisar de reset, atualiza com os oficiais correntes
         let usersAtuais = JSON.parse(localStorage.getItem('cad_utilizadores') || '[]');
-        
-        // Garantir que o Thiago e os oficiais base estão sempre presentes em qualquer dispositivo
         utilizadoresPredefinidos.forEach(def => {
             if (!usersAtuais.some(u => u.corp === def.corp && u.nome.toLowerCase() === def.nome.toLowerCase())) {
                 usersAtuais.push(def);
@@ -64,7 +60,6 @@
             const corp = document.getElementById('corporacao').value;
             
             let users = JSON.parse(localStorage.getItem('cad_utilizadores'));
-
             const match = users.find(u => u.corp === corp && u.nome.toLowerCase() === nome.toLowerCase() && u.senha === senha);
 
             if (match) {
@@ -74,7 +69,7 @@
                 window.location.href = 'dashboard.html';
             } else {
                 const erro = document.getElementById('erroMsg');
-                erro.textContent = "Credenciais inválidas! Verifique o nome, corporação e palavra-passe.";
+                erro.textContent = "Credenciais inválidas!";
                 erro.classList.remove('hidden');
             }
         });

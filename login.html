@@ -31,7 +31,6 @@
             color: #fff;
             font-size: 14px;
             outline: none;
-            transition: border-color 0.2s;
         }
         .input-group input:focus { border-color: #3b82f6; }
 
@@ -45,7 +44,6 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 14px;
-            transition: background-color 0.2s;
             margin-top: 10px;
         }
         .btn-main:hover { background-color: #1d4ed8; }
@@ -85,27 +83,28 @@
     </div>
 
     <script>
-        // Garante que a conta master existe no sistema para conseguires entrar
-        let listaAtual = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
-        if (!listaAtual.some(u => u.nome.toLowerCase() === 'proenca')) {
-            listaAtual.push({
-                corporacao: "Polícia Civil",
-                nome: "proenca",
-                senha: "6323",
-                patente: "Delegado Geral",
-                cargo: "Alto Comando"
-            });
-            localStorage.setItem('cadUtilizadoresLista', JSON.stringify(listaAtual));
-        }
-
-        // Lógica de login com verificação
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const user = document.getElementById('loginUser').value.trim();
+            e.preventDefault(); // Impede que a página faça refresh automático para trás
+            
+            const user = document.getElementById('loginUser').value.trim().toLowerCase();
             const pass = document.getElementById('loginPass').value.trim();
             
+            // Conta Master fixa direta para garantir acesso imediato sem falhas
+            if (user === 'proenca' && pass === '6323') {
+                const dadosMaster = {
+                    corporacao: "Polícia Civil",
+                    nome: "proenca",
+                    patente: "Delegado Geral",
+                    cargo: "Alto Comando"
+                };
+                localStorage.setItem('utilizadorLogado', JSON.stringify(dadosMaster));
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Verificar outros utilizadores guardados no localStorage
             let utilizadores = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
-            let encontrado = utilizadores.find(u => u.nome.toLowerCase() === user.toLowerCase() && u.senha === pass);
+            let encontrado = utilizadores.find(u => u.nome.toLowerCase() === user && u.senha === pass);
 
             if (encontrado) {
                 localStorage.setItem('utilizadorLogado', JSON.stringify(encontrado));

@@ -32,7 +32,7 @@
                 <button onclick="mudarAba('procurados')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-procurados">🚨 Procurados</button>
                 <button onclick="mudarAba('prisoes')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-prisoes">🔒 Prisões</button>
                 <button onclick="mudarAba('veiculos')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-veiculos">🚗 Veículos</button>
-                <button onclick="mudarAba('radio')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-radio">📻 Rádio (Vários Canais)</button>
+                <button onclick="mudarAba('radio')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-radio">📻 Rádio Tático (1000+ Canais)</button>
                 <div class="pt-4 border-t border-slate-800 space-y-2">
                     <button onclick="acionarPanico()" class="w-full py-2.5 bg-red-600/20 border border-red-500/40 text-red-400 font-bold text-xs rounded-xl hover:bg-red-600/30">🚨 BOTÃO DE PÂNICO</button>
                     <a href="admin.html" id="btnAdmin" class="hidden block text-center py-2.5 bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs rounded-xl hover:bg-slate-800">⚙️ Alto Comando</a>
@@ -70,12 +70,25 @@
             </div>
         </div>
 
-        <!-- PROCURADOS (COM FOTOS) -->
+        <!-- PROCURADOS (ADICIONAR + APAGAR) -->
         <div id="sec-procurados" class="aba-conteudo hidden space-y-6">
             <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-black">Galeria de Procurados</h2>
+                <h2 class="text-2xl font-black">Base de Dados de Procurados</h2>
             </div>
-            <div id="grelhaProcurados" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+
+            <!-- Formulário para Adicionar Procurado -->
+            <form id="formProcurado" class="bg-slate-900 p-6 rounded-xl border border-slate-800 space-y-3 max-w-2xl">
+                <h3 class="text-sm font-bold text-blue-400">Adicionar Novo Mandado de Captura</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" id="proc_nome" required placeholder="Nome Completo" class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                    <input type="text" id="proc_recompensa" required placeholder="Recompensa (Ex: R$ 50.000)" class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                </div>
+                <input type="text" id="proc_crimes" required placeholder="Crimes Cometidos (Ex: Assalto, Homicídio)" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                <input type="url" id="proc_foto" required placeholder="URL da Foto (Link direto de imagem)" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-xl font-bold text-sm transition">Emitir Mandado</button>
+            </form>
+
+            <div id="grelhaProcurados" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2"></div>
         </div>
 
         <!-- PRISÕES -->
@@ -101,30 +114,43 @@
             <div id="listaVeiculos" class="space-y-2 max-w-xl pt-2"></div>
         </div>
 
-        <!-- RÁDIO (MUITOS CANAIS) -->
+        <!-- RÁDIO TÁTICO COM MULTICANAIS REAIS -->
         <div id="sec-radio" class="aba-conteudo hidden space-y-6">
-            <h2 class="text-2xl font-black">Rede de Rádio Multicanal</h2>
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-black">Sistema de Comunicação de Rádio (PTT)</h2>
+            </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- SELETOR DE CANAIS EXTENSO -->
                 <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                    <h3 class="text-sm font-bold text-blue-400">Selecionar Frequência</h3>
-                    <div class="space-y-1.5 max-h-[300px] overflow-y-auto pr-1">
-                        <button onclick="mudarCanal('Canal 1 - Geral PM')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-300 font-bold text-xs">Canal 1: Geral PM</button>
-                        <button onclick="mudarCanal('Canal 2 - Tático / Operações')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 2: Tático / Operações</button>
-                        <button onclick="mudarCanal('Canal 3 - Polícia Civil')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 3: Polícia Civil</button>
-                        <button onclick="mudarCanal('Canal 4 - Polícia Federal')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 4: Polícia Federal</button>
-                        <button onclick="mudarCanal('Canal 5 - Rota / Choque')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 5: Rota / Choque</button>
-                        <button onclick="mudarCanal('Canal 6 - Alto Comando')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 6: Alto Comando</button>
-                        <button onclick="mudarCanal('Canal 7 - Perseguição Alfa')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 7: Perseguição Alfa</button>
+                    <div class="flex gap-2">
+                        <input type="number" id="inputCanalCustom" placeholder="Nº Canal (ex: 412)" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-xs">
+                        <button onclick="mudarCanalCustom()" class="bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded-lg text-xs font-bold">Entrar</button>
+                    </div>
+                    <p class="text-[11px] text-slate-400">Frequências Táticas Predefinidas:</p>
+                    <div class="space-y-1.5 max-h-[260px] overflow-y-auto pr-1">
+                        <button onclick="mudarCanal('Canal 01 - Geral PM')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-300 font-bold text-xs">01. Geral PM</button>
+                        <button onclick="mudarCanal('Canal 02 - Tático Operacional')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">02. Tático Operacional</button>
+                        <button onclick="mudarCanal('Canal 03 - Polícia Civil')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">03. Polícia Civil (Investigação)</button>
+                        <button onclick="mudarCanal('Canal 04 - Polícia Federal')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">04. Polícia Federal</button>
+                        <button onclick="mudarCanal('Canal 05 - Rota / Choque')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">05. Rota / Choque</button>
+                        <button onclick="mudarCanal('Canal 10 - Alto Comando')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">10. Alto Comando</button>
+                        <button onclick="mudarCanal('Canal 99 - Operação Especial / Cerco')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">99. Operação Especial / Cerco</button>
                     </div>
                 </div>
 
+                <!-- BOTÃO DE TRANSMISSÃO PTT -->
                 <div class="md:col-span-2 bg-slate-900 p-8 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center space-y-4">
-                    <p class="text-xs text-slate-400">Frequência Atual: <b id="lblCanal" class="text-green-400">Canal 1 - Geral PM</b></p>
+                    <div class="w-16 h-16 rounded-full bg-blue-600/10 border border-blue-500/30 flex items-center justify-center text-blue-400 text-2xl">🎙️</div>
+                    <div>
+                        <p class="text-xs text-slate-400">Frequência Sintonizada:</p>
+                        <h3 id="lblCanal" class="text-lg font-bold text-green-400 mt-1">Canal 01 - Geral PM</h3>
+                    </div>
                     <button id="btnPTT" onmousedown="pttStart()" onmouseup="pttStop()" ontouchstart="pttStart()" ontouchend="pttStop()" 
                         class="w-full max-w-sm py-6 bg-slate-800 border border-slate-700 hover:bg-blue-600 text-white font-black rounded-xl text-sm transition select-none cursor-pointer shadow-xl">
-                        PRESSIONE PARA FALAR (PTT)
+                        PRESSIONE E MANTENHA PARA FALAR
                     </button>
-                    <p id="micStatus" class="text-xs text-slate-500">Microfone em Escuta</p>
+                    <p id="micStatus" class="text-xs text-slate-500">Microfone em Escuta (Aguardando Transmissão)</p>
                 </div>
             </div>
         </div>
@@ -187,24 +213,57 @@
             }
         }, 1000);
 
-        // PROCURADOS COM FOTOS
+        // PROCURADOS (ADICIONAR E APAGAR)
         if(!localStorage.getItem('cad_procurados')) {
             localStorage.setItem('cad_procurados', JSON.stringify([
-                { nome: "Carlos Mendes", crimes: "Tráfico de Armas e Homicídio", recompensa: "R$ 50.000", foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=60" },
-                { nome: "Ana Rodrigues", crimes: "Assalto a Banco e Sequestro", recompensa: "R$ 80.000", foto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=60" }
+                { id: 1, nome: "Carlos Mendes", crimes: "Tráfico de Armas", recompensa: "R$ 50.000", foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=60" }
             ]));
         }
+
+        document.getElementById('formProcurado').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let p = JSON.parse(localStorage.getItem('cad_procurados') || '[]');
+            p.push({
+                id: Date.now(),
+                nome: document.getElementById('proc_nome').value,
+                crimes: document.getElementById('proc_crimes').value,
+                recompensa: document.getElementById('proc_recompensa').value,
+                foto: document.getElementById('proc_foto').value
+            });
+            localStorage.setItem('cad_procurados', JSON.stringify(p));
+            mostrarToast("Mandado emitido com sucesso!");
+            this.reset();
+            carregarProcurados();
+            atualizarStats();
+        });
+
+        function apagarProcurado(id) {
+            let p = JSON.parse(localStorage.getItem('cad_procurados') || '[]');
+            p = p.filter(x => x.id !== id);
+            localStorage.setItem('cad_procurados', JSON.stringify(p));
+            mostrarToast("Mandado removido / capturado!");
+            carregarProcurados();
+            atualizarStats();
+        }
+
         function carregarProcurados() {
             let p = JSON.parse(localStorage.getItem('cad_procurados') || '[]');
             let g = document.getElementById('grelhaProcurados');
+            if(p.length === 0) {
+                g.innerHTML = `<p class="text-xs text-slate-500">Nenhum procurado registado.</p>`;
+                return;
+            }
             g.innerHTML = p.map(x => `
-                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex gap-4 items-center">
-                    <img src="${x.foto || 'https://via.placeholder.com/150'}" class="w-20 h-20 rounded-lg object-cover border border-slate-700" alt="Foto">
-                    <div>
-                        <h4 class="font-bold text-white text-sm">${x.nome}</h4>
-                        <p class="text-xs text-slate-400 mt-0.5">Crimes: ${x.crimes}</p>
-                        <p class="text-xs text-green-400 font-bold mt-1">Recompensa: ${x.recompensa}</p>
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex gap-4 items-center justify-between">
+                    <div class="flex gap-4 items-center">
+                        <img src="${x.foto}" class="w-16 h-16 rounded-lg object-cover border border-slate-700" alt="Foto">
+                        <div>
+                            <h4 class="font-bold text-white text-sm">${x.nome}</h4>
+                            <p class="text-xs text-slate-400 mt-0.5">Crimes: ${x.crimes}</p>
+                            <p class="text-xs text-green-400 font-bold mt-1">${x.recompensa}</p>
+                        </div>
                     </div>
+                    <button onclick="apagarProcurado(${x.id})" class="bg-red-950/60 border border-red-900 text-red-400 hover:bg-red-900 px-3 py-2 rounded-xl text-xs font-bold transition">Apagar</button>
                 </div>
             `).join('');
         }
@@ -217,6 +276,7 @@
             localStorage.setItem('cad_prisoes', JSON.stringify(prisoes));
             mostrarToast("Prisão registada com sucesso!");
             this.reset();
+            atualizarStats();
         });
 
         // VEÍCULOS
@@ -228,6 +288,7 @@
             mostrarToast("Veículo apreendido!");
             this.reset();
             carregarVeiculos();
+            atualizarStats();
         });
 
         function carregarVeiculos() {
@@ -239,10 +300,17 @@
         // RÁDIO PTT
         function mudarCanal(c) {
             document.getElementById('lblCanal').textContent = c;
-            mostrarToast("Frequência alterada para: " + c);
+            mostrarToast("Mudou para a frequência: " + c);
+        }
+        function mudarCanalCustom() {
+            let val = document.getElementById('inputCanalCustom').value;
+            if(val) {
+                mudarCanal(`Canal Custom #${val}`);
+                document.getElementById('inputCanalCustom').value = '';
+            }
         }
         async function pttStart() {
-            document.getElementById('micStatus').textContent = "A Transmitir na Frequência...";
+            document.getElementById('micStatus').textContent = "A Transmitir...";
             document.getElementById('micStatus').className = "text-xs text-green-400 font-bold";
             document.getElementById('btnPTT').className = "w-full max-w-sm py-6 bg-red-600 border border-red-500 text-white font-black rounded-xl text-sm transition select-none shadow-xl";
             try { await navigator.mediaDevices.getUserMedia({ audio: true }); } catch(e) {}

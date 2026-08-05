@@ -3,74 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - MDT / CAD Polícia Civil</title>
-    <link rel="stylesheet" href="style.css">
+    <title>CAD - Login Operador</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #090d16; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .box { background-color: #111827; padding: 30px; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #1f2937; }
+        h2 { color: #3b82f6; text-align: center; margin-bottom: 5px; font-size: 22px; }
+        p { text-align: center; color: #9ca3af; font-size: 13px; margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; color: #d1d5db; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 12px; background-color: #030712; border: 1px solid #374151; border-radius: 6px; color: #fff; font-size: 14px; }
+        input:focus, select:focus { outline: none; border-color: #3b82f6; }
+        button.btn-main { width: 100%; padding: 12px; background-color: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        button.btn-main:hover { background-color: #1d4ed8; }
+        .link-voltar { display: block; text-align: center; margin-top: 15px; color: #60a5fa; font-size: 13px; text-decoration: none; cursor: pointer; }
+        .link-voltar:hover { text-decoration: underline; }
+    </style>
 </head>
-<body class="login-body">
+<body>
 
-    <div class="login-container">
-        <h2>POLÍCIA CIVIL / RP</h2>
-        <p class="login-subtitle">Insira as suas credenciais para aceder ao sistema</p>
+    <div class="box">
+        <h2>🛡️ CAD Policial</h2>
+        <p>Selecione a corporação e insira os seus dados</p>
         
         <form onsubmit="fazerLogin(event)">
             <div class="input-group">
-                <label>Passaporte ID ou Nome do Agente</label>
-                <input type="text" id="loginUser" placeholder="Ex: #0006 ou Thiago" required>
+                <label>Selecione a Polícia / Corporação</label>
+                <select id="loginCorp" required>
+                    <option value="Polícia Civil">Polícia Civil (PC)</option>
+                    <option value="Polícia Militar">Polícia Militar (PM)</option>
+                    <option value="PRF">PRF (Rodoviária Federal)</option>
+                    <option value="Polícia Federal">Polícia Federal (PF)</option>
+                </select>
             </div>
-            
+
             <div class="input-group">
-                <label>Password (PIN)</label>
-                <input type="password" id="loginPass" placeholder="Insira a password" required>
+                <label>Nome de Utilizador</label>
+                <input type="text" id="loginUser" placeholder="Ex: proenca" required>
             </div>
-            
-            <button type="submit" class="btn-login">Entrar no Sistema</button>
+
+            <div class="input-group">
+                <label>Palavra-Passe (Pass)</label>
+                <input type="password" id="loginPass" placeholder="Ex: 6323" required>
+            </div>
+
+            <button type="submit" class="btn-main">Entrar no Sistema</button>
         </form>
-        
-        <div id="loginErro" style="color: #f87171; font-size: 13px; text-align: center; margin-top: 15px; display: none;">
-            Credenciais incorretas ou utilizador não existente. Tente novamente.
-        </div>
+
+        <a class="link-voltar" href="index.html">← Voltar à Central Pública de Ocorrências</a>
     </div>
 
     <script>
-        // Função opcional de arranque: garante apenas que o Proença e o Thiago existem se for a primeira vez que abres o site
-        function inicializarOficiaisPadrao() {
-            let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD'));
-            if (!listaOficiais || listaOficiais.length === 0) {
-                listaOficiais = [
-                    { id: '#0005', nome: 'Proença', pass: '7576', cargo: 'Alto Comando', estado: 'Ativo' },
-                    { id: '#0006', nome: 'Thiago', pass: '1218', cargo: 'Oficial de Patrulha', estado: 'Ativo' }
-                ];
-                localStorage.setItem('listaOficiaisCAD', JSON.stringify(listaOficiais));
-            }
+        // Inicializar o utilizador padrão se não existir nenhum
+        if (!localStorage.getItem('cadUtilizadoresLista')) {
+            localStorage.setItem('cadUtilizadoresLista', JSON.stringify([
+                { corporacao: "Polícia Civil", nome: "proenca", senha: "6323" }
+            ]));
         }
 
-        inicializarOficiaisPadrao();
+        function fazerLogin(e) {
+            e.preventDefault();
+            let corp = document.getElementById('loginCorp').value;
+            let user = document.getElementById('loginUser').value.trim().toLowerCase();
+            let pass = document.getElementById('loginPass').value;
 
-        function fazerLogin(event) {
-            event.preventDefault();
+            let lista = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
             
-            const userInput = document.getElementById('loginUser').value.trim().toLowerCase();
-            const passInput = document.getElementById('loginPass').value.trim();
-            
-            // Lê SEMPRE a lista atualizada do localStorage (incluindo os novos criados na app)
-            let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [];
-            
-            // Procura o oficial comparando o nome ou o ID
-            const agenteEncontrado = listaOficiais.find(oficial => {
-                const idLimpo = oficial.id.toLowerCase().replace('#', '');
-                const userLimpo = userInput.replace('#', '');
-                
-                const correspondeUser = (oficial.nome.toLowerCase() === userInput || idLimpo === userLimpo);
-                const correspondePass = (oficial.pass.trim() === passInput);
-                
-                return correspondeUser && correspondePass;
-            });
-            
-            if (agenteEncontrado) {
-                localStorage.setItem('agenteLogado', JSON.stringify(agenteEncontrado));
+            // Verificar se existe o utilizador com esta corporação, nome e pass exatos
+            let valido = lista.find(u => u.corporacao === corp && u.nome.toLowerCase() === user && u.senha === pass);
+
+            if (valido) {
+                let sessaoInfo = `${corp} - ${valido.nome}`;
+                localStorage.setItem('cadUtilizadorLogado', sessaoInfo);
                 window.location.href = 'index.html';
             } else {
-                document.getElementById('loginErro').style.display = 'block';
+                alert('Dados incorretos! Verifique a polícia selecionada, o nome de utilizador e a palavra-passe.');
             }
         }
     </script>

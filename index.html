@@ -7,13 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 flex items-center justify-center h-screen">
-    <div class="bg-slate-900 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-800">
-        <div class="text-center mb-6">
+    <div class="bg-slate-900 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-800 space-y-6">
+        <div class="text-center">
             <h1 class="text-2xl font-black text-white">CAD POLICIAL</h1>
             <p class="text-xs text-slate-400 mt-1">Terminal de Acesso Seguro</p>
         </div>
         
-        <div id="erroMsg" class="hidden bg-red-950/80 border border-red-600 text-red-300 p-3 rounded-xl mb-4 text-xs font-semibold text-center"></div>
+        <div id="erroMsg" class="hidden bg-red-950/80 border border-red-600 text-red-300 p-3 rounded-xl text-xs font-semibold text-center"></div>
 
         <form id="loginForm" class="space-y-4">
             <div>
@@ -36,14 +36,13 @@
             </div>
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold p-3 rounded-xl text-sm transition">Entrar no Sistema</button>
         </form>
-        <p class="text-center text-xs text-slate-500 mt-4">Admin Padrão: <b>admin</b> / Palavra-passe: <b>6323</b></p>
+        <p class="text-center text-xs text-slate-500">Admin Padrão: <b>admin</b> / Palavra-passe: <b>6323</b></p>
     </div>
 
     <script>
         if (!localStorage.getItem('cad_utilizadores')) {
             localStorage.setItem('cad_utilizadores', JSON.stringify([
-                { corp: "ADMIN", nome: "admin", senha: "6323", cargo: "Alto Comando" },
-                { corp: "PM", nome: "Soldado Silva", senha: "123", cargo: "Soldado" }
+                { corp: "ADMIN", nome: "admin", senha: "6323", cargo: "Alto Comando" }
             ]));
         }
 
@@ -57,7 +56,7 @@
             const match = users.find(u => u.corp === corp && u.nome.toLowerCase() === nome.toLowerCase() && u.senha === senha);
 
             if (match || (corp === "ADMIN" && nome.toLowerCase() === "admin" && senha === "6323")) {
-                const dados = match || { nome, corp, cargo: "Comando" };
+                const dados = match || { nome, corp, cargo: "Alto Comando" };
                 localStorage.setItem('cad_user_logado', dados.nome);
                 localStorage.setItem('cad_corp_logada', dados.corp);
                 localStorage.setItem('cad_cargo_logado', dados.cargo);

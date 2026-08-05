@@ -54,11 +54,11 @@
     </div>
 
     <script>
-        // Inicializar o utilizador padrão se não existir nenhum
-        if (!localStorage.getItem('cadUtilizadoresLista')) {
-            localStorage.setItem('cadUtilizadoresLista', JSON.stringify([
-                { corporacao: "Polícia Civil", nome: "proenca", senha: "6323" }
-            ]));
+        // Forçar a criação e atualização imediata do utilizador padrão
+        let listaAtual = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
+        if (!listaAtual.some(u => u.nome.toLowerCase() === 'proenca')) {
+            listaAtual.push({ corporacao: "Polícia Civil", nome: "proenca", senha: "6323" });
+            localStorage.setItem('cadUtilizadoresLista', JSON.stringify(listaAtual));
         }
 
         function fazerLogin(e) {

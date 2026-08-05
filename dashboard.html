@@ -17,6 +17,8 @@
                 <button onclick="mudarAba('mandados')" class="w-full text-left p-2 rounded hover:bg-slate-700 transition">Mandados</button>
                 <button onclick="mudarAba('multas')" class="w-full text-left p-2 rounded hover:bg-slate-700 transition">Emitir Multa</button>
                 <button onclick="mudarAba('ponto')" class="w-full text-left p-2 rounded hover:bg-slate-700 transition">Bater Ponto</button>
+                
+                <!-- Botão exclusivo visível apenas para o Alto Comando / Admin -->
                 <a href="admin.html" id="btnAdmin" class="hidden block w-full text-left p-2 rounded bg-red-900/50 hover:bg-red-900 transition text-red-300 font-semibold mt-6">Painel Alto Comando</a>
             </nav>
         </div>
@@ -33,25 +35,25 @@
         <div id="sec-prisoes" class="aba-conteudo">
             <h2 class="text-2xl font-bold mb-4">Registo de Prisão</h2>
             <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 max-w-2xl">
-                <form class="space-y-4">
+                <form class="space-y-4" onsubmit="event.preventDefault(); alert('Prisão registada com sucesso!');">
                     <div>
                         <label class="block text-sm mb-1">Nome do Cidadão</label>
-                        <input type="text" class="w-full bg-slate-700 border border-slate-600 rounded p-2" placeholder="Nome completo">
+                        <input type="text" required class="w-full bg-slate-700 border border-slate-600 rounded p-2" placeholder="Nome completo">
                     </div>
                     <div>
                         <label class="block text-sm mb-1">Crimes / Artigos</label>
-                        <textarea class="w-full bg-slate-700 border border-slate-600 rounded p-2" placeholder="Descreva os crimes cometidos..."></textarea>
+                        <textarea required class="w-full bg-slate-700 border border-slate-600 rounded p-2" placeholder="Descreva os crimes cometidos..."></textarea>
                     </div>
                     <div>
                         <label class="block text-sm mb-1">Tempo de Pena / Multa (R$)</label>
-                        <input type="text" class="w-full bg-slate-700 border border-slate-600 rounded p-2" placeholder="Ex: 50 meses / 10.000 R$">
+                        <input type="text" required class="w-full bg-slate-700 border border-slate-600 rounded p-2" placeholder="Ex: 50 meses / 10.000 R$">
                     </div>
-                    <button type="button" alert("Prisão registada com sucesso!") class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-bold"> Registar Prisão</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-bold">Registar Prisão</button>
                 </form>
             </div>
         </div>
 
-        <!-- SECÇÃO: MANDADOS (Ativos / Emissão) -->
+        <!-- SECÇÃO: MANDADOS -->
         <div id="sec-mandados" class="aba-conteudo hidden">
             <h2 class="text-2xl font-bold mb-4">Gestão de Mandados</h2>
             <div class="bg-slate-800 p-6 rounded-lg border border-slate-700">
@@ -60,7 +62,7 @@
                     <input type="text" placeholder="Nome do Alvo" class="bg-slate-700 border border-slate-600 rounded p-2">
                     <input type="text" placeholder="Motivo / Justificativa" class="bg-slate-700 border border-slate-600 rounded p-2">
                 </div>
-                <button class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-bold">Emitir Mandado</button>
+                <button onclick="alert('Mandado emitido com sucesso!')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-bold">Emitir Mandado</button>
             </div>
         </div>
 
@@ -68,11 +70,11 @@
         <div id="sec-multas" class="aba-conteudo hidden">
             <h2 class="text-2xl font-bold mb-4">Emitir Multa</h2>
             <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 max-w-2xl">
-                <form class="space-y-4">
-                    <input type="text" placeholder="Nome do Condutor / Cidadão" class="w-full bg-slate-700 border border-slate-600 rounded p-2">
-                    <input type="text" placeholder="Motivo da Infração (Ex: Excesso de velocidade)" class="w-full bg-slate-700 border border-slate-600 rounded p-2">
-                    <input type="number" placeholder="Valor (R$)" class="w-full bg-slate-700 border border-slate-600 rounded p-2">
-                    <button type="button" class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded font-bold text-slate-900">Aplicar Multa</button>
+                <form class="space-y-4" onsubmit="event.preventDefault(); alert('Multa aplicada com sucesso!');">
+                    <input type="text" required placeholder="Nome do Condutor / Cidadão" class="w-full bg-slate-700 border border-slate-600 rounded p-2">
+                    <input type="text" required placeholder="Motivo da Infração (Ex: Excesso de velocidade)" class="w-full bg-slate-700 border border-slate-600 rounded p-2">
+                    <input type="number" required placeholder="Valor (R$)" class="w-full bg-slate-700 border border-slate-600 rounded p-2">
+                    <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded font-bold text-slate-900">Aplicar Multa</button>
                 </form>
             </div>
         </div>
@@ -89,13 +91,19 @@
     </div>
 
     <script>
-        // Carregar dados do utilizador logado
-        const user = localStorage.getItem('cad_user') || 'Desconhecido';
-        const corp = localStorage.getItem('cad_corp') || 'GERAL';
-        document.getElementById('userInfo').innerHTML = `Logado como: <b>${user}</b> (${corp})`;
+        // Proteger a página contra acesso direto sem login
+        const user = localStorage.getItem('cad_user');
+        const corp = localStorage.getItem('cad_corp');
+        const cargo = localStorage.getItem('cad_cargo');
 
-        // Simulação de acesso exclusivo ao Alto Comando (se o nome contiver "Comando" ou for configurado)
-        if(user.toLowerCase().includes('comando') || user.toLowerCase().includes('coronel') || user.toLowerCase().includes('delegado')) {
+        if (!user) {
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('userInfo').innerHTML = `Logado: <b>${user}</b><br><span class="text-xs text-blue-400">${corp} - ${cargo || 'Agente'}</span>`;
+
+        // Mostrar o painel de administração apenas se for a conta Admin ou se tiver cargo de comando
+        if (corp === 'ADMIN' || user.toLowerCase() === 'admin') {
             document.getElementById('btnAdmin').classList.remove('hidden');
         }
 

@@ -120,25 +120,16 @@
     <div id="viewLogin" class="public-container" style="display: none;">
         <div class="box">
             <h2>🛡️ CAD - Login Operador</h2>
-            <p>Selecione a polícia, insira o seu nome e a sua senha</p>
+            <p>Insira a sua pessoa (utilizador) e palavra-passe</p>
             
             <form onsubmit="fazerLogin(event)">
                 <div class="input-group">
-                    <label>Corporação</label>
-                    <select id="loginCorporacao" required>
-                        <option value="Polícia Civil">Polícia Civil (PC)</option>
-                        <option value="Polícia Militar">Polícia Militar (PM)</option>
-                        <option value="PRF">PRF (Rodoviária)</option>
-                        <option value="Polícia Federal">Polícia Federal (PF)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>O seu Nome de Utilizador</label>
-                    <input type="text" id="loginNome" placeholder="Ex: Agente Carlos" required>
+                    <label>Utilizador (Nome)</label>
+                    <input type="text" id="loginUser" placeholder="Ex: proenca" required>
                 </div>
                 <div class="input-group">
                     <label>Palavra-Passe</label>
-                    <input type="password" id="loginSenha" placeholder="Sua senha pessoal" required>
+                    <input type="password" id="loginSenha" placeholder="Sua palavra-passe" required>
                 </div>
                 <button type="submit" class="btn-main">Entrar no Sistema CAD</button>
             </form>
@@ -157,7 +148,7 @@
                     <li><a href="#" class="active" onclick="mudarAba('despacho', event)">📟 Dispatch / Ocorrências</a></li>
                     <li><a href="#" onclick="mudarAba('unidades', event)">🚓 Unidades em Patrulha</a></li>
                     <li><a href="#" onclick="mudarAba('mandados', event)">⚖️ Mandados & Procurados</a></li>
-                    <li><a href="#" onclick="mudarAba('utilizadores', event)">👥 Registar Utilizadores</a></li>
+                    <li><a href="#" onclick="mudarAba('utilizadores', event)">👥 Registar Pessoas/Pass</a></li>
                 </ul>
             </div>
             <div>
@@ -277,11 +268,11 @@
 
             <!-- 4. REGISTAR UTILIZADORES -->
             <div id="aba-utilizadores" class="aba">
-                <h3>Registar Novo Operador / Pessoa com Acesso</h3>
+                <h3>Registar Pessoa e Palavra-Passe</h3>
                 <form class="form-admin" onsubmit="registarUtilizador(event)">
                     <div class="input-grid">
                         <div class="input-group">
-                            <label>Corporação</label>
+                            <label>Corporação / Polícia</label>
                             <select id="novoUserCorp" required>
                                 <option value="Polícia Civil">Polícia Civil (PC)</option>
                                 <option value="Polícia Militar">Polícia Militar (PM)</option>
@@ -290,15 +281,15 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <label>Nome do Operador</label>
-                            <input type="text" id="novoUserNome" placeholder="Ex: Agente Proença" required>
+                            <label>Nome / Utilizador (Ex: proenca)</label>
+                            <input type="text" id="novoUserNome" placeholder="Nome para login" required>
                         </div>
                     </div>
                     <div class="input-group">
-                        <label>Palavra-Passe Pessoal</label>
-                        <input type="password" id="novoUserSenha" placeholder="Definir palavra-passe" required>
+                        <label>Palavra-Passe (Pass)</label>
+                        <input type="password" id="novoUserSenha" placeholder="Palavra-passe de acesso" required>
                     </div>
-                    <button type="submit" class="btn-acao">Criar Acesso para a Pessoa</button>
+                    <button type="submit" class="btn-acao">Guardar Novo Acesso</button>
                 </form>
 
                 <div class="tabela-box">
@@ -306,7 +297,7 @@
                         <thead>
                             <tr>
                                 <th>Corporação</th>
-                                <th>Nome do Operador</th>
+                                <th>Utilizador / Pessoa</th>
                                 <th>Ação</th>
                             </tr>
                         </thead>
@@ -320,10 +311,10 @@
     </div>
 
     <script>
-        // Inicializar utilizadores predefinidos caso esteja vazio (exemplo inicial para não ficar totalmente em branco)
+        // Utilizador inicial padrão (ex: proenca / 6323)
         if (!localStorage.getItem('cadUtilizadoresLista')) {
             localStorage.setItem('cadUtilizadoresLista', JSON.stringify([
-                { corporacao: "Polícia Civil", nome: "AdminPC", senha: "123" }
+                { corporacao: "Polícia Civil", nome: "proenca", senha: "6323" }
             ]));
         }
 
@@ -377,19 +368,18 @@
 
         function fazerLogin(e) {
             e.preventDefault();
-            let corporacao = document.getElementById('loginCorporacao').value;
-            let nomeInserido = document.getElementById('loginNome').value.trim().toLowerCase();
+            let userInserido = document.getElementById('loginUser').value.trim().toLowerCase();
             let senhaInserida = document.getElementById('loginSenha').value;
 
             let utilizadores = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
-            let encontrado = utilizadores.find(u => u.corporacao === corporacao && u.nome.toLowerCase() === nomeInserido && u.senha === senhaInserida);
+            let encontrado = utilizadores.find(u => u.nome.toLowerCase() === userInserido && u.senha === senhaInserida);
 
             if (encontrado) {
                 let sessaoInfo = `${encontrado.corporacao} (${encontrado.nome})`;
                 localStorage.setItem('cadUtilizadorLogado', sessaoInfo);
                 entrarNoPainelAdmin(sessaoInfo);
             } else {
-                alert('Dados incorretos! Certifique-se de que selecionou a polícia certa, colocou o seu nome exato e a palavra-passe correta.');
+                alert('Utilizador ou palavra-passe incorretos!');
             }
         }
 
@@ -538,7 +528,7 @@
 
             listaUtilizadores.push({ corporacao: corp, nome: nome, senha: senha });
             localStorage.setItem('cadUtilizadoresLista', JSON.stringify(listaUtilizadores));
-            alert(`Utilizador ${nome} (${corp}) registado com sucesso!`);
+            alert(`Acesso criado para ${nome} (${corp})!`);
             e.target.reset();
             atualizarTabelaUtilizadores();
         }

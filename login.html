@@ -24,16 +24,12 @@
                 <button type="submit" class="btn-main">Entrar no Sistema CAD</button>
             </form>
 
-            <div class="info-teste">
-                🔑 <strong>Conta Master:</strong><br>
-                Utilizador: <code>proenca</code> | Senha: <code>6323</code> (PC - Alto Comando)
-            </div>
-
             <a class="link-voltar" href="index.html">← Voltar à Central Pública de Emergência</a>
         </div>
     </div>
 
     <script>
+        // Garante que a conta master continua a existir no sistema para conseguires entrar
         let listaAtual = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
         if (!listaAtual.some(u => u.nome.toLowerCase() === 'proenca')) {
             listaAtual.push({
@@ -46,13 +42,11 @@
             localStorage.setItem('cadUtilizadoresLista', JSON.stringify(listaAtual));
         }
 
-        // Exemplo básico de manipulação do formulário de login
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const user = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
             
-            // Validação simples contra o localStorage
             let utilizadores = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
             let encontrado = utilizadores.find(u => u.nome.toLowerCase() === user.toLowerCase() && u.senha === pass);
 

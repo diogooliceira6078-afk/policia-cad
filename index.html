@@ -39,10 +39,16 @@
     </div>
 
     <script>
+        // Lista padrão de utilizadores globais predefinidos para testes em qualquer telemóvel
+        const utilizadoresPredefinidos = [
+            { corp: "ADMIN", nome: "admin", senha: "6323", cargo: "Alto Comando" },
+            { corp: "PM", nome: "Comandante Silva", senha: "1234", cargo: "Coronel" },
+            { corp: "PC", nome: "Agente Mendes", senha: "1234", cargo: "Investigador" }
+        ];
+
+        // Inicializar o localStorage se não existir
         if (!localStorage.getItem('cad_utilizadores')) {
-            localStorage.setItem('cad_utilizadores', JSON.stringify([
-                { corp: "ADMIN", nome: "admin", senha: "6323", cargo: "Alto Comando" }
-            ]));
+            localStorage.setItem('cad_utilizadores', JSON.stringify(utilizadoresPredefinidos));
         }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -50,19 +56,20 @@
             const nome = document.getElementById('nome').value.trim();
             const senha = document.getElementById('senha').value;
             const corp = document.getElementById('corporacao').value;
-            const users = JSON.parse(localStorage.getItem('cad_utilizadores'));
+            
+            let users = JSON.parse(localStorage.getItem('cad_utilizadores'));
 
+            // Procurar correspondência
             const match = users.find(u => u.corp === corp && u.nome.toLowerCase() === nome.toLowerCase() && u.senha === senha);
 
-            if (match || (corp === "ADMIN" && nome.toLowerCase() === "admin" && senha === "6323")) {
-                const dados = match || { nome, corp, cargo: "Alto Comando" };
-                localStorage.setItem('cad_user_logado', dados.nome);
-                localStorage.setItem('cad_corp_logada', dados.corp);
-                localStorage.setItem('cad_cargo_logado', dados.cargo);
+            if (match) {
+                localStorage.setItem('cad_user_logado', match.nome);
+                localStorage.setItem('cad_corp_logada', match.corp);
+                localStorage.setItem('cad_cargo_logado', match.cargo || 'Militar');
                 window.location.href = 'dashboard.html';
             } else {
                 const erro = document.getElementById('erroMsg');
-                erro.textContent = "Credenciais inválidas!";
+                erro.textContent = "Credenciais inválidas ou utilizador não registado neste dispositivo!";
                 erro.classList.remove('hidden');
             }
         });

@@ -3,106 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD Policial | Acesso Restrito</title>
+    <title>CAD Policial | Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        police: { 900: '#0f172a', 950: '#090d16' }
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-police-950 text-slate-100 flex items-center justify-center h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-police-950 to-police-950">
-
-    <div class="bg-police-900/80 backdrop-blur-xl p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-800/80 relative overflow-hidden">
-        <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600/10 border border-blue-500/20 text-blue-400 text-2xl mb-3 shadow-inner">🛡️</div>
-            <h1 class="text-2xl font-black tracking-wider text-white">CAD POLICIAL UNIFICADO</h1>
-            <p class="text-xs text-slate-400 mt-1">PM | PC | PF | PRF — Sistema Operacional</p>
+<body class="bg-slate-950 text-slate-100 flex items-center justify-center h-screen">
+    <div class="bg-slate-900 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-800">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-black text-white">CAD POLICIAL</h1>
+            <p class="text-xs text-slate-400 mt-1">Terminal de Acesso Seguro</p>
         </div>
         
-        <div id="erroMsg" class="hidden bg-red-950/80 border border-red-600/50 text-red-300 p-3 rounded-xl mb-4 text-xs font-semibold text-center animate-shake"></div>
+        <div id="erroMsg" class="hidden bg-red-950/80 border border-red-600 text-red-300 p-3 rounded-xl mb-4 text-xs font-semibold text-center"></div>
 
         <form id="loginForm" class="space-y-4">
             <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Corporação</label>
-                <select id="corporacao" class="w-full bg-police-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+                <label class="block text-xs font-bold text-slate-400 mb-1">Corporação</label>
+                <select id="corporacao" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white">
                     <option value="PM">Polícia Militar (PM)</option>
                     <option value="PC">Polícia Civil (PC)</option>
                     <option value="PF">Polícia Federal (PF)</option>
-                    <option value="PRF">Polícia Rodoviária Federal (PRF)</option>
-                    <option value="ADMIN">Alto Comando / Administração</option>
+                    <option value="PRF">PRF</option>
+                    <option value="ADMIN">Alto Comando</option>
                 </select>
             </div>
-
             <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Nome / Identificação</label>
-                <input type="text" id="nome" required class="w-full bg-police-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500 transition" placeholder="Ex: Soldado Silva">
+                <label class="block text-xs font-bold text-slate-400 mb-1">Nome / Patente</label>
+                <input type="text" id="nome" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white" placeholder="Ex: Capitão Silva">
             </div>
-
             <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Palavra-Passe</label>
-                <input type="password" id="senha" required class="w-full bg-police-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500 transition" placeholder="••••••••">
+                <label class="block text-xs font-bold text-slate-400 mb-1">Palavra-Passe</label>
+                <input type="password" id="senha" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white" placeholder="••••••••">
             </div>
-
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold p-3.5 rounded-xl text-sm transition shadow-lg shadow-blue-600/30 mt-2">Aceder ao Terminal</button>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold p-3 rounded-xl text-sm transition">Entrar no Sistema</button>
         </form>
-
-        <div class="mt-6 pt-4 border-t border-slate-800/80 text-center text-xs text-slate-500">
-            <p>Admin Padrão: Pass <b class="text-slate-300">6323</b> (Utilizador: admin)</p>
-        </div>
+        <p class="text-center text-xs text-slate-500 mt-4">Admin Padrão: <b>admin</b> / Palavra-passe: <b>6323</b></p>
     </div>
 
     <script>
-        // Inicializar dados iniciais se vazio
         if (!localStorage.getItem('cad_utilizadores')) {
             localStorage.setItem('cad_utilizadores', JSON.stringify([
                 { corp: "ADMIN", nome: "admin", senha: "6323", cargo: "Alto Comando" },
-                { corp: "PM", nome: "Soldado Silva", senha: "123", cargo: "Soldado" },
-                { corp: "PC", nome: "Inspetor Santos", senha: "123", cargo: "Inspetor" },
-                { corp: "PF", nome: "Agente Costa", senha: "123", cargo: "Agente Federal" },
-                { corp: "PRF", nome: "Patrulheiro Oliveira", senha: "123", cargo: "Patrulheiro" }
-            ]));
-        }
-        if (!localStorage.getItem('cad_procurados')) {
-            localStorage.setItem('cad_procurados', JSON.stringify([
-                { id: 1, nome: "Carlos 'Falcão' Mendes", foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400", crimes: "Tráfico de Armas, Homicídio", periculosidade: "Extrema", recompensa: "R$ 50.000" },
-                { id: 2, nome: "Ana 'Viper' Souza", foto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400", crimes: "Assalto a Banco", periculosidade: "Alta", recompensa: "R$ 25.000" }
+                { corp: "PM", nome: "Soldado Silva", senha: "123", cargo: "Soldado" }
             ]));
         }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const nomeInput = document.getElementById('nome').value.trim();
-            const senhaInput = document.getElementById('senha').value;
-            const corpInput = document.getElementById('corporacao').value;
-            const erroDiv = document.getElementById('erroMsg');
-
+            const nome = document.getElementById('nome').value.trim();
+            const senha = document.getElementById('senha').value;
+            const corp = document.getElementById('corporacao').value;
             const users = JSON.parse(localStorage.getItem('cad_utilizadores'));
-            const match = users.find(u => u.corp === corpInput && u.nome.toLowerCase() === nomeInput.toLowerCase() && u.senha === senhaInput);
 
-            if (match || (corpInput === "ADMIN" && nomeInput.toLowerCase() === "admin" && senhaInput === "6323")) {
-                const dados = match || { nome: nomeInput, corp: corpInput, cargo: "Comando" };
+            const match = users.find(u => u.corp === corp && u.nome.toLowerCase() === nome.toLowerCase() && u.senha === senha);
+
+            if (match || (corp === "ADMIN" && nome.toLowerCase() === "admin" && senha === "6323")) {
+                const dados = match || { nome, corp, cargo: "Comando" };
                 localStorage.setItem('cad_user_logado', dados.nome);
                 localStorage.setItem('cad_corp_logada', dados.corp);
                 localStorage.setItem('cad_cargo_logado', dados.cargo);
-
-                let logs = JSON.parse(localStorage.getItem('cad_logs') || '[]');
-                logs.unshift(`[${new Date().toLocaleString()}] LOGIN: ${dados.nome} (${dados.corp})`);
-                localStorage.setItem('cad_logs', JSON.stringify(logs));
-
                 window.location.href = 'dashboard.html';
             } else {
-                erroDiv.textContent = "Credenciais inválidas! Verifique os dados introduzidos.";
-                erroDiv.classList.remove('hidden');
+                const erro = document.getElementById('erroMsg');
+                erro.textContent = "Credenciais inválidas!";
+                erro.classList.remove('hidden');
             }
         });
     </script>

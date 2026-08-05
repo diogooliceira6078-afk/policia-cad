@@ -7,28 +7,28 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 p-10">
-    <div class="max-w-2xl mx-auto space-y-6">
+    <div class="max-w-xl mx-auto space-y-6">
         <div class="flex justify-between items-center border-b border-slate-800 pb-4">
             <h1 class="text-2xl font-black text-red-500">Alto Comando</h1>
-            <a href="dashboard.html" class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-xs font-bold">Voltar</a>
+            <a href="dashboard.html" class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-800">Voltar</a>
         </div>
 
         <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 space-y-4">
-            <h2 class="font-bold text-blue-400">Registar Novo Utilizador</h2>
+            <h2 class="font-bold text-blue-400 text-sm">Registar Novo Utilizador</h2>
             <form id="formUser" class="space-y-3">
                 <input type="text" id="u_nome" required placeholder="Nome do Agente" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
                 <input type="text" id="u_cargo" required placeholder="Cargo (Ex: Capitão)" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
                 <input type="password" id="u_senha" required placeholder="Palavra-Passe" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
-                <button type="submit" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-sm">Guardar Utilizador</button>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Guardar Utilizador</button>
             </form>
         </div>
 
         <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 flex justify-between items-center">
             <div>
-                <h2 class="font-bold text-red-400">Repor Sistema</h2>
-                <p class="text-xs text-slate-400">Apaga todos os dados guardados.</p>
+                <h2 class="font-bold text-red-400 text-sm">Repor Sistema</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Limpa todos os dados guardados.</p>
             </div>
-            <button onclick="localStorage.clear(); alert('Reposto!'); window.location.href='index.html';" class="bg-red-950 border border-red-900 text-red-300 font-bold px-4 py-2 rounded-xl text-xs">Limpar Dados</button>
+            <button onclick="localStorage.clear(); alert('Sistema limpo!'); window.location.href='index.html';" class="bg-red-950 border border-red-900 text-red-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-red-900 transition">Limpar Dados</button>
         </div>
     </div>
 
@@ -41,7 +41,7 @@
             let users = JSON.parse(localStorage.getItem('cad_utilizadores') || '[]');
             users.push({ corp: "PM", nome: document.getElementById('u_nome').value, cargo: document.getElementById('u_cargo').value, senha: document.getElementById('u_senha').value });
             localStorage.setItem('cad_utilizadores', JSON.stringify(users));
-            alert('Utilizador registado!');
+            alert('Utilizador registado com sucesso!');
             this.reset();
         });
     </script>

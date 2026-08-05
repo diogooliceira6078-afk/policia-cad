@@ -3,61 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD - Login Operador</title>
+    <title>CAD - Autenticação de Operadores</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #090d16; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .box { background-color: #111827; padding: 30px; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #1f2937; }
-        h2 { color: #3b82f6; text-align: center; margin-bottom: 5px; font-size: 22px; }
-        p { text-align: center; color: #9ca3af; font-size: 13px; margin-bottom: 20px; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; color: #d1d5db; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 12px; background-color: #030712; border: 1px solid #374151; border-radius: 6px; color: #fff; font-size: 14px; }
-        input:focus, select:focus { outline: none; border-color: #3b82f6; }
-        button.btn-main { width: 100%; padding: 12px; background-color: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        body { background-color: #070a12; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .box { background-color: #0f172a; padding: 35px; border-radius: 14px; width: 100%; max-width: 440px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid #1e293b; }
+        h2 { color: #3b82f6; text-align: center; margin-bottom: 8px; font-size: 24px; font-weight: 700; }
+        p { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 25px; }
+        .input-group { margin-bottom: 18px; }
+        label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select { width: 100%; padding: 12px 15px; background-color: #020617; border: 1px solid #334155; border-radius: 8px; color: #fff; font-size: 14px; transition: 0.2s; }
+        input:focus, select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        button.btn-main { width: 100%; padding: 13px; background-color: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
         button.btn-main:hover { background-color: #1d4ed8; }
-        .link-voltar { display: block; text-align: center; margin-top: 15px; color: #60a5fa; font-size: 13px; text-decoration: none; cursor: pointer; }
+        .link-voltar { display: block; text-align: center; margin-top: 20px; color: #60a5fa; font-size: 13px; text-decoration: none; }
         .link-voltar:hover { text-decoration: underline; }
+        .info-teste { background-color: #1e293b; padding: 12px; border-radius: 8px; font-size: 12px; color: #cbd5e1; margin-top: 20px; border-left: 4px solid #3b82f6; }
     </style>
 </head>
 <body>
 
     <div class="box">
-        <h2>🛡️ CAD Policial</h2>
-        <p>Selecione a corporação e insira os seus dados</p>
+        <h2>🛡️ CAD Policial - Acesso</h2>
+        <p>Central de Operações Integrada de Segurança</p>
         
         <form onsubmit="fazerLogin(event)">
             <div class="input-group">
-                <label>Selecione a Polícia / Corporação</label>
+                <label>Instituição / Corporação</label>
                 <select id="loginCorp" required>
                     <option value="Polícia Civil">Polícia Civil (PC)</option>
                     <option value="Polícia Militar">Polícia Militar (PM)</option>
-                    <option value="PRF">PRF (Rodoviária Federal)</option>
+                    <option value="PRF">Polícia Rodoviária Federal (PRF)</option>
                     <option value="Polícia Federal">Polícia Federal (PF)</option>
                 </select>
             </div>
 
             <div class="input-group">
-                <label>Nome de Utilizador</label>
+                <label>Digite o seu nome</label>
                 <input type="text" id="loginUser" placeholder="Ex: proenca" required>
             </div>
 
             <div class="input-group">
-                <label>Palavra-Passe (Pass)</label>
+                <label>Digite a sua senha</label>
                 <input type="password" id="loginPass" placeholder="Ex: 6323" required>
             </div>
 
-            <button type="submit" class="btn-main">Entrar no Sistema</button>
+            <button type="submit" class="btn-main">Entrar no Sistema CAD</button>
         </form>
 
-        <a class="link-voltar" href="index.html">← Voltar à Central Pública de Ocorrências</a>
+        <div class="info-teste">
+            🔑 <strong>Acesso Inicial Teste:</strong><br>
+            Utilizador: <code>proenca</code> | Senha: <code>6323</code> (PC)
+        </div>
+
+        <a class="link-voltar" href="index.html">← Voltar à Central Pública de Emergência</a>
     </div>
 
     <script>
-        // Forçar a criação e atualização imediata do utilizador padrão
+        // Inicializar base de dados de utilizadores e dados padrão se não existirem
         let listaAtual = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
         if (!listaAtual.some(u => u.nome.toLowerCase() === 'proenca')) {
-            listaAtual.push({ corporacao: "Polícia Civil", nome: "proenca", senha: "6323" });
+            listaAtual.push({ 
+                corporacao: "Polícia Civil", 
+                nome: "proenca", 
+                senha: "6323", 
+                patente: "Delegado Geral", 
+                cargo: "Alto Comando" 
+            });
             localStorage.setItem('cadUtilizadoresLista', JSON.stringify(listaAtual));
         }
 
@@ -68,17 +80,33 @@
             let pass = document.getElementById('loginPass').value;
 
             let lista = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
-            
-            // Verificar se existe o utilizador com esta corporação, nome e pass exatos
             let valido = lista.find(u => u.corporacao === corp && u.nome.toLowerCase() === user && u.senha === pass);
 
             if (valido) {
-                let sessaoInfo = `${corp} - ${valido.nome}`;
-                localStorage.setItem('cadUtilizadorLogado', sessaoInfo);
+                let dadosSessao = {
+                    corporacao: corp,
+                    nome: valido.nome,
+                    patente: valido.patente || 'Agente / Soldado',
+                    cargo: valido.cargo || 'Operacional'
+                };
+                localStorage.setItem('cadUtilizadorLogado', JSON.stringify(dadosSessao));
+                
+                // Registar Log de Acesso
+                registarLogSistema(`Operador ${valido.nome} (${corp} - ${dadosSessao.patente}) efetuou login no sistema.`);
+
                 window.location.href = 'index.html';
             } else {
-                alert('Dados incorretos! Verifique a polícia selecionada, o nome de utilizador e a palavra-passe.');
+                alert('Dados incorretos! Verifique a corporação, o nome e a senha digitados.');
             }
+        }
+
+        function registarLogSistema(descricao) {
+            let logs = JSON.parse(localStorage.getItem('cadLogs')) || [];
+            logs.unshift({
+                data: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}),
+                descricao: descricao
+            });
+            localStorage.setItem('cadLogs', JSON.stringify(logs));
         }
     </script>
 </body>

@@ -6,11 +6,11 @@
     <title>CAD - Central de Operações Policiais Avançada</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #070a12; color: #f8fafc; min-height: 100vh; }
+        body { background-color: #05070d; color: #f8fafc; min-height: 100vh; }
         
-        /* ECRÃ PÚBLICO / REGISTO DE OCORRÊNCIAS */
+        /* ECRÃ PÚBLICO */
         .public-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .box { background-color: #0f172a; padding: 35px; border-radius: 14px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid #1e293b; }
+        .box { background-color: #0f172a; padding: 35px; border-radius: 14px; width: 100%; max-width: 480px; box-shadow: 0 20px 40px rgba(0,0,0,0.7); border: 1px solid #1e293b; }
         h2 { color: #3b82f6; text-align: center; margin-bottom: 5px; font-size: 24px; }
         p { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 20px; }
         .input-group { margin-bottom: 15px; }
@@ -23,15 +23,15 @@
         .link-alternativo:hover { text-decoration: underline; }
         #sucessoCli { color: #22c55e; font-size: 13px; text-align: center; margin-top: 15px; display: none; font-weight: bold; }
 
-        /* PAINEL OPERACIONAL INTERNO */
+        /* PAINEL INTERNO */
         #painelAdmin { display: none; flex-direction: column; }
         @media(min-width: 768px) { #painelAdmin { flex-direction: row; } }
         
         .sidebar { background-color: #0f172a; width: 100%; padding: 20px; border-bottom: 1px solid #1e293b; display: flex; flex-direction: column; justify-content: space-between; }
-        @media(min-width: 768px) { .sidebar { width: 300px; height: 100vh; position: fixed; border-bottom: none; border-right: 1px solid #1e293b; overflow-y: auto; } }
+        @media(min-width: 768px) { .sidebar { width: 310px; height: 100vh; position: fixed; border-bottom: none; border-right: 1px solid #1e293b; overflow-y: auto; } }
         
         .sidebar h2 { font-size: 18px; margin-bottom: 5px; text-align: center; color: #3b82f6; }
-        .user-info { font-size: 12px; color: #38bdf8; text-align: center; margin-bottom: 20px; background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #1e293b; }
+        .user-info { font-size: 12px; color: #38bdf8; text-align: center; margin-bottom: 15px; background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #1e293b; }
         .user-info span { display: block; font-weight: bold; color: #fff; font-size: 13px; margin-top: 2px; }
         
         .menu-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
@@ -40,17 +40,21 @@
         .menu-list li a { display: block; padding: 10px 14px; color: #cbd5e1; text-decoration: none; border-radius: 8px; font-size: 13px; transition: 0.2s; background-color: #020617; font-weight: 500; }
         @media(min-width: 768px) { .menu-list li a { background-color: transparent; } }
         .menu-list li a:hover, .menu-list li a.active { background-color: #2563eb; color: #fff; font-weight: bold; }
+        .menu-list li a.alto-comando-menu { border-left: 3px solid #ef4444; }
         
-        .btn-sair { display: block; text-align: center; background-color: #dc2626; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-size: 13px; margin-top: 20px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-sair:hover { background-color: #b91c1c; }
+        .btn-panico { width: 100%; background-color: #dc2626; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: pulsar 2s infinite; }
+        @keyframes pulsar { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        
+        .btn-sair { display: block; text-align: center; background-color: #334155; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-size: 13px; margin-top: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-sair:hover { background-color: #475569; }
         
         .main { flex: 1; padding: 25px; width: 100%; }
-        @media(min-width: 768px) { .main { margin-left: 300px; padding: 35px; } }
+        @media(min-width: 768px) { .main { margin-left: 310px; padding: 35px; } }
         
         .aba { display: none; }
         .aba.active { display: block; }
         
-        h3 { font-size: 22px; color: #3b82f6; margin-bottom: 20px; border-bottom: 2px solid #1e293b; padding-bottom: 10px; font-weight: 700; }
+        h3 { font-size: 22px; color: #3b82f6; margin-bottom: 20px; border-bottom: 2px solid #1e293b; padding-bottom: 10px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
         
         form.form-admin { background-color: #0f172a; padding: 25px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .input-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
@@ -62,7 +66,7 @@
         
         .tabela-box { overflow-x: auto; background-color: #0f172a; border-radius: 12px; border: 1px solid #1e293b; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-        th, td { padding: 14px; border-bottom: 1px solid #1e293b; }
+        th, td { padding: 14px; border-bottom: 1px solid #1e293b; vertical-align: middle; }
         th { background-color: #020617; color: #3b82f6; font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
         
         .badge-corporacao { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; text-transform: uppercase; display: inline-block; }
@@ -76,6 +80,9 @@
 
         .btn-apagar { background-color: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .btn-apagar:hover { background-color: #b91c1c; }
+        
+        .foto-mini { width: 42px; height: 42px; border-radius: 6px; object-fit: cover; border: 1px solid #334155; background: #020617; }
+        
         .stats-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 25px; }
         @media(min-width: 600px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
         .stat-card { background: #0f172a; padding: 20px; border-radius: 12px; border: 1px solid #1e293b; text-align: center; }
@@ -85,15 +92,15 @@
 </head>
 <body>
 
-    <!-- VISTA PÚBLICA (Registar Ocorrência / Cidadão) -->
+    <!-- ECRÃ PÚBLICO -->
     <div id="viewOcorrencia" class="public-container">
         <div class="box">
             <h2>🚨 Central de Emergência CAD</h2>
-            <p>Registo público de ocorrências e chamadas de emergência</p>
+            <p>Registo público de ocorrências e chamadas de urgência</p>
             
             <form onsubmit="enviarOcorrenciaPublica(event)">
                 <div class="input-group">
-                    <label>Nome do Requerente / Vítima</label>
+                    <label>Nome do Requerente</label>
                     <input type="text" id="ocNome" placeholder="Ex: Carlos Alberto" required>
                 </div>
                 
@@ -103,35 +110,35 @@
                 </div>
                 
                 <div class="input-group">
-                    <label>Força Policial Solicitada</label>
+                    <label>Força Policial Requisitada</label>
                     <select id="ocForca" required>
                         <option value="Polícia Civil">Polícia Civil (PC)</option>
                         <option value="Polícia Militar">Polícia Militar (PM)</option>
-                        <option value="PRF">Polícia Rodoviária Federal (PRF)</option>
+                        <option value="PRF">PRF (Rodoviária Federal)</option>
                         <option value="Polícia Federal">Polícia Federal (PF)</option>
                     </select>
                 </div>
 
                 <div class="input-group">
                     <label>Localização Exata</label>
-                    <input type="text" id="ocLocal" placeholder="Ex: Av. Central, Banco Principal" required>
+                    <input type="text" id="ocLocal" placeholder="Ex: Av. Central, Loja 12" required>
                 </div>
 
                 <div class="input-group">
-                    <label>Descrição DetalHada dos Factos</label>
-                    <textarea id="ocDescricao" rows="3" placeholder="O que está a acontecer no local..." required></textarea>
+                    <label>Descrição dos Factos</label>
+                    <textarea id="ocDescricao" rows="3" placeholder="O que se passa no local..." required></textarea>
                 </div>
                 
                 <button type="submit" class="btn-main">Transmitir Chamada para o CAD</button>
             </form>
 
-            <div id="sucessoCli">Chamada transmitida com sucesso para o terreno!</div>
+            <div id="sucessoCli">Ocorrência transmitida com sucesso para o terreno!</div>
 
             <a class="link-alternativo" href="login.html">🔐 Aceder ao Painel Restrito (Login Policial)</a>
         </div>
     </div>
 
-    <!-- PAINEL OPERACIONAL AVANÇADO -->
+    <!-- PAINEL INTERNO AVANÇADO -->
     <div id="painelAdmin">
         <div class="sidebar">
             <div>
@@ -140,14 +147,20 @@
                     Operador: <span id="txtSessaoNome">-</span>
                     Patente: <span id="txtSessaoPatente" style="color: #cbd5e1;">-</span>
                 </div>
+
+                <button class="btn-panico" onclick="ativarBotaoPanico()">🚨 Emitir Pânico (Q-9)</button>
+
                 <ul class="menu-list">
-                    <li><a href="#" class="active" onclick="mudarAba('dashboard', event)">📊 Dashboard & Estatísticas</a></li>
+                    <li><a href="#" class="active" onclick="mudarAba('dashboard', event)">📊 Dashboard & Métricas</a></li>
+                    <li><a href="#" onclick="mudarAba('ponto', event)">⏱️ Bater Ponto / Turnos</a></li>
                     <li><a href="#" onclick="mudarAba('despacho', event)">📟 Dispatch / Ocorrências</a></li>
                     <li><a href="#" onclick="mudarAba('unidades', event)">🚓 Unidades em Patrulha</a></li>
                     <li><a href="#" onclick="mudarAba('mandados', event)">⚖️ Mandados & Procurados</a></li>
-                    <li><a href="#" onclick="mudarAba('prisoes', event)">🔒 Registo de Prisões</a></li>
+                    <li><a href="#" onclick="mudarAba('prisoes', event)">🔒 Registo de Prisões & Fotos</a></li>
+                    <li><a href="#" onclick="mudarAba('veiculos', event)">🚗 Veículos Apreendidos</a></li>
                     <li><a href="#" onclick="mudarAba('utilizadores', event)">👥 Gestão de Efetivos</a></li>
-                    <li><a href="#" onclick="mudarAba('logs', event)">📜 Registos (Logs CAD)</a></li>
+                    <li><a href="#" class="alto-comando-menu" onclick="mudarAba('altocomando', event)">⭐ Área do Alto Comando</a></li>
+                    <li><a href="#" onclick="mudarAba('logs', event)">📜 Auditoria (Logs CAD)</a></li>
                 </ul>
             </div>
             <div>
@@ -178,15 +191,65 @@
                     </div>
                 </div>
 
-                <div style="background-color: #0f172a; padding: 25px; border-radius: 12px; border: 1px solid #1e293b;">
-                    <h4 style="color: #3b82f6; margin-bottom: 10px; font-size: 16px;">Bem-vindo ao Sistema CAD Multipolar</h4>
+                <div style="background-color: #0f172a; padding: 25px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 25px;">
+                    <h4 style="color: #3b82f6; margin-bottom: 10px; font-size: 16px;">⚡ Central Tática Integrada</h4>
                     <p style="color: #94a3b8; font-size: 14px; line-height: 1.6;">
-                        Este sistema conecta todas as agências de segurança num ecossistema unificado. Utilize o menu lateral para gerir ocorrências em tempo real, monitorizar unidades em patrulha, consultar mandados de captura, registar detenções formais e auditar as ações efetuadas por todos os efetivos da cidade.
+                        Bem-vindo ao CAD Multipolar Avançado. Podes registar detenções com fotos dos suspeitos, controlar o teu ponto de serviço, emitir alertas de pânico imediatos e monitorizar toda a atividade da cidade em tempo real.
                     </p>
+                </div>
+
+                <h3 style="font-size: 18px; margin-bottom: 15px;">Últimos Alertas e Ocorrências Concluídas</h3>
+                <div class="tabela-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data / Hora</th>
+                                <th>Força Alvo</th>
+                                <th>Local</th>
+                                <th>Descrição</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaHistoricoRecente">
+                            <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Sem histórico recente.</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- 1. DESPACHO -->
+            <!-- 1. BATER PONTO / TURNOS -->
+            <div id="aba-ponto" class="aba">
+                <h3>Registo de Assiduidade (Bater Ponto)</h3>
+                
+                <div style="background-color: #0f172a; padding: 30px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 30px; text-align: center;">
+                    <h4 style="color: #3b82f6; margin-bottom: 10px; font-size: 18px;">Estado do Teu Turno</h4>
+                    <p id="txtEstadoPonto" style="font-size: 15px; color: #94a3b8; margin-bottom: 20px;">A verificar estado...</p>
+                    <div id="controloBotoesPonto">
+                        <!-- Gerado por JS -->
+                    </div>
+                </div>
+
+                <h4 style="color: #3b82f6; margin-bottom: 15px; font-size: 16px;">📜 Histórico Geral de Pontos da Corporação</h4>
+                <div class="tabela-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Corporação</th>
+                                <th>Operador / Patente</th>
+                                <th>Entrada</th>
+                                <th>Saída</th>
+                                <th>Tempo Total</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaListaPontos">
+                            <tr><td colspan="6" style="text-align: center; color: #94a3b8;">Nenhum ponto registado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2. DESPACHO -->
             <div id="aba-despacho" class="aba">
                 <h3>Gestão de Ocorrências Ativas</h3>
                 <div class="tabela-box">
@@ -209,7 +272,7 @@
                 </div>
             </div>
 
-            <!-- 2. UNIDADES -->
+            <!-- 3. UNIDADES -->
             <div id="aba-unidades" class="aba">
                 <h3>Unidades Operacionais no Terreno</h3>
                 <form class="form-admin" onsubmit="registarUnidade(event)">
@@ -219,7 +282,7 @@
                             <input type="text" id="uniIndicativo" placeholder="Ex: Alfa-01, Bravo-04" required>
                         </div>
                         <div class="input-group">
-                            <label>Efetivo / Elementos</label>
+                            <label>Efetivos / Elementos</label>
                             <input type="text" id="uniElementos" placeholder="Ex: Agt. Silva / Agt. Costa" required>
                         </div>
                     </div>
@@ -230,7 +293,7 @@
                                 <option value="Em Patrulhamento">Em Patrulhamento</option>
                                 <option value="Em Ocorrência">Em Ocorrência</option>
                                 <option value="Disponível (Q-1)">Disponível (Q-1)</option>
-                                <option value="Em Trânsito / Apoio">Em Trânsito / Apoio</option>
+                                <option value="Perseguição / Código 3">Perseguição / Código 3</option>
                             </select>
                         </div>
                         <div class="input-group">
@@ -260,7 +323,7 @@
                 </div>
             </div>
 
-            <!-- 3. MANDADOS -->
+            <!-- 4. MANDADOS -->
             <div id="aba-mandados" class="aba">
                 <h3>Base de Dados Compartilhada: Mandados & Procurados</h3>
                 <form class="form-admin" onsubmit="registarMandado(event)">
@@ -270,9 +333,13 @@
                             <input type="text" id="manNome" placeholder="Nome do indivíduo" required>
                         </div>
                         <div class="input-group">
-                            <label>Motivo / Crime Principal</label>
-                            <input type="text" id="manCrime" placeholder="Ex: Mandado de Captura / Assalto à Mão Armada" required>
+                            <label>Link da Foto do Suspeito (URL)</label>
+                            <input type="url" id="manFoto" placeholder="https://exemplo.com/foto.jpg" required>
                         </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Motivo / Crime Principal</label>
+                        <input type="text" id="manCrime" placeholder="Ex: Mandado de Captura / Assalto" required>
                     </div>
                     <button type="submit" class="btn-acao">Emitir Mandado Oficial</button>
                 </form>
@@ -281,6 +348,7 @@
                     <table>
                         <thead>
                             <tr>
+                                <th>Foto</th>
                                 <th>Emitido por</th>
                                 <th>Suspeito</th>
                                 <th>Motivo</th>
@@ -289,15 +357,15 @@
                             </tr>
                         </thead>
                         <tbody id="tabelaListaMandados">
-                            <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Nenhum mandado ativo.</td></tr>
+                            <tr><td colspan="6" style="text-align: center; color: #94a3b8;">Nenhum mandado ativo.</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 4. PRISÕES -->
+            <!-- 5. PRISÕES & FOTOS -->
             <div id="aba-prisoes" class="aba">
-                <h3>Registo Formal de Prisões e Detenções</h3>
+                <h3>Registo Formal de Prisões e Ficha Criminal com Foto</h3>
                 <form class="form-admin" onsubmit="registarPrisao(event)">
                     <div class="input-grid">
                         <div class="input-group">
@@ -305,21 +373,25 @@
                             <input type="text" id="prisaoIndividuo" placeholder="Nome completo do suspeito" required>
                         </div>
                         <div class="input-group">
-                            <label>Artigo / Crimes Cometidos</label>
-                            <input type="text" id="prisaoCrimes" placeholder="Ex: Tráfico de Droga / Resistência à Prisão" required>
+                            <label>Link da Foto do Rosto (URL)</label>
+                            <input type="url" id="prisaoFoto" placeholder="https://exemplo.com/rosto.jpg" required>
                         </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Artigo / Crimes Cometidos</label>
+                        <input type="text" id="prisaoCrimes" placeholder="Ex: Tráfico de Droga / Porte Ilegal de Arma" required>
                     </div>
                     <div class="input-grid input-grid-3">
                         <div class="input-group">
-                            <label>Valor da Coima / Multa (€)</label>
+                            <label>Coima / Multa (€)</label>
                             <input type="number" id="prisaoCoima" placeholder="Ex: 5000" required>
                         </div>
                         <div class="input-group">
-                            <label>Valor da Fiança (€)</label>
+                            <label>Fiança (€)</label>
                             <input type="number" id="prisaoFianca" placeholder="Ex: 15000 (0 se inafiançável)" required>
                         </div>
                         <div class="input-group">
-                            <label>Tempo de Pena (Meses / Anos)</label>
+                            <label>Tempo de Pena</label>
                             <input type="text" id="prisaoPena" placeholder="Ex: 36 Meses" required>
                         </div>
                     </div>
@@ -330,11 +402,11 @@
                     <table>
                         <thead>
                             <tr>
+                                <th>Foto</th>
                                 <th>Data / Hora</th>
                                 <th>Detido</th>
                                 <th>Crimes / Artigos</th>
-                                <th>Coima</th>
-                                <th>Fiança</th>
+                                <th>Coima / Fiança</th>
                                 <th>Pena</th>
                                 <th>Oficial Responsável</th>
                                 <th>Ação</th>
@@ -347,9 +419,48 @@
                 </div>
             </div>
 
-            <!-- 5. UTILIZADORES / EFETIVOS -->
+            <!-- 6. VEÍCULOS APREENDIDOS -->
+            <div id="aba-veiculos" class="aba">
+                <h3>Registo de Veículos Apreendidos ou Procurados</h3>
+                <form class="form-admin" onsubmit="registarVeiculo(event)">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Matrícula / Placa</label>
+                            <input type="text" id="veicMatricula" placeholder="Ex: 45-AB-89" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Modelo e Cor</label>
+                            <input type="text" id="veicModelo" placeholder="Ex: Sultan Preto" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Motivo da Apreensão / Registo</label>
+                        <input type="text" id="veicMotivo" placeholder="Ex: Utilizado em Assalto / Abandonado" required>
+                    </div>
+                    <button type="submit" class="btn-acao">Registar Veículo</button>
+                </form>
+
+                <div class="tabela-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Matrícula</th>
+                                <th>Modelo / Cor</th>
+                                <th>Motivo</th>
+                                <th>Oficial</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaListaVeiculos">
+                            <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Sem veículos registados.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 7. UTILIZADORES -->
             <div id="aba-utilizadores" class="aba">
-                <h3>Gestão de Efetivos, Patentes e Cargos</h3>
+                <h3>Gestão de Efetivos e Patentes</h3>
                 <form class="form-admin" onsubmit="registarUtilizador(event)">
                     <div class="input-grid">
                         <div class="input-group">
@@ -357,7 +468,7 @@
                             <select id="novoUserCorp" required>
                                 <option value="Polícia Civil">Polícia Civil (PC)</option>
                                 <option value="Polícia Militar">Polícia Militar (PM)</option>
-                                <option value="PRF">Polícia Rodoviária Federal (PRF)</option>
+                                <option value="PRF">PRF (Rodoviária)</option>
                                 <option value="Polícia Federal">Polícia Federal (PF)</option>
                             </select>
                         </div>
@@ -373,13 +484,13 @@
                         </div>
                         <div class="input-group">
                             <label>Patente</label>
-                            <input type="text" id="novoUserPatente" placeholder="Ex: Tenente, Agente, Delegado" required>
+                            <input type="text" id="novoUserPatente" placeholder="Ex: Tenente, Agente" required>
                         </div>
                         <div class="input-group">
                             <label>Nível de Cargo</label>
                             <select id="novoUserCargo" required>
-                                <option value="Operacional">Operacional (Normal)</option>
-                                <option value="Alto Comando">Alto Comando (Comando/Chefe)</option>
+                                <option value="Operacional">Operacional</option>
+                                <option value="Alto Comando">Alto Comando</option>
                             </select>
                         </div>
                     </div>
@@ -404,10 +515,51 @@
                 </div>
             </div>
 
-            <!-- 6. LOGS DO SISTEMA -->
+            <!-- 8. ÁREA DO ALTO COMANDO (EXCLUSIVA) -->
+            <div id="aba-altocomando" class="aba">
+                <h3>⭐ Centro de Comando Estratégico (Restrito)</h3>
+                <div id="avisoAltoComando" style="display: none;">
+                    <div style="background-color: #0f172a; padding: 30px; border-radius: 12px; border: 1px solid #ef4444; text-align: center;">
+                        <h4 style="color: #ef4444; font-size: 20px; margin-bottom: 10px;">Acesso Restrito</h4>
+                        <p style="color: #94a3b8; font-size: 14px;">Esta área é exclusiva para oficiais com o cargo de <strong>Alto Comando</strong>. O teu nível de acesso atual não permite gerir diretrizes estratégicas.</p>
+                    </div>
+                </div>
+
+                <div id="conteudoAltoComando" style="display: none;">
+                    <div style="background-color: #0f172a; padding: 25px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 25px;">
+                        <h4 style="color: #3b82f6; margin-bottom: 12px; font-size: 16px;">Painel de Ordens e Comunicados Gerais</h4>
+                        <form onsubmit="enviarComunicado(event)">
+                            <div class="input-group">
+                                <label>Emitir Diretiva / Ordem Geral para todas as Patrulhas</label>
+                                <textarea id="txtComunicado" rows="3" placeholder="Escreva aqui a ordem do Alto Comando..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn-acao">Transmitir Comunicado Oficial</button>
+                        </form>
+                    </div>
+
+                    <h4 style="color: #3b82f6; margin-bottom: 12px; font-size: 16px;">Comunicados Ativos na Rede</h4>
+                    <div class="tabela-box">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data / Hora</th>
+                                    <th>Emissor (Alto Comando)</th>
+                                    <th>Diretiva</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaComunicados">
+                                <tr><td colspan="4" style="text-align: center; color: #94a3b8;">Sem comunicados emitidos.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. LOGS DO SISTEMA -->
             <div id="aba-logs" class="aba">
                 <h3>Auditoria e Registos do Sistema (Logs CAD)</h3>
-                <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Histórico completo de atividades, logins, prisões e ocorrências efetuadas por todas as forças de segurança.</p>
+                <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">Histórico detalhado de ações efetuadas por todas as forças de segurança da cidade.</p>
                 <div class="tabela-box">
                     <table>
                         <thead>
@@ -431,8 +583,10 @@
         let historico = JSON.parse(localStorage.getItem('cadHistorico')) || [];
         let mandados = JSON.parse(localStorage.getItem('cadMandados')) || [];
         let prisoes = JSON.parse(localStorage.getItem('cadPrisoes')) || [];
-        let listaUtilizadores = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
+        let veiculos = JSON.parse(localStorage.getItem('cadVeiculos')) || [];
+        let comunicados = JSON.parse(localStorage.getItem('cadComunicados')) || [];
         let logsSistema = JSON.parse(localStorage.getItem('cadLogs')) || [];
+        let pontos = JSON.parse(localStorage.getItem('cadPontos')) || [];
 
         let sessaoAtual = JSON.parse(localStorage.getItem('cadUtilizadorLogado'));
 
@@ -442,6 +596,15 @@
                 document.getElementById('painelAdmin').style.display = 'flex';
                 document.getElementById('txtSessaoNome').innerText = `${sessaoAtual.nome} (${sessaoAtual.corporacao})`;
                 document.getElementById('txtSessaoPatente').innerText = `${sessaoAtual.patente} [${sessaoAtual.cargo}]`;
+                
+                if(sessaoAtual.cargo === 'Alto Comando') {
+                    document.getElementById('avisoAltoComando').style.display = 'none';
+                    document.getElementById('conteudoAltoComando').style.display = 'block';
+                } else {
+                    document.getElementById('avisoAltoComando').style.display = 'block';
+                    document.getElementById('conteudoAltoComando').style.display = 'none';
+                }
+
                 atualizarDashboard();
                 mudarAba('dashboard');
             } else {
@@ -472,6 +635,14 @@
             setTimeout(() => { document.getElementById('sucessoCli').style.display = 'none'; }, 4000);
         }
 
+        function ativarBotaoPanico() {
+            if(confirm('🚨 ATENÇÃO: Deseja emitir um Alerta de Pânico geral (Q-9) para todas as patrulhas?')) {
+                registarLog(`⚠️ ALERTA DE PÂNICO EMITIDO por ${sessaoAtual.nome} (${sessaoAtual.corporacao})! Apoio urgente necessário.`);
+                alert('🚨 ALERTA DE PÂNICO TRANSMITIDO! Todas as unidades foram notificadas na rede.');
+                mudarAba('logs');
+            }
+        }
+
         function sairDaConta() {
             if(sessaoAtual) {
                 registarLog(`Operador ${sessaoAtual.nome} terminou sessão.`);
@@ -487,11 +658,14 @@
             if(event) event.currentTarget.classList.add('active');
 
             if(abaId === 'dashboard') atualizarDashboard();
+            if(abaId === 'ponto') atualizarGestaoPonto();
             if(abaId === 'despacho') atualizarTabelaOcorrencias();
             if(abaId === 'unidades') atualizarTabelaUnidades();
             if(abaId === 'mandados') atualizarTabelaMandados();
             if(abaId === 'prisoes') atualizarTabelaPrisoes();
+            if(abaId === 'veiculos') atualizarTabelaVeiculos();
             if(abaId === 'utilizadores') atualizarTabelaUtilizadores();
+            if(abaId === 'altocomando') atualizarTabelaComunicados();
             if(abaId === 'logs') atualizarTabelaLogs();
         }
 
@@ -500,6 +674,24 @@
             document.getElementById('statUnidades').innerText = unidades.length;
             document.getElementById('statMandados').innerText = mandados.length;
             document.getElementById('statPrisoes').innerText = prisoes.length;
+
+            let tbody = document.getElementById('tabelaHistoricoRecente');
+            if(historico.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Sem histórico recente.</td></tr>`;
+                return;
+            }
+            let html = '';
+            historico.slice(0, 5).forEach(h => {
+                let badgeClass = obterClasseBadge(h.forca);
+                html += `<tr>
+                    <td>${h.data}</td>
+                    <td><span class="badge-corporacao ${badgeClass}">${h.forca}</span></td>
+                    <td>${h.local}</td>
+                    <td>${h.descricao}</td>
+                    <td><span style="color: #22c55e; font-weight: bold;">${h.estado}</span></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
         }
 
         function obterClasseBadge(forca) {
@@ -516,6 +708,81 @@
                 descricao: descricao
             });
             localStorage.setItem('cadLogs', JSON.stringify(logsSistema));
+        }
+
+        // SISTEMA DE BATER PONTO
+        function atualizarGestaoPonto() {
+            let txtEstado = document.getElementById('txtEstadoPonto');
+            let divBotoes = document.getElementById('controloBotoesPonto');
+
+            // Verificar se o utilizador tem um ponto ativo (sem hora de saída)
+            let pontoAtivoIndex = pontos.findIndex(p => p.nomeUser.toLowerCase() === sessaoAtual.nome.toLowerCase() && p.ativo === true);
+
+            if(pontoAtivoIndex !== -1) {
+                let p = pontos[pontoAtivoIndex];
+                txtEstado.innerHTML = `🟢 Encontras-te atualmente <strong>EM SERVIÇO</strong> desde as <strong>${p.entrada}</strong>.`;
+                divBotoes.innerHTML = `<button class="btn-acao" style="background-color: #dc2626;" onclick="terminarPonto(${pontoAtivoIndex})">Terminar Turno (Marcar Saída)</button>`;
+            } else {
+                txtEstado.innerHTML = `🔴 Encontras-te atualmente <strong>FORA DE SERVIÇO</strong>.`;
+                divBotoes.innerHTML = `<button class="btn-acao" style="background-color: #16a34a;" onclick="iniciarPonto()">Iniciar Turno (Marcar Entrada)</button>`;
+            }
+
+            // Atualizar tabela geral de pontos
+            let tbody = document.getElementById('tabelaListaPontos');
+            if(pontos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8;">Nenhum ponto registado.</td></tr>`;
+                return;
+            }
+            let html = '';
+            pontos.forEach(pt => {
+                let badgeClass = obterClasseBadge(pt.corporacao);
+                let estadoBadge = pt.ativo ? `<span style="color: #22c55e; font-weight: bold;">Em Serviço</span>` : `<span style="color: #94a3b8;">Terminado</span>`;
+                html += `<tr>
+                    <td><span class="badge-corporacao ${badgeClass}">${pt.corporacao}</span></td>
+                    <td><strong>${pt.nomeUser}</strong> (${pt.patente})</td>
+                    <td>${pt.entrada}</td>
+                    <td>${pt.saida}</td>
+                    <td>${pt.tempoTotal}</td>
+                    <td>${estadoBadge}</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function iniciarPonto() {
+            let agora = new Date();
+            let novoPonto = {
+                id: Date.now(),
+                corporacao: sessaoAtual.corporacao,
+                nomeUser: sessaoAtual.nome,
+                patente: sessaoAtual.patente,
+                entradaTimestamp: agora.getTime(),
+                entrada: agora.toLocaleDateString() + ' ' + agora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                saida: 'A decorrer...',
+                tempoTotal: 'Em curso',
+                ativo: true
+            };
+            pontos.unshift(novoPonto);
+            localStorage.setItem('cadPontos', JSON.stringify(pontos));
+            registarLog(`Agente ${sessaoAtual.nome} iniciou o turno de serviço.`);
+            atualizarGestaoPonto();
+        }
+
+        function terminarPonto(index) {
+            let agora = new Date();
+            let p = pontos[index];
+            p.saida = agora.toLocaleDateString() + ' ' + agora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            p.ativo = false;
+
+            let diffMs = agora.getTime() - p.entradaTimestamp;
+            let diffMins = Math.floor(diffMs / 60000);
+            let horas = Math.floor(diffMins / 60);
+            let mins = diffMins % 60;
+            p.tempoTotal = `${horas}h ${mins}m`;
+
+            localStorage.setItem('cadPontos', JSON.stringify(pontos));
+            registarLog(`Agente ${sessaoAtual.nome} terminou o turno (Total: ${p.tempoTotal}).`);
+            atualizarGestaoPonto();
         }
 
         // OCORRÊNCIAS
@@ -562,7 +829,7 @@
                 estado: document.getElementById('uniEstado').value
             });
             localStorage.setItem('cadUnidades', JSON.stringify(unidades));
-            registarLog(`Unidade ${document.getElementById('uniIndicativo').value} registada por ${sessaoAtual.nome}.`);
+            registarLog(`Unidade ${document.getElementById('uniIndicativo').value} empenhada por ${sessaoAtual.nome}.`);
             alert('Unidade registada com sucesso no terreno!');
             e.target.reset();
             atualizarTabelaUnidades();
@@ -601,6 +868,7 @@
             mandados.unshift({
                 emitente: `${sessaoAtual.corporacao} - ${sessaoAtual.nome}`,
                 nome: document.getElementById('manNome').value.trim(),
+                foto: document.getElementById('manFoto').value.trim(),
                 crime: document.getElementById('manCrime').value.trim(),
                 data: new Date().toLocaleDateString()
             });
@@ -614,13 +882,14 @@
         function atualizarTabelaMandados() {
             let tbody = document.getElementById('tabelaListaMandados');
             if(mandados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Nenhum mandado registado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8;">Nenhum mandado registado.</td></tr>`;
                 return;
             }
             let html = '';
             mandados.forEach((m, index) => {
                 let badgeClass = obterClasseBadge(m.emitente);
                 html += `<tr>
+                    <td><img src="${m.foto}" class="foto-mini" onerror="this.src='https://via.placeholder.com/42'"></td>
                     <td><span class="badge-corporacao ${badgeClass}">${m.emitente}</span></td>
                     <td><strong>${m.nome}</strong></td>
                     <td>${m.crime}</td>
@@ -643,6 +912,7 @@
             prisoes.unshift({
                 data: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                 individuo: document.getElementById('prisaoIndividuo').value.trim(),
+                foto: document.getElementById('prisaoFoto').value.trim(),
                 crimes: document.getElementById('prisaoCrimes').value.trim(),
                 coima: document.getElementById('prisaoCoima').value.trim(),
                 fianca: document.getElementById('prisaoFianca').value.trim(),
@@ -665,11 +935,11 @@
             let html = '';
             prisoes.forEach((p, index) => {
                 html += `<tr>
+                    <td><img src="${p.foto}" class="foto-mini" onerror="this.src='https://via.placeholder.com/42'"></td>
                     <td>${p.data}</td>
                     <td><strong>${p.individuo}</strong></td>
                     <td>${p.crimes}</td>
-                    <td>€ ${p.coima}</td>
-                    <td>€ ${p.fianca}</td>
+                    <td>€ ${p.coima} <br><small style="color:#94a3b8;">Fiança: € ${p.fianca}</small></td>
                     <td>${p.pena}</td>
                     <td>${p.oficial}</td>
                     <td><button class="btn-apagar" onclick="removerPrisao(${index})">Apagar</button></td>
@@ -682,6 +952,41 @@
             prisoes.splice(index, 1);
             localStorage.setItem('cadPrisoes', JSON.stringify(prisoes));
             atualizarTabelaPrisoes();
+        }
+
+        // VEÍCULOS
+        function registarVeiculo(e) {
+            e.preventDefault();
+            veiculos.unshift({
+                matricula: document.getElementById('veicMatricula').value.trim(),
+                modelo: document.getElementById('veicModelo').value.trim(),
+                motivo: document.getElementById('veicMotivo').value.trim(),
+                oficial: sessaoAtual.nome
+            });
+            localStorage.setItem('cadVeiculos', JSON.stringify(veiculos));
+            registarLog(`Veículo ${document.getElementById('veicMatricula').value} registado/apreendido por ${sessaoAtual.nome}.`);
+            alert('Veículo registado com sucesso!');
+            e.target.reset();
+            atualizarTabelaVeiculos();
+        }
+
+        function atualizarTabelaVeiculos() {
+            let tbody = document.getElementById('tabelaListaVeiculos');
+            if(veiculos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Sem veículos registados.</td></tr>`;
+                return;
+            }
+            let html = '';
+            veiculos.forEach((v, index) => {
+                html += `<tr>
+                    <td><strong>${v.matricula}</strong></td>
+                    <td>${v.modelo}</td>
+                    <td>${v.motivo}</td>
+                    <td>${v.oficial}</td>
+                    <td><button class="btn-apagar" onclick="veiculos.splice(${index},1);localStorage.setItem('cadVeiculos',JSON.stringify(veiculos));atualizarTabelaVeiculos();">Remover</button></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
         }
 
         // UTILIZADORES
@@ -730,6 +1035,39 @@
             lista.splice(index, 1);
             localStorage.setItem('cadUtilizadoresLista', JSON.stringify(lista));
             atualizarTabelaUtilizadores();
+        }
+
+        // COMUNICADOS ALTO COMANDO
+        function enviarComunicado(e) {
+            e.preventDefault();
+            comunicados.unshift({
+                data: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                emissor: `${sessaoAtual.nome} (${sessaoAtual.patente})`,
+                texto: document.getElementById('txtComunicado').value.trim()
+            });
+            localStorage.setItem('cadComunicados', JSON.stringify(comunicados));
+            registarLog(`Diretiva do Alto Comando emitida por ${sessaoAtual.nome}.`);
+            alert('Comunicado transmitido a todas as forças!');
+            e.target.reset();
+            atualizarTabelaComunicados();
+        }
+
+        function atualizarTabelaComunicados() {
+            let tbody = document.getElementById('tabelaComunicados');
+            if(comunicados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Sem comunicados emitidos.</td></tr>`;
+                return;
+            }
+            let html = '';
+            comunicados.forEach((c, index) => {
+                html += `<tr>
+                    <td>${c.data}</td>
+                    <td><strong>${c.emissor}</strong></td>
+                    <td>${c.texto}</td>
+                    <td><button class="btn-apagar" onclick="comunicados.splice(${index},1);localStorage.setItem('cadComunicados',JSON.stringify(comunicados));atualizarTabelaComunicados();">Remover</button></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
         }
 
         // LOGS

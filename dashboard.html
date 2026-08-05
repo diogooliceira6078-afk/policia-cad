@@ -1,235 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD Policial | Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-950 text-slate-100 flex flex-col md:flex-row h-screen overflow-hidden m-0 p-0">
-
-    <!-- ALERTA DE PÂNICO -->
-    <div id="panicoOverlay" class="hidden fixed inset-0 bg-red-600/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 border-8 border-red-600 animate-pulse">
-        <div class="bg-red-950 border border-red-500 text-red-200 p-6 rounded-2xl text-center shadow-2xl max-w-md w-full">
-            <h1 class="text-2xl font-black text-red-500 mb-2">⚠️ PÂNICO ATIVADO ⚠️</h1>
-            <p id="textoPanico" class="text-sm font-bold mb-4"></p>
-            <button onclick="fecharPanico()" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-2 rounded-xl text-xs">Desarmar Alerta</button>
-        </div>
-    </div>
-
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-45 space-y-2 pointer-events-none"></div>
-
-    <!-- BARRA DE TOPO MÓVEL (Apenas para Telemóveis) -->
-    <div class="md:hidden bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center z-30 shrink-0">
-        <div>
-            <h2 class="text-xs font-black text-white">CAD POLICIAL</h2>
-            <p id="infoCorpMob" class="text-[10px] text-blue-400 font-bold"></p>
-        </div>
-        <button onclick="toggleMenu()" class="bg-slate-800 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold text-slate-200">📂 Menu</button>
-    </div>
-
-    <!-- MENU LATERAL -->
-    <aside id="sidebarMenu" class="fixed md:static inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-40 w-72 bg-slate-900 border-r border-slate-800 flex flex-col justify-between p-4 overflow-y-auto shrink-0 h-full">
-        <div class="space-y-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-sm font-black text-white tracking-wider">CAD POLICIAL</h2>
-                    <p id="infoCorp" class="text-xs text-blue-400 font-bold"></p>
-                </div>
-                <button onclick="toggleMenu()" class="md:hidden text-slate-400 font-bold text-sm">✕</button>
-            </div>
-            
-            <nav class="space-y-1">
-                <button onclick="mudarAba('inicio')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium bg-slate-800 text-blue-400" id="btn-inicio">📊 Início & Estatísticas</button>
-                <button onclick="mudarAba('procurados')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-procurados">🚨 Mandados / Procurados</button>
-                <button onclick="mudarAba('prisoes')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-prisoes">🔒 Registo de Prisões</button>
-                <button onclick="mudarAba('veiculos')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-veiculos">🚗 Veículos Apreendidos</button>
-                <button onclick="mudarAba('ocorrencias')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-ocorrencias">📑 Ocorrências / BOs</button>
-                <button onclick="mudarAba('portearmas')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-portearmas">🔫 Porte de Armas</button>
-                <button onclick="mudarAba('multas')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-multas">💸 Emissão de Multas</button>
-                <button onclick="mudarAba('drogas')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-drogas">📦 Apreensões de Droga</button>
-                <button onclick="mudarAba('fiancas')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-fiancas">⚖️ Pagamentos de Fiança</button>
-                <button onclick="mudarAba('faccoes')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-faccoes">👥 Facções / Gangues</button>
-                <button onclick="mudarAba('radio')" class="nav-btn w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs font-medium" id="btn-radio">📻 Rádio Tático</button>
-                
-                <div class="pt-3 border-t border-slate-800 space-y-1.5">
-                    <button onclick="acionarPanico()" class="w-full py-2 bg-red-600/20 border border-red-500/40 text-red-400 font-bold text-xs rounded-xl hover:bg-red-600/30">🚨 BOTÃO DE PÂNICO</button>
-                    <button onclick="mudarAba('auditoria')" id="btnAuditoria" class="hidden w-full text-left px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-amber-400 hover:bg-slate-800 text-xs font-bold">📋 Auditoria Geral</button>
-                    <a href="admin.html" id="btnAdmin" class="hidden block text-center py-2 bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs rounded-xl hover:bg-slate-800">⚙️ Gestão de Agentes</a>
-                </div>
-            </nav>
-        </div>
-
-        <div class="border-t border-slate-800 pt-3 mt-4 flex justify-between items-center text-xs">
-            <div>
-                <p id="userName" class="font-bold text-white"></p>
-                <p id="userCargo" class="text-blue-400"></p>
-            </div>
-            <button onclick="logout()" class="text-red-400 font-bold px-3 py-1.5 bg-red-950/60 border border-red-900 rounded-lg">Sair</button>
-        </div>
-    </aside>
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 p-4 md:p-8 overflow-y-auto bg-slate-950 h-full">
-        
-        <!-- INÍCIO -->
-        <div id="sec-inicio" class="aba-conteudo space-y-6">
-            <h2 class="text-xl md:text-2xl font-black">Painel Geral de Operações</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
-                    <p class="text-xs text-slate-400 font-bold">Procurados Ativos</p>
-                    <h3 id="statProc" class="text-3xl font-black text-blue-400 mt-1">0</h3>
-                </div>
-                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
-                    <p class="text-xs text-slate-400 font-bold">Prisões Efetuadas</p>
-                    <h3 id="statPris" class="text-3xl font-black text-green-400 mt-1">0</h3>
-                </div>
-                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
-                    <p class="text-xs text-slate-400 font-bold">Veículos Apreendidos</p>
-                    <h3 id="statVeic" class="text-3xl font-black text-orange-400 mt-1">0</h3>
-                </div>
-            </div>
-        </div>
-
-        <!-- PROCURADOS -->
-        <div id="sec-procurados" class="aba-conteudo hidden space-y-6">
-            <h2 class="text-xl md:text-2xl font-black">Mandados de Captura</h2>
-            <form id="formProcurado" class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                <h3 class="text-sm font-bold text-blue-400">Emitir Novo Mandado</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input type="text" id="proc_nome" required placeholder="Nome do Suspeito" class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm w-full outline-none">
-                    <input type="text" id="proc_recompensa" required placeholder="Recompensa (Ex: R$ 50.000)" class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm w-full outline-none">
-                </div>
-                <input type="text" id="proc_crimes" required placeholder="Crimes Cometidos" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="url" id="proc_foto" required placeholder="URL da Foto" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Emitir Mandado</button>
-            </form>
-            <div id="grelhaProcurados" class="grid grid-cols-1 gap-4 pt-2"></div>
-        </div>
-
-        <!-- PRISÕES -->
-        <div id="sec-prisoes" class="aba-conteudo hidden space-y-4">
-            <h2 class="text-xl md:text-2xl font-black">Registar Nova Prisão</h2>
-            <form id="formPrisao" class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                <input type="text" id="p_nome" required placeholder="Nome do Detido" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="p_crimes" required placeholder="Crimes" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="p_pena" required placeholder="Pena / Multa" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Confirmar Prisão</button>
-            </form>
-        </div>
-
-        <!-- VEÍCULOS -->
-        <div id="sec-veiculos" class="aba-conteudo hidden space-y-4">
-            <h2 class="text-xl md:text-2xl font-black">Apreensão de Veículos</h2>
-            <form id="formVeiculo" class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                <input type="text" id="v_modelo" required placeholder="Modelo" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="v_placa" required placeholder="Matrícula" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="v_motivo" required placeholder="Motivo" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-500 py-3 rounded-xl font-bold text-sm transition">Registar Apreensão</button>
-            </form>
-        </div>
-
-        <!-- OCORRÊNCIAS -->
-        <div id="sec-ocorrencias" class="aba-conteudo hidden space-y-4">
-            <h2 class="text-xl md:text-2xl font-black">Boletim de Ocorrência</h2>
-            <form id="formOcorrencia" class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                <input type="text" id="oc_local" required placeholder="Local" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <textarea id="oc_desc" required rows="3" placeholder="Descrição..." class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none"></textarea>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Arquivar BO</button>
-            </form>
-        </div>
-
-        <!-- PORTE DE ARMAS -->
-        <div id="sec-portearmas" class="aba-conteudo hidden space-y-4">
-            <h2 class="text-xl md:text-2xl font-black">Porte de Armas</h2>
-            <form id="formArmas" class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                <input type="text" id="arm_cidadao" required placeholder="Nome do Cidadão" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="arm_tipo" required placeholder="Tipo de Arma" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="arm_validade" required placeholder="Validade" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Emitir Licença</button>
-            </form>
-        </div>
-
-        <!-- MULTAS -->
-        <div id="sec-multas" class="aba-conteudo hidden space-y-4">
-            <h2 class="text-xl md:text-2xl font-black">Emissão de Multas</h2>
-            <form id="formMultas" class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                <input type="text" id="m_condutor" required placeholder="Infrator" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="m_infracao" required placeholder="Motivo" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="m_valor" required placeholder="Valor" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-sm transition">Aplicar Multa</button>
-            </form>
-        </div>
-
-        <!-- DROGAS -->
-        <div id="sec-drogas" class="aba-conteudo hidden space-y-4">
-            <h2 class="text-xl md:text-2xl font-black">Apreensão de Contrabando</h2>
-            <form id="formDrogas" class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                <input type="text" id="d_tipo" required placeholder="Tipo" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="d_qtd" required placeholder="Quantidade" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="d_suspeito" required placeholder="Suspeito" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Registar</button>
-            </form>
-        </div>
-
-        <!-- FIANÇAS -->
-        <div id="sec-fiancas" class="aba-conteudo hidden space-y-4">
-            <h2 class="text-xl md:text-2xl font-black">Pagamento de Fiança</h2>
-            <form id="formFiancas" class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                <input type="text" id="f_preso" required placeholder="Nome do Detido" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="f_valor" required placeholder="Valor da Fiança" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <button type="submit" class="w-full bg-green-600 hover:bg-green-500 py-3 rounded-xl font-bold text-sm transition">Registar Soltura</button>
-            </form>
-        </div>
-
-        <!-- FACÇÕES -->
-        <div id="sec-faccoes" class="aba-conteudo hidden space-y-4">
-            <h2 class="text-xl md:text-2xl font-black">Facções / Gangues</h2>
-            <form id="formFaccao" class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
-                <input type="text" id="fac_nome" required placeholder="Nome da Facção" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="fac_lider" required placeholder="Líder" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <input type="text" id="fac_territorio" required placeholder="Território" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm outline-none">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Registar</button>
-            </form>
-        </div>
-
-        <!-- RÁDIO -->
-        <div id="sec-radio" class="aba-conteudo hidden space-y-6">
-            <h2 class="text-xl md:text-2xl font-black">Rádio Tático (1000+ Canais)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <div class="flex gap-2">
-                        <input type="number" min="1" max="1000" id="inputCanalCustom" placeholder="Canal 1-1000" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-xs outline-none">
-                        <button onclick="mudarCanalCustom()" class="bg-blue-600 px-3 py-2 rounded-lg text-xs font-bold hover:bg-blue-500 transition">Ir</button>
-                    </div>
-                    <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                        <button onclick="mudarCanal('Canal 01 - Geral PM')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-300 font-bold text-xs">01. Geral PM</button>
-                        <button onclick="mudarCanal('Canal 03 - Polícia Civil')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">03. Polícia Civil</button>
-                        <button onclick="mudarCanal('Canal 10 - Alto Comando')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">10. Alto Comando</button>
-                        <button onclick="mudarCanal('Canal 100 - COPOM')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">100. COPOM</button>
-                    </div>
-                </div>
-
-                <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center space-y-4 md:col-span-2">
-                    <h3 id="lblCanal" class="text-base font-bold text-green-400">Canal 01 - Geral PM</h3>
-                    <button id="btnPTT" onmousedown="pttStart()" onmouseup="pttStop()" ontouchstart="pttStart()" ontouchend="pttStop()" 
-                        class="w-full py-5 bg-slate-800 border border-slate-700 text-white font-black rounded-xl text-xs select-none hover:bg-slate-700 transition">
-                        PRESSIONE PARA FALAR
-                    </button>
-                    <p id="micStatus" class="text-xs text-slate-500">Em Escuta</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- AUDITORIA -->
-        <div id="sec-auditoria" class="aba-conteudo hidden space-y-6">
-            <h2 class="text-xl md:text-2xl font-black text-amber-400">Auditoria Geral</h2>
-            <div id="listaAuditoria" class="space-y-3"></div>
-        </div>
-
-    </main>
-
-    <script>
+<script>
         const user = localStorage.getItem('cad_user_logado');
         const corp = localStorage.getItem('cad_corp_logada');
         const cargo = localStorage.getItem('cad_cargo_logado') || 'Agente';
@@ -301,13 +70,26 @@
             guardarAuditoria("PÂNICO", "Alerta ativado");
         }
         function fecharPanico() { localStorage.removeItem('cad_panico'); document.getElementById('panicoOverlay').classList.add('hidden'); }
+        
         setInterval(() => {
             let p = localStorage.getItem('cad_panico');
             if(p) { document.getElementById('textoPanico').textContent = p; document.getElementById('panicoOverlay').classList.remove('hidden'); }
         }, 1000);
 
+        // Ouve alterações no localStorage em tempo real (caso mude noutra aba ou dispositivo)
+        window.addEventListener('storage', (e) => {
+            atualizarStats();
+            if(!document.getElementById('sec-procurados').classList.contains('hidden')) {
+                carregarProcurados();
+            }
+            if(!document.getElementById('sec-auditoria').classList.contains('hidden')) {
+                carregarAuditoria();
+            }
+        });
+
+        // Valores padrão iniciais se não existirem
         if(!localStorage.getItem('cad_procurados')) {
-            localStorage.setItem('cad_procurados', JSON.stringify([{ id: 1, nome: "Carlos Mendes", crimes: "Tráfico", recompensa: "R$ 50k", foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" }]));
+            localStorage.setItem('cad_procurados', JSON.stringify([]));
         }
 
         document.getElementById('formProcurado').addEventListener('submit', function(e) {
@@ -327,11 +109,16 @@
 
         function carregarProcurados() {
             let p = JSON.parse(localStorage.getItem('cad_procurados') || '[]');
-            document.getElementById('grelhaProcurados').innerHTML = p.map(x => `
+            let grelha = document.getElementById('grelhaProcurados');
+            if(p.length === 0) {
+                grelha.innerHTML = `<p class="text-xs text-slate-500">Nenhum mandado ativo.</p>`;
+                return;
+            }
+            grelha.innerHTML = p.map(x => `
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                     <div class="flex items-center gap-3">
                         <img src="${x.foto}" class="w-12 h-12 rounded-lg object-cover">
-                        <div><h4 class="font-bold text-white">${x.nome}</h4><p class="text-slate-400">${x.crimes}</p></div>
+                        <div><h4 class="font-bold text-white">${x.nome}</h4><p class="text-slate-400">${x.crimes} - <span class="text-blue-400">${x.recompensa}</span></p></div>
                     </div>
                     <button onclick="apagarProcurado(${x.id})" class="bg-red-950 text-red-400 px-3 py-1.5 rounded-lg font-bold">Apagar</button>
                 </div>
@@ -354,6 +141,5 @@
         function pttStop() { document.getElementById('micStatus').textContent = "Em Escuta"; }
 
         atualizarStats();
+        carregarProcurados();
     </script>
-</body>
-</html>

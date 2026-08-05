@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD | Gestão de Agentes</title>
+    <title>CAD | Gestão de Agentes e Exonerações</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 p-10">
-    <div class="max-w-xl mx-auto space-y-6">
+<body class="bg-slate-950 text-slate-100 p-6 md:p-10">
+    <div class="max-w-3xl mx-auto space-y-6">
+        
+        <!-- CABEÇALHO -->
         <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-            <h1 class="text-2xl font-black text-red-500">Alto Comando - Gestão de Agentes</h1>
-            <a href="dashboard.html" class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-800">Voltar</a>
+            <div>
+                <h1 class="text-2xl font-black text-red-500">Alto Comando - Gestão de Agentes</h1>
+                <p class="text-xs text-slate-400 mt-0.5">Controlo de acessos, patentes e exonerações</p>
+            </div>
+            <a href="dashboard.html" class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 transition">Voltar ao CAD</a>
         </div>
 
+        <!-- FORMULÁRIO DE REGISTO -->
         <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 space-y-4">
-            <h2 class="font-bold text-blue-400 text-sm">Registar Novo Utilizador</h2>
-            <form id="formUser" class="space-y-3">
+            <h2 class="font-bold text-blue-400 text-sm">Registar Novo Utilizador / Militar</h2>
+            <form id="formUser" class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">Corporação</label>
                     <select id="u_corp" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm text-white outline-none">
@@ -31,44 +37,103 @@
                     <input type="text" id="u_nome" required placeholder="Ex: Soldado Mendes" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm text-white outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">Cargo</label>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">Cargo / Patente descritiva</label>
                     <input type="text" id="u_cargo" required placeholder="Ex: Capitão" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm text-white outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">Palavra-Passe</label>
                     <input type="password" id="u_senha" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm text-white outline-none">
                 </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Guardar Utilizador</button>
+                <div class="md:col-span-2 pt-2">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Autorizar e Registar Agente</button>
+                </div>
             </form>
         </div>
 
+        <!-- LISTA DE AGENTES REGISTADOS (PARA EXONERAÇÃO) -->
+        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 space-y-4">
+            <h2 class="font-bold text-amber-400 text-sm">Lista de Agentes Ativos no Sistema (Exoneração)</h2>
+            <p class="text-xs text-slate-400">Podes consultar quem tem acesso e remover contas de militares exonerados instantaneamente.</p>
+            
+            <div id="listaAgentes" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+                <!-- Preenchido via JavaScript -->
+            </div>
+        </div>
+
+        <!-- REPOR SISTEMA -->
         <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 flex justify-between items-center">
             <div>
-                <h2 class="font-bold text-red-400 text-sm">Repor Sistema</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Limpa todos os dados guardados.</p>
+                <h2 class="font-bold text-red-400 text-sm">Repor Sistema Completo</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Apaga todos os registos e dados guardados.</p>
             </div>
-            <button onclick="localStorage.clear(); alert('Sistema limpo!'); window.location.href='index.html';" class="bg-red-950 border border-red-900 text-red-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-red-900 transition">Limpar Dados</button>
+            <button onclick="limparTudo()" class="bg-red-950 border border-red-900 text-red-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-red-900 transition">Limpar Dados</button>
         </div>
     </div>
 
     <script>
+        // Verificar se é Admin
         if(localStorage.getItem('cad_corp_logada') !== 'ADMIN' && localStorage.getItem('cad_user_logado') !== 'admin') {
             window.location.href = 'dashboard.html';
         }
-        
+
+        function carregarListaAgentes() {
+            let users = JSON.parse(localStorage.getItem('cad_utilizadores') || '[]');
+            let container = document.getElementById('listaAgentes');
+
+            if(users.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500">Nenhum agente registado.</p>`;
+                return;
+            }
+
+            container.innerHTML = users.map((u, index) => `
+                <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl flex justify-between items-center text-xs">
+                    <div>
+                        <span class="font-bold text-white text-sm">${u.nome}</span> 
+                        <span class="text-blue-400 ml-2">[${u.corp}]</span>
+                        <p class="text-slate-400 text-[11px]">Cargo: ${u.cargo || 'Militar'} | Pass: <span class="text-slate-500">${u.senha}</span></p>
+                    </div>
+                    <button onclick="exonerarAgente(${index})" class="bg-red-950/60 border border-red-900 text-red-400 hover:bg-red-900 px-3 py-1.5 rounded-lg font-bold transition">
+                        Exonerar / Apagar
+                    </button>
+                </div>
+            `).join('');
+        }
+
         document.getElementById('formUser').addEventListener('submit', function(e) {
             e.preventDefault();
             let users = JSON.parse(localStorage.getItem('cad_utilizadores') || '[]');
+            
             users.push({ 
                 corp: document.getElementById('u_corp').value, 
-                nome: document.getElementById('u_nome').value, 
-                cargo: document.getElementById('u_cargo').value, 
+                nome: document.getElementById('u_nome').value.trim(), 
+                cargo: document.getElementById('u_cargo').value.trim(), 
                 senha: document.getElementById('u_senha').value 
             });
+
             localStorage.setItem('cad_utilizadores', JSON.stringify(users));
-            alert('Utilizador registado com sucesso!');
+            alert('Agente registado com sucesso!');
             this.reset();
+            carregarListaAgentes();
         });
+
+        function exonerarAgente(index) {
+            let users = JSON.parse(localStorage.getItem('cad_utilizadores') || '[]');
+            let removido = users.splice(index, 1);
+            localStorage.setItem('cad_utilizadores', JSON.stringify(users));
+            alert(`Agente ${removido[0].nome} foi exonerado e o acesso removido!`);
+            carregarListaAgentes();
+        }
+
+        function limparTudo() {
+            if(confirm('Tens a certeza que queres limpar todos os dados do sistema?')) {
+                localStorage.clear();
+                alert('Sistema limpo com sucesso!');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Carregar ao abrir a página
+        carregarListaAgentes();
     </script>
 </body>
 </html>

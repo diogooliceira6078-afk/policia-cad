@@ -10,10 +10,10 @@
 
     <!-- ALERTA DE PÂNICO GLOBAL -->
     <div id="panicoOverlay" class="hidden fixed inset-0 bg-red-600/30 backdrop-blur-sm z-50 flex items-center justify-center border-8 border-red-600 animate-pulse">
-        <div class="bg-red-950 border border-red-500 text-red-200 p-8 rounded-2xl text-center shadow-2xl">
+        <div class="bg-red-950 border border-red-500 text-red-200 p-8 rounded-2xl text-center shadow-2xl max-w-md">
             <h1 class="text-3xl font-black text-red-500 mb-2">⚠️ PÂNICO ATIVADO ⚠️</h1>
             <p id="textoPanico" class="text-sm font-bold mb-4"></p>
-            <button onclick="fecharPanico()" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-2 rounded-xl text-xs">Desarmar</button>
+            <button onclick="fecharPanico()" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-2 rounded-xl text-xs">Desarmar Alerta</button>
         </div>
     </div>
 
@@ -31,20 +31,20 @@
                 <button onclick="mudarAba('inicio')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium bg-slate-800 text-blue-400" id="btn-inicio">📊 Início</button>
                 <button onclick="mudarAba('procurados')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-procurados">🚨 Procurados</button>
                 <button onclick="mudarAba('prisoes')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-prisoes">🔒 Prisões</button>
-                <button onclick="mudarAba('veiculos')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-veiculos">🚗 Veículos Apreendidos</button>
-                <button onclick="mudarAba('radio')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-radio">📻 Rádio PTT</button>
+                <button onclick="mudarAba('veiculos')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-veiculos">🚗 Veículos</button>
+                <button onclick="mudarAba('radio')" class="nav-btn w-full text-left px-4 py-2.5 rounded-xl hover:bg-slate-800 text-sm font-medium" id="btn-radio">📻 Rádio (Vários Canais)</button>
                 <div class="pt-4 border-t border-slate-800 space-y-2">
-                    <button onclick="acionarPanico()" class="w-full py-2.5 bg-red-600/20 border border-red-500/40 text-red-400 font-bold text-xs rounded-xl">🚨 BOTÃO DE PÂNICO</button>
-                    <a href="admin.html" id="btnAdmin" class="hidden block text-center py-2.5 bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs rounded-xl">⚙️ Alto Comando</a>
+                    <button onclick="acionarPanico()" class="w-full py-2.5 bg-red-600/20 border border-red-500/40 text-red-400 font-bold text-xs rounded-xl hover:bg-red-600/30">🚨 BOTÃO DE PÂNICO</button>
+                    <a href="admin.html" id="btnAdmin" class="hidden block text-center py-2.5 bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs rounded-xl hover:bg-slate-800">⚙️ Alto Comando</a>
                 </div>
             </nav>
         </div>
         <div class="border-t border-slate-800 pt-3 flex justify-between items-center text-xs">
             <div>
-                <p id="userName" class="font-bold"></p>
+                <p id="userName" class="font-bold text-white"></p>
                 <p id="userCargo" class="text-blue-400"></p>
             </div>
-            <button onclick="logout()" class="text-red-400 font-bold px-2.5 py-1 bg-red-950/50 rounded-lg">Sair</button>
+            <button onclick="logout()" class="text-red-400 font-bold px-3 py-1.5 bg-red-950/60 border border-red-900 rounded-lg hover:bg-red-900 transition">Sair</button>
         </div>
     </aside>
 
@@ -70,10 +70,12 @@
             </div>
         </div>
 
-        <!-- PROCURADOS -->
-        <div id="sec-procurados" class="aba-conteudo hidden space-y-4">
-            <h2 class="text-2xl font-black">Galeria de Procurados</h2>
-            <div id="grelhaProcurados" class="grid grid-cols-2 gap-4"></div>
+        <!-- PROCURADOS (COM FOTOS) -->
+        <div id="sec-procurados" class="aba-conteudo hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-black">Galeria de Procurados</h2>
+            </div>
+            <div id="grelhaProcurados" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
         </div>
 
         <!-- PRISÕES -->
@@ -82,8 +84,8 @@
             <form id="formPrisao" class="bg-slate-900 p-6 rounded-xl border border-slate-800 max-w-xl space-y-3">
                 <input type="text" id="p_nome" required placeholder="Nome do Detido" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
                 <input type="text" id="p_crimes" required placeholder="Crimes Cometidos" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
-                <input type="text" id="p_pena" required placeholder="Tempo de Pena" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
-                <button type="submit" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-sm">Registar Prisão</button>
+                <input type="text" id="p_pena" required placeholder="Tempo de Pena / Multa" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Registar Prisão</button>
             </form>
         </div>
 
@@ -94,25 +96,36 @@
                 <input type="text" id="v_modelo" required placeholder="Modelo (Ex: Sultan)" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
                 <input type="text" id="v_placa" required placeholder="Matrícula (Ex: ABC1234)" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
                 <input type="text" id="v_motivo" required placeholder="Motivo da Apreensão" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
-                <button type="submit" class="w-full bg-orange-600 py-3 rounded-xl font-bold text-sm">Registar Apreensão</button>
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-500 py-3 rounded-xl font-bold text-sm transition">Registar Apreensão</button>
             </form>
-            <div id="listaVeiculos" class="space-y-2 max-w-xl"></div>
+            <div id="listaVeiculos" class="space-y-2 max-w-xl pt-2"></div>
         </div>
 
-        <!-- RÁDIO PTT -->
+        <!-- RÁDIO (MUITOS CANAIS) -->
         <div id="sec-radio" class="aba-conteudo hidden space-y-6">
-            <h2 class="text-2xl font-black">Rádio Walkie-Talkie (PTT)</h2>
-            <div class="bg-slate-900 p-8 rounded-xl border border-slate-800 max-w-xl text-center space-y-4">
-                <p class="text-sm">Canal Ativo: <b id="lblCanal" class="text-green-400">Canal 1 - Geral</b></p>
-                <div class="flex gap-2 justify-center">
-                    <button onclick="mudarCanal('Canal 1 - Geral')" class="px-4 py-2 bg-blue-600/20 border border-blue-500 rounded-xl text-xs font-bold text-blue-300">Canal 1</button>
-                    <button onclick="mudarCanal('Canal 2 - Tático')" class="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold">Canal 2</button>
+            <h2 class="text-2xl font-black">Rede de Rádio Multicanal</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+                    <h3 class="text-sm font-bold text-blue-400">Selecionar Frequência</h3>
+                    <div class="space-y-1.5 max-h-[300px] overflow-y-auto pr-1">
+                        <button onclick="mudarCanal('Canal 1 - Geral PM')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-300 font-bold text-xs">Canal 1: Geral PM</button>
+                        <button onclick="mudarCanal('Canal 2 - Tático / Operações')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 2: Tático / Operações</button>
+                        <button onclick="mudarCanal('Canal 3 - Polícia Civil')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 3: Polícia Civil</button>
+                        <button onclick="mudarCanal('Canal 4 - Polícia Federal')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 4: Polícia Federal</button>
+                        <button onclick="mudarCanal('Canal 5 - Rota / Choque')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 5: Rota / Choque</button>
+                        <button onclick="mudarCanal('Canal 6 - Alto Comando')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 6: Alto Comando</button>
+                        <button onclick="mudarCanal('Canal 7 - Perseguição Alfa')" class="canal-tab w-full text-left px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-bold text-xs">Canal 7: Perseguição Alfa</button>
+                    </div>
                 </div>
-                <button id="btnPTT" onmousedown="pttStart()" onmouseup="pttStop()" ontouchstart="pttStart()" ontouchend="pttStop()" 
-                    class="w-full py-6 bg-slate-800 border border-slate-700 hover:bg-blue-600 text-white font-black rounded-xl text-sm transition select-none">
-                    PRESSIONE PARA FALAR
-                </button>
-                <p id="micStatus" class="text-xs text-slate-500">Microfone Desligado</p>
+
+                <div class="md:col-span-2 bg-slate-900 p-8 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center space-y-4">
+                    <p class="text-xs text-slate-400">Frequência Atual: <b id="lblCanal" class="text-green-400">Canal 1 - Geral PM</b></p>
+                    <button id="btnPTT" onmousedown="pttStart()" onmouseup="pttStop()" ontouchstart="pttStart()" ontouchend="pttStop()" 
+                        class="w-full max-w-sm py-6 bg-slate-800 border border-slate-700 hover:bg-blue-600 text-white font-black rounded-xl text-sm transition select-none cursor-pointer shadow-xl">
+                        PRESSIONE PARA FALAR (PTT)
+                    </button>
+                    <p id="micStatus" class="text-xs text-slate-500">Microfone em Escuta</p>
+                </div>
             </div>
         </div>
 
@@ -127,6 +140,13 @@
         document.getElementById('userCargo').textContent = localStorage.getItem('cad_cargo_logado') || 'Agente';
         document.getElementById('infoCorp').textContent = `Divisão: ${corp}`;
         if(corp === 'ADMIN' || user === 'admin') document.getElementById('btnAdmin').classList.remove('hidden');
+
+        function logout() {
+            localStorage.removeItem('cad_user_logado');
+            localStorage.removeItem('cad_corp_logada');
+            localStorage.removeItem('cad_cargo_logado');
+            window.location.href = 'index.html';
+        }
 
         function mudarAba(id) {
             document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.add('hidden'));
@@ -147,7 +167,7 @@
         function mostrarToast(msg) {
             const c = document.getElementById('toastContainer');
             const t = document.createElement('div');
-            t.className = 'p-3 bg-green-950 border border-green-500 text-green-200 text-xs font-bold rounded-xl shadow-lg';
+            t.className = 'p-3 bg-slate-900 border border-slate-700 text-slate-100 text-xs font-bold rounded-xl shadow-lg';
             t.textContent = msg;
             c.appendChild(t);
             setTimeout(() => t.remove(), 3000);
@@ -167,16 +187,26 @@
             }
         }, 1000);
 
-        // PROCURADOS
+        // PROCURADOS COM FOTOS
         if(!localStorage.getItem('cad_procurados')) {
             localStorage.setItem('cad_procurados', JSON.stringify([
-                { nome: "Carlos Mendes", crimes: "Tráfico", recompensa: "R$ 50.000" }
+                { nome: "Carlos Mendes", crimes: "Tráfico de Armas e Homicídio", recompensa: "R$ 50.000", foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=60" },
+                { nome: "Ana Rodrigues", crimes: "Assalto a Banco e Sequestro", recompensa: "R$ 80.000", foto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=60" }
             ]));
         }
         function carregarProcurados() {
             let p = JSON.parse(localStorage.getItem('cad_procurados') || '[]');
             let g = document.getElementById('grelhaProcurados');
-            g.innerHTML = p.map(x => `<div class="bg-slate-900 p-4 rounded-xl border border-slate-800"><h4 class="font-bold text-white">${x.nome}</h4><p class="text-xs text-slate-400">Crimes: ${x.crimes}</p><p class="text-xs text-green-400 mt-1">${x.recompensa}</p></div>`).join('');
+            g.innerHTML = p.map(x => `
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex gap-4 items-center">
+                    <img src="${x.foto || 'https://via.placeholder.com/150'}" class="w-20 h-20 rounded-lg object-cover border border-slate-700" alt="Foto">
+                    <div>
+                        <h4 class="font-bold text-white text-sm">${x.nome}</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">Crimes: ${x.crimes}</p>
+                        <p class="text-xs text-green-400 font-bold mt-1">Recompensa: ${x.recompensa}</p>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // PRISÕES
@@ -203,24 +233,24 @@
         function carregarVeiculos() {
             let veic = JSON.parse(localStorage.getItem('cad_veiculos') || '[]');
             let d = document.getElementById('listaVeiculos');
-            d.innerHTML = veic.map(v => `<div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs"><b class="text-orange-400">${v.modelo}</b> (${v.placa}) — Motivo: ${v.motivo}</div>`).join('');
+            d.innerHTML = veic.map(v => `<div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs flex justify-between"><span><b class="text-orange-400">${v.modelo}</b> (${v.placa})</span><span class="text-slate-400">${v.motivo}</span></div>`).join('');
         }
 
         // RÁDIO PTT
         function mudarCanal(c) {
             document.getElementById('lblCanal').textContent = c;
-            mostrarToast("Mudou para: " + c);
+            mostrarToast("Frequência alterada para: " + c);
         }
         async function pttStart() {
-            document.getElementById('micStatus').textContent = "A Transmitir...";
+            document.getElementById('micStatus').textContent = "A Transmitir na Frequência...";
             document.getElementById('micStatus').className = "text-xs text-green-400 font-bold";
-            document.getElementById('btnPTT').className = "w-full py-6 bg-red-600 border border-red-500 text-white font-black rounded-xl text-sm transition select-none";
+            document.getElementById('btnPTT').className = "w-full max-w-sm py-6 bg-red-600 border border-red-500 text-white font-black rounded-xl text-sm transition select-none shadow-xl";
             try { await navigator.mediaDevices.getUserMedia({ audio: true }); } catch(e) {}
         }
         function pttStop() {
-            document.getElementById('micStatus').textContent = "Microfone Desligado";
+            document.getElementById('micStatus').textContent = "Microfone em Escuta";
             document.getElementById('micStatus').className = "text-xs text-slate-500";
-            document.getElementById('btnPTT').className = "w-full py-6 bg-slate-800 border border-slate-700 hover:bg-blue-600 text-white font-black rounded-xl text-sm transition select-none";
+            document.getElementById('btnPTT').className = "w-full max-w-sm py-6 bg-slate-800 border border-slate-700 hover:bg-blue-600 text-white font-black rounded-xl text-sm transition select-none shadow-xl";
         }
 
         atualizarStats();

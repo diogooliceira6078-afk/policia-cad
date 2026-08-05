@@ -65,31 +65,36 @@
         <h2>Central Policial - CAD</h2>
         <p class="subtitulo">Insira as suas credenciais para aceder.</p>
 
-        <form id="loginForm">
+        <!-- Removido qualquer atributo action para evitar submissão indesejada -->
+        <form id="loginForm" onsubmit="return false;">
             <div class="input-group">
                 <label>Nome</label>
-                <input type="text" id="loginUser" placeholder="Nome" required>
+                <input type="text" id="loginUser" placeholder="Nome" required autocomplete="off">
             </div>
 
             <div class="input-group">
                 <label>Sua senha</label>
-                <input type="password" id="loginPass" placeholder="Sua senha" required>
+                <input type="password" id="loginPass" placeholder="Sua senha" required autocomplete="off">
             </div>
 
-            <button type="submit" class="btn-main">Entrar no Sistema CAD</button>
+            <button type="button" id="btnLogin" class="btn-main">Entrar no Sistema CAD</button>
         </form>
 
         <a class="link-voltar" href="index.html">← Voltar à Central Pública de Emergência</a>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Impede que a página faça refresh automático para trás
-            
+        // Usamos click direto no botão para evitar o comportamento nativo de form submit que causa o refresh/voltar atrás
+        document.getElementById('btnLogin').addEventListener('click', function() {
             const user = document.getElementById('loginUser').value.trim().toLowerCase();
             const pass = document.getElementById('loginPass').value.trim();
             
-            // Conta Master fixa direta para garantir acesso imediato sem falhas
+            if (!user || !pass) {
+                alert('Por favor, preencha o nome e a senha.');
+                return;
+            }
+
+            // Conta Master fixa de teste para roleplay
             if (user === 'proenca' && pass === '6323') {
                 const dadosMaster = {
                     corporacao: "Polícia Civil",

@@ -13,12 +13,32 @@
             <a href="dashboard.html" class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-800">Voltar</a>
         </div>
 
+        <!-- Painel para Criar Utilizador com Escolha de Corporação -->
         <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 space-y-4">
             <h2 class="font-bold text-blue-400 text-sm">Registar Novo Utilizador</h2>
             <form id="formUser" class="space-y-3">
-                <input type="text" id="u_nome" required placeholder="Nome do Agente" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
-                <input type="text" id="u_cargo" required placeholder="Cargo (Ex: Capitão)" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
-                <input type="password" id="u_senha" required placeholder="Palavra-Passe" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">Corporação</label>
+                    <select id="u_corp" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm text-white outline-none">
+                        <option value="PM">Polícia Militar (PM)</option>
+                        <option value="PC">Polícia Civil (PC)</option>
+                        <option value="PF">Polícia Federal (PF)</option>
+                        <option value="PRF">PRF</option>
+                        <option value="ADMIN">Alto Comando</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">Nome / Patente</label>
+                    <input type="text" id="u_nome" required placeholder="Ex: Soldado Mendes" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">Cargo</label>
+                    <input type="text" id="u_cargo" required placeholder="Ex: Capitão" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">Palavra-Passe</label>
+                    <input type="password" id="u_senha" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm text-white outline-none">
+                </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm transition">Guardar Utilizador</button>
             </form>
         </div>
@@ -36,10 +56,16 @@
         if(localStorage.getItem('cad_corp_logada') !== 'ADMIN' && localStorage.getItem('cad_user_logado') !== 'admin') {
             window.location.href = 'dashboard.html';
         }
+        
         document.getElementById('formUser').addEventListener('submit', function(e) {
             e.preventDefault();
             let users = JSON.parse(localStorage.getItem('cad_utilizadores') || '[]');
-            users.push({ corp: "PM", nome: document.getElementById('u_nome').value, cargo: document.getElementById('u_cargo').value, senha: document.getElementById('u_senha').value });
+            users.push({ 
+                corp: document.getElementById('u_corp').value, 
+                nome: document.getElementById('u_nome').value, 
+                cargo: document.getElementById('u_cargo').value, 
+                senha: document.getElementById('u_senha').value 
+            });
             localStorage.setItem('cad_utilizadores', JSON.stringify(users));
             alert('Utilizador registado com sucesso!');
             this.reset();

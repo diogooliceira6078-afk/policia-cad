@@ -3,122 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD | Alto Comando & Auditoria</title>
+    <title>CAD | Painel Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: { extend: { colors: { police: { 900: '#0f172a', 950: '#090d16' } } } }
-        }
-    </script>
 </head>
-<body class="bg-police-950 text-slate-100 p-10 font-sans">
-    <div class="max-w-5xl mx-auto space-y-8">
-        
-        <header class="flex justify-between items-center border-b border-slate-800/80 pb-6">
-            <div>
-                <h1 class="text-3xl font-black text-red-500 tracking-tight">Painel do Alto Comando</h1>
-                <p class="text-slate-400 text-sm mt-1">Área confidencial de gestão de pessoal e auditoria do sistema.</p>
-            </div>
-            <a href="dashboard.html" class="bg-police-900 hover:bg-slate-800 border border-slate-800 px-5 py-2.5 rounded-xl font-bold text-sm transition shadow-lg">Voltar ao CAD</a>
-        </header>
+<body class="bg-slate-950 text-slate-100 p-10">
+    <div class="max-w-2xl mx-auto space-y-6">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+            <h1 class="text-2xl font-black text-red-500">Alto Comando</h1>
+            <a href="dashboard.html" class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-xs font-bold">Voltar</a>
+        </div>
 
-        <!-- SECÇÃO 1: GERIR CONTAS -->
-        <section class="bg-police-900 p-8 rounded-2xl border border-slate-800/80 shadow-xl">
-            <h2 class="text-xl font-bold mb-4 text-blue-400">Registar Credenciais de Membro</h2>
-            <form id="formAddUser" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <select id="adm_corp" class="bg-police-950 border border-slate-800 rounded-xl p-3 text-sm text-white">
-                    <option value="PM">Polícia Militar (PM)</option>
-                    <option value="PC">Polícia Civil (PC)</option>
-                    <option value="PF">Polícia Federal (PF)</option>
-                    <option value="PRF">PRF</option>
-                    <option value="ADMIN">Alto Comando</option>
-                </select>
-                <input type="text" id="adm_nome" required placeholder="Nome do Agente" class="bg-police-950 border border-slate-800 rounded-xl p-3 text-sm text-white">
-                <input type="text" id="adm_cargo" required placeholder="Cargo (Ex: Coronel)" class="bg-police-950 border border-slate-800 rounded-xl p-3 text-sm text-white">
-                <input type="password" id="adm_senha" required placeholder="Palavra-Passe" class="bg-police-950 border border-slate-800 rounded-xl p-3 text-sm text-white">
-                <button type="submit" class="md:col-span-4 bg-blue-600 hover:bg-blue-500 font-bold p-3.5 rounded-xl text-sm transition shadow-lg shadow-blue-600/20">Guardar Credenciais</button>
+        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 space-y-4">
+            <h2 class="font-bold text-blue-400">Registar Novo Utilizador</h2>
+            <form id="formUser" class="space-y-3">
+                <input type="text" id="u_nome" required placeholder="Nome do Agente" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                <input type="text" id="u_cargo" required placeholder="Cargo (Ex: Capitão)" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                <input type="password" id="u_senha" required placeholder="Palavra-Passe" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm">
+                <button type="submit" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-sm">Guardar Utilizador</button>
             </form>
-        </section>
+        </div>
 
-        <!-- SECÇÃO 2: PESQUISAR ATIVIDADE POR AGENTE -->
-        <section class="bg-police-900 p-8 rounded-2xl border border-slate-800/80 shadow-xl">
-            <h2 class="text-xl font-bold mb-4 text-blue-400">Auditoria de Atividade por Agente</h2>
-            <div class="flex gap-4 mb-4">
-                <input type="text" id="inputPesquisaAgente" placeholder="Nome exato do agente (Ex: Soldado Silva)" class="flex-1 bg-police-950 border border-slate-800 rounded-xl p-3 text-sm text-white">
-                <button onclick="pesquisarAtividadeAgente()" class="bg-green-600 hover:bg-green-500 font-bold px-6 py-3 rounded-xl text-sm transition shadow-lg shadow-green-600/20">Pesquisar</button>
+        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 flex justify-between items-center">
+            <div>
+                <h2 class="font-bold text-red-400">Repor Sistema</h2>
+                <p class="text-xs text-slate-400">Apaga todos os dados guardados.</p>
             </div>
-            <div id="resultadoPesquisaAgente" class="bg-police-950 p-5 rounded-xl border border-slate-800 text-sm text-slate-300 min-h-[120px] max-h-60 overflow-y-auto space-y-3">
-                <span class="text-slate-500">As prisões e intervenções do agente selecionado aparecerão aqui.</span>
-            </div>
-        </section>
-
-        <!-- SECÇÃO 3: LOGS GLOBAIS -->
-        <section class="bg-police-900 p-8 rounded-2xl border border-slate-800/80 shadow-xl">
-            <h2 class="text-xl font-bold mb-4 text-red-400">Registo Global de Logs (Audit Trail)</h2>
-            <div id="caixaLogs" class="bg-police-950 p-5 rounded-xl border border-slate-800 font-mono text-xs text-green-400 space-y-1.5 h-60 overflow-y-auto shadow-inner"></div>
-        </section>
-
+            <button onclick="localStorage.clear(); alert('Reposto!'); window.location.href='index.html';" class="bg-red-950 border border-red-900 text-red-300 font-bold px-4 py-2 rounded-xl text-xs">Limpar Dados</button>
+        </div>
     </div>
 
     <script>
-        const corpLogada = localStorage.getItem('cad_corp_logada');
-        const userLogado = localStorage.getItem('cad_user_logado');
-        if (corpLogada !== 'ADMIN' && userLogado?.toLowerCase() !== 'admin') {
-            alert('Acesso restrito ao Alto Comando!');
+        if(localStorage.getItem('cad_corp_logada') !== 'ADMIN' && localStorage.getItem('cad_user_logado') !== 'admin') {
             window.location.href = 'dashboard.html';
         }
-
-        document.getElementById('formAddUser').addEventListener('submit', function(e) {
+        document.getElementById('formUser').addEventListener('submit', function(e) {
             e.preventDefault();
             let users = JSON.parse(localStorage.getItem('cad_utilizadores') || '[]');
-            users.push({
-                corp: document.getElementById('adm_corp').value,
-                nome: document.getElementById('adm_nome').value,
-                cargo: document.getElementById('adm_cargo').value,
-                senha: document.getElementById('adm_senha').value
-            });
+            users.push({ corp: "PM", nome: document.getElementById('u_nome').value, cargo: document.getElementById('u_cargo').value, senha: document.getElementById('u_senha').value });
             localStorage.setItem('cad_utilizadores', JSON.stringify(users));
-            alert('Credenciais registadas com sucesso!');
+            alert('Utilizador registado!');
             this.reset();
         });
-
-        function pesquisarAtividadeAgente() {
-            let nomeBusca = document.getElementById('inputPesquisaAgente').value.trim().toLowerCase();
-            let container = document.getElementById('resultadoPesquisaAgente');
-            container.innerHTML = '';
-
-            if(!nomeBusca) {
-                container.innerHTML = '<span class="text-red-400">Introduza o nome do agente.</span>';
-                return;
-            }
-
-            let prisoes = JSON.parse(localStorage.getItem('cad_historico_prisoes') || '[]');
-            let filtradas = prisoes.filter(p => p.agente.toLowerCase().includes(nomeBusca));
-
-            if(filtradas.length === 0) {
-                container.innerHTML = `<span class="text-slate-500">Nenhum registo encontrado para "${nomeBusca}".</span>`;
-                return;
-            }
-
-            filtradas.forEach(p => {
-                container.innerHTML += `
-                    <div class="bg-police-900 p-4 rounded-xl border border-slate-800 shadow-sm">
-                        <p class="text-blue-400 font-bold">Detido: ${p.nome} (ID: ${p.idCidadao})</p>
-                        <p class="text-xs text-slate-400 mt-1">Crimes: ${p.crimes} | Pena: ${p.pena} | Multa: ${p.multa}</p>
-                        <p class="text-[10px] text-slate-500 mt-1">${p.data} — Divisão: ${p.corp}</p>
-                    </div>
-                `;
-            });
-        }
-
-        function carregarLogs() {
-            let logs = JSON.parse(localStorage.getItem('cad_logs') || '[]');
-            let caixa = document.getElementById('caixaLogs');
-            caixa.innerHTML = logs.length === 0 ? '<p class="text-slate-500">Sem logs registados.</p>' : logs.map(l => `<p>${l}</p>`).join('');
-        }
-
-        carregarLogs();
     </script>
 </body>
 </html>

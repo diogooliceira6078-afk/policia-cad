@@ -3,55 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD Policial - Login</title>
+    <title>CAD Policial Unificado - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-white flex items-center justify-center h-screen">
+<body class="bg-slate-950 text-white flex items-center justify-center h-screen">
 
-    <div class="bg-slate-800 p-8 rounded-xl shadow-2xl w-96 border border-slate-700">
-        <h1 class="text-2xl font-bold text-center mb-6 text-blue-400">CAD POLICIAL UNIFICADO</h1>
+    <div class="bg-slate-900 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-800">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-black text-blue-500 tracking-wider">CAD POLICIAL</h1>
+            <p class="text-xs text-slate-400 mt-1">Sistema Integrado de Segurança Pública (PM | PC | PF | PRF)</p>
+        </div>
         
-        <div id="erroMsg" class="hidden bg-red-900/50 border border-red-500 text-red-300 p-2 rounded mb-4 text-sm text-center"></div>
+        <div id="erroMsg" class="hidden bg-red-950/80 border border-red-600 text-red-300 p-3 rounded-lg mb-4 text-sm text-center font-semibold"></div>
 
         <form id="loginForm" class="space-y-4">
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Corporação</label>
-                <select id="corporacao" class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Corporação</label>
+                <select id="corporacao" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500">
                     <option value="PM">Polícia Militar (PM)</option>
                     <option value="PC">Polícia Civil (PC)</option>
                     <option value="PF">Polícia Federal (PF)</option>
                     <option value="PRF">Polícia Rodoviária Federal (PRF)</option>
-                    <option value="ADMIN">Alto Comando / Admin</option>
+                    <option value="ADMIN">Alto Comando / Administração</option>
                 </select>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Nome / Identificação</label>
-                <input type="text" id="nome" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white" placeholder="Ex: Soldado Silva">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Nome / Identificação</label>
+                <input type="text" id="nome" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500" placeholder="Ex: Soldado Silva ou admin">
             </div>
 
-            <div class="mb-6">
-                <label class="block text-sm font-medium mb-1">Palavra-Passe</label>
-                <input type="password" id="senha" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white" placeholder="••••••••">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Palavra-Passe</label>
+                <input type="password" id="senha" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500" placeholder="••••••••">
             </div>
 
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-2 rounded transition">Entrar no CAD</button>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold p-3 rounded-lg transition shadow-lg shadow-blue-600/30">Aceder ao Sistema</button>
         </form>
 
-        <div class="mt-4 text-xs text-slate-400 text-center">
-            <p>Admin de teste: Nome: <b>admin</b> | Pass: <b>6323</b></p>
+        <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-500 text-center">
+            <p>Admin padrão de teste: Pass: <b class="text-slate-300">6323</b> (Nome: admin)</p>
         </div>
     </div>
 
     <script>
-        // Base de dados simulada de utilizadores e passes por corporação
-        const utilizadoresValidos = [
-            { corp: "ADMIN", nome: "admin", senha: "6323", cargo: "Alto Comando" },
-            { corp: "PM", nome: "Soldado Silva", senha: "123", cargo: "Soldado PM" },
-            { corp: "PC", nome: "Inspetor Santos", senha: "123", cargo: "Inspetor PC" },
-            { corp: "PF", nome: "Agente Costa", senha: "123", cargo: "Agente Federal" },
-            { corp: "PRF", nome: "Patrulheiro Oliveira", senha: "123", cargo: "Patrulheiro PRF" }
-        ];
+        // Inicializar dados padrão no localStorage se não existirem
+        if (!localStorage.getItem('cad_utilizadores')) {
+            const utilizadoresIniciais = [
+                { corp: "ADMIN", nome: "admin", senha: "6323", cargo: "Alto Comando" },
+                { corp: "PM", nome: "Soldado Silva", senha: "123", cargo: "Soldado" },
+                { corp: "PC", nome: "Inspetor Santos", senha: "123", cargo: "Inspetor" },
+                { corp: "PF", nome: "Agente Costa", senha: "123", cargo: "Agente Federal" },
+                { corp: "PRF", nome: "Patrulheiro Oliveira", senha: "123", cargo: "Patrulheiro" }
+            ];
+            localStorage.setItem('cad_utilizadores', JSON.stringify(utilizadoresIniciais));
+        }
+
+        if (!localStorage.getItem('cad_procurados')) {
+            const procuradosIniciais = [
+                { id: 1, nome: "Carlos 'Falcão' Mendes", foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400", crimes: "Tráfico de Armas, Homicídio", periculosidade: "Extrema", recompensa: "R$ 50.000" },
+                { id: 2, nome: "Ana 'Viper' Souza", foto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400", crimes: "Assalto a Banco, Formação de Quadrilha", periculosidade: "Alta", recompensa: "R$ 25.000" }
+            ];
+            localStorage.setItem('cad_procurados', JSON.stringify(procuradosIniciais));
+        }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -60,27 +74,35 @@
             const corpInput = document.getElementById('corporacao').value;
             const erroDiv = document.getElementById('erroMsg');
 
-            // Verificar se as credenciais batem certo
-            const utilizadorEncontrado = utilizadoresValidos.find(u => 
-                u.corp === corpInput && 
+            const dbUsers = JSON.parse(localStorage.getItem('cad_utilizadores'));
+            const userEncontrado = dbUsers.find(u => 
+                u.corp.toUpperCase() === corpInput.toUpperCase() && 
                 u.nome.toLowerCase() === nomeInput.toLowerCase() && 
                 u.senha === senhaInput
             );
 
-            // Permissão especial para qualquer um usar a pass '6323' no perfil de Admin
-            if ((corpInput === "ADMIN" && nomeInput.toLowerCase() === "admin" && senhaInput === "6323") || utilizadorEncontrado) {
-                const dadosUser = utilizadorEncontrado || { nome: nomeInput, corp: corpInput, cargo: "Comando" };
+            if (userEncontrado || (corpInput === "ADMIN" && nomeInput.toLowerCase() === "admin" && senhaInput === "6323")) {
+                const dados = userEncontrado || { nome: nomeInput, corp: corpInput, cargo: "Alto Comando" };
                 
-                localStorage.setItem('cad_user', dadosUser.nome);
-                localStorage.setItem('cad_corp', dadosUser.corp);
-                localStorage.setItem('cad_cargo', dadosUser.cargo);
-                
+                localStorage.setItem('cad_user_logado', dados.nome);
+                localStorage.setItem('cad_corp_logada', dados.corp);
+                localStorage.setItem('cad_cargo_logado', dados.cargo);
+
+                // Registar Log
+                registarLog(`Utilizador ${dados.nome} (${dados.corp}) efetuou login.`);
+
                 window.location.href = 'dashboard.html';
             } else {
-                erroDiv.textContent = "Nome, corporação ou palavra-passe incorretos!";
+                erroDiv.textContent = "Credenciais inválidas! Verifique o nome, corporação ou palavra-passe.";
                 erroDiv.classList.remove('hidden');
             }
         });
+
+        function registarLog(texto) {
+            let logs = JSON.parse(localStorage.getItem('cad_logs') || '[]');
+            logs.unshift(`[${new Date().toLocaleString()}] ${texto}`);
+            localStorage.setItem('cad_logs', JSON.stringify(logs));
+        }
     </script>
 </body>
 </html>

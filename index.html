@@ -3,643 +3,534 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MDT / CAD Avançado - Polícia Civil</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="painel-body">
+    <title>CAD - Central de Operações Policiais</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #090d16; color: #f8fafc; min-height: 100vh; }
+        
+        /* ECRÃ DE LOGIN / PÚBLICO */
+        .public-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .box { background-color: #111827; padding: 30px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #1f2937; }
+        h2 { color: #3b82f6; text-align: center; margin-bottom: 5px; font-size: 22px; }
+        p { text-align: center; color: #9ca3af; font-size: 13px; margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; color: #d1d5db; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 12px; background-color: #030712; border: 1px solid #374151; border-radius: 6px; color: #fff; font-size: 14px; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; }
+        button.btn-main { width: 100%; padding: 12px; background-color: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        button.btn-main:hover { background-color: #1d4ed8; }
+        .link-alternativo { display: block; text-align: center; margin-top: 15px; color: #60a5fa; font-size: 13px; text-decoration: none; cursor: pointer; }
+        .link-alternativo:hover { text-decoration: underline; }
+        #sucessoCli { color: #22c55e; font-size: 13px; text-align: center; margin-top: 15px; display: none; font-weight: bold; }
+        .credenciais-info { background: #1f2937; padding: 10px; border-radius: 6px; font-size: 11px; color: #93c5fd; margin-bottom: 15px; line-height: 1.4; }
 
-    <div class="sidebar">
-        <h2>POLÍCIA CIVIL / RP</h2>
-        <p id="sidebarAgente" class="user-cargo">Agente: A carregar...</p>
-        <hr style="border-color: #1f293d; margin: 15px 0;">
-        <ul>
-            <li><a href="#" class="active" onclick="mudarAba('mdt')">🔍 Consulta MDT & Ficha</a></li>
-            <li><a href="#" onclick="mudarAba('prisao')">📝 Registar Prisão & Pena</a></li>
-            <li><a href="#" onclick="mudarAba('multas')">💵 Passar Multa Isolada</a></li>
-            <li><a href="#" onclick="mudarAba('mandados')">🚨 Mandados Ativos</a></li>
-            <li><a href="#" onclick="mudarAba('veiculos')">🚗 Garagem & Veículos</a></li>
-            <li><a href="#" onclick="mudarAba('investigacao')">📁 Registar Investigação</a></li>
-            <li><a href="#" onclick="mudarAba('ponto')">⏱️ Bater Ponto (Turno)</a></li>
-            <li><a href="#" onclick="mudarAba('altocomando')">⭐ Zona do Alto Comando</a></li>
-            <li><a href="#" onclick="mudarAba('membros')">👥 Oficiais Online & Gestão</a></li>
-        </ul>
-        <div style="margin-top: auto;">
-            <a href="login.html" class="btn-sair" onclick="localStorage.removeItem('agenteLogado')">Sair do Sistema</a>
+        /* PAINEL OPERACIONAL / CAD */
+        #painelAdmin { display: none; flex-direction: column; }
+        @media(min-width: 768px) { #painelAdmin { flex-direction: row; } }
+        
+        .sidebar { background-color: #111827; width: 100%; padding: 15px; border-bottom: 1px solid #1f2937; display: flex; flex-direction: column; justify-content: space-between; }
+        @media(min-width: 768px) { .sidebar { width: 280px; height: 100vh; position: fixed; border-bottom: none; border-right: 1px solid #1f2937; } }
+        
+        .sidebar h2 { font-size: 16px; margin-bottom: 5px; text-align: center; color: #3b82f6; }
+        .user-info { font-size: 12px; color: #60a5fa; text-align: center; margin-bottom: 15px; font-weight: bold; }
+        .menu-list { list-style: none; display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+        @media(min-width: 768px) { .menu-list { flex-direction: column; } }
+        
+        .menu-list li a { display: block; padding: 8px 12px; color: #d1d5db; text-decoration: none; border-radius: 6px; font-size: 13px; transition: 0.2s; background-color: #030712; }
+        @media(min-width: 768px) { .menu-list li a { background-color: transparent; } }
+        .menu-list li a:hover, .menu-list li a.active { background-color: #2563eb; color: #fff; font-weight: bold; }
+        
+        .btn-sair { display: block; text-align: center; background-color: #dc2626; color: white; padding: 8px; border-radius: 6px; text-decoration: none; font-size: 12px; margin-top: 15px; font-weight: bold; cursor: pointer; }
+        
+        .main { flex: 1; padding: 20px; width: 100%; }
+        @media(min-width: 768px) { .main { margin-left: 280px; padding: 30px; } }
+        
+        .aba { display: none; }
+        .aba.active { display: block; }
+        
+        h3 { font-size: 20px; color: #3b82f6; margin-bottom: 15px; border-bottom: 1px solid #1f2937; padding-bottom: 8px; }
+        
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card { background-color: #111827; padding: 20px; border-radius: 10px; border: 1px solid #1f2937; }
+        .card span { font-size: 12px; color: #9ca3af; display: block; margin-bottom: 5px; }
+        .card h4 { font-size: 22px; color: #fff; }
+        
+        form.form-admin { background-color: #111827; padding: 20px; border-radius: 10px; border: 1px solid #1f2937; margin-bottom: 25px; }
+        .input-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+        @media(min-width: 600px) { .input-grid { grid-template-columns: 1fr 1fr; } }
+        
+        button.btn-acao { background-color: #2563eb; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; }
+        button.btn-acao:hover { background-color: #1d4ed8; }
+        
+        .tabela-box { overflow-x: auto; background-color: #111827; border-radius: 10px; border: 1px solid #1f2937; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th, td { padding: 12px; border-bottom: 1px solid #1f2937; }
+        th { background-color: #030712; color: #3b82f6; }
+        .badge-corporacao { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .pc { background-color: #1e3a8a; color: #93c5fd; }
+        .pm { background-color: #065f46; color: #6ee7b7; }
+        .prf { background-color: #78350f; color: #fde047; }
+        .pf { background-color: #581c87; color: #d8b4fe; }
+        .btn-apagar { background-color: #dc2626; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+    </style>
+</head>
+<body>
+
+    <!-- VISTA 1: ABRIR OCORRÊNCIA / CIDADÃO -->
+    <div id="viewOcorrencia" class="public-container">
+        <div class="box">
+            <h2>🚨 Central de Emergência</h2>
+            <p>Registo de Ocorrências / Chamadas CAD</p>
+            
+            <form onsubmit="enviarOcorrenciaPublica(event)">
+                <div class="input-group">
+                    <label>Nome do Requerente / Vítima</label>
+                    <input type="text" id="ocNome" placeholder="Ex: João Silva" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Contacto Telefónico</label>
+                    <input type="tel" id="ocTelefone" placeholder="Ex: 912345678" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Força Principal Solicitada</label>
+                    <select id="ocForca" required>
+                        <option value="Polícia Militar">Polícia Militar (PM)</option>
+                        <option value="Polícia Civil">Polícia Civil (PC)</option>
+                        <option value="PRF">PRF (Rodoviária)</option>
+                        <option value="PF">Polícia Federal (PF)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Local da Ocorrência</label>
+                    <input type="text" id="ocLocal" placeholder="Ex: Rua Principal, Centro" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Descrição dos Factos</label>
+                    <textarea id="ocDescricao" rows="3" placeholder="Descreva o que está a acontecer..." required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-main">Transmitir para as Patrulhas</button>
+            </form>
+
+            <div id="sucessoCli">Ocorrência despachada para todas as corporações!</div>
+
+            <a class="link-alternativo" onclick="mostrarLogin()">Aceder ao CAD (Login Unificado das Forças)</a>
         </div>
     </div>
 
-    <div class="main-content">
-        <!-- 1. MDT / CONSULTA DE CIDADÃO -->
-        <div id="aba-mdt" class="conteudo-aba">
-            <h2>MDT - Sistema de Identificação Criminal & Licenças</h2>
-            <p>Pesquise pelo nome para ver o histórico de passagens, licenças e facções.</p>
+    <!-- VISTA 2: ECRÃ DE LOGIN DAS FORÇAS -->
+    <div id="viewLogin" class="public-container" style="display: none;">
+        <div class="box">
+            <h2>🛡️ CAD - Acesso Unificado</h2>
+            <p>Selecione a sua corporação e insira a credencial</p>
             
-            <div style="display: flex; gap: 15px; margin-bottom: 25px;">
-                <input type="text" id="inputPesquisa" placeholder="Ex: JoaoSilva" style="flex: 1; padding: 12px; background-color: #131b2e; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 14px;">
-                <button type="button" onclick="pesquisarCID()" class="btn-login" style="width: 160px; margin-top: 0;">Pesquisar Cidadão</button>
+            <div class="credenciais-info">
+                <strong>Chaves de Acesso Predefinidas:</strong><br>
+                • Polícia Civil: <code>civil123</code><br>
+                • Polícia Militar: <code>militar123</code><br>
+                • PRF: <code>prf123</code><br>
+                • PF: <code>pf123</code>
             </div>
 
-            <div id="fichaCriminal" style="display: none; background-color: #131b2e; border: 1px solid #1f293d; border-radius: 10px; padding: 25px;">
-                <div style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
-                    <!-- Foto -->
-                    <div style="text-align: center;">
-                        <div id="perfilFotoBox" style="width: 140px; height: 180px; background-color: #0b0f19; border: 2px solid #3b82f6; border-radius: 8px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 11px;">
-                            [Sem Foto]
-                        </div>
-                        <p style="margin-top: 8px; font-size: 11px; color: #94a3b8;">Mugshot Oficial</p>
-                    </div>
-
-                    <div style="flex: 1; min-width: 250px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <h3 id="perfilNome" style="font-size: 22px; color: #3b82f6; margin-bottom: 5px;">Nome do Cidadão</h3>
-                                <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;">Passaporte ID: <span id="perfilID" style="color: #fff;">#4020</span> | Estado: <span id="perfilEstadoBadge" style="font-weight: bold;">Ativo</span> | Facção: <span id="perfilFaccao" style="color: #f87171;">Nenhuma</span></p>
-                            </div>
-                            <button type="button" onclick="eliminarCID()" style="background-color: #dc2626; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">🗑️ Eliminar do Cadastro</button>
-                        </div>
-                        
-                        <!-- Licenças -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
-                            <div style="background-color: #0b0f19; padding: 10px; border-radius: 6px; border: 1px solid #1f293d;">
-                                <span style="font-size: 11px; color: #94a3b8; display: block;">Carta de Condução</span>
-                                <strong id="perfilCarta" style="color: #4ade80; font-size: 13px;">Ativa</strong>
-                            </div>
-                            <div style="background-color: #0b0f19; padding: 10px; border-radius: 6px; border: 1px solid #1f293d;">
-                                <span style="font-size: 11px; color: #94a3b8; display: block;">Porte de Armas</span>
-                                <strong id="perfilPorte" style="color: #f87171; font-size: 13px;">Revogado</strong>
-                            </div>
-                        </div>
-
-                        <h4 style="font-size: 13px; margin-bottom: 5px; color: #cbd5e1;">Histórico de Passagens & Ocorrências:</h4>
-                        <div id="perfilHistorico" style="max-height: 150px; overflow-y: auto; background-color: #0b0f19; padding: 10px; border-radius: 6px; border: 1px solid #1f293d; font-size: 12px; color: #cbd5e1;">
-                            Nenhum registo encontrado.
-                        </div>
-                    </div>
+            <form onsubmit="fazerLogin(event)">
+                <div class="input-group">
+                    <label>Corporação</label>
+                    <select id="loginCorporacao" required>
+                        <option value="Polícia Civil">Polícia Civil (PC)</option>
+                        <option value="Polícia Militar">Polícia Militar (PM)</option>
+                        <option value="PRF">Polícia Rodoviária Federal (PRF)</option>
+                        <option value="Polícia Federal">Polícia Federal (PF)</option>
+                    </select>
                 </div>
-            </div>
-        </div>
-
-        <!-- 2. REGISTAR PRISÃO -->
-        <div id="aba-prisao" class="conteudo-aba" style="display: none;">
-            <h2>Registar Prisão, Pena e Inteligência</h2>
-            <form class="form-cad" onsubmit="registarPrisao(event)">
-                <div class="input-grid">
-                    <div class="input-group"><label>Nome / Nick do Suspeito</label><input type="text" id="regNome" placeholder="Ex: JoaoSilva" required></div>
-                    <div class="input-group"><label>Artigos / Crimes</label><input type="text" id="regCrime" placeholder="Ex: Assalto a Banco" required></div>
+                <div class="input-group">
+                    <label>Palavra-Passe / Chave de Acesso</label>
+                    <input type="password" id="loginSenha" placeholder="Insira a senha institucional" required>
                 </div>
-                <div class="input-grid">
-                    <div class="input-group"><label>Tempo de Prisão</label><input type="text" id="regTempo" placeholder="Ex: 80 Meses" required></div>
-                    <div class="input-group"><label>Valor da Multa ($)</label><input type="text" id="regMulta" placeholder="Ex: $15.000" required></div>
-                </div>
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label>Estado do Cidadão</label>
-                        <select id="regEstado" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
-                            <option value="Procurado">🚨 Procurado (Mandado Ativo)</option>
-                            <option value="Cumpriu Pena">✅ Em liberdade / Cumpriu Pena</option>
-                        </select>
-                    </div>
-                    <div class="input-group"><label>Facção / Organização (Opcional)</label><input type="text" id="regFaccao" placeholder="Ex: Cartel / Sem Facção"></div>
-                </div>
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label>Carta de Condução</label>
-                        <select id="regCarta" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
-                            <option value="Ativa">Ativa</option>
-                            <option value="Apreendida / Suspensa">Apreendida / Suspensa</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Porte de Armas</label>
-                        <select id="regPorte" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
-                            <option value="Ativo">Ativo</option>
-                            <option value="Revogado">Revogado</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-group"><label>Link Direto da Foto (Mugshot)</label><input type="url" id="regFoto" placeholder="https://exemplo.com/foto.png" required></div>
-                <div class="input-group"><label>Relatório Detalhado & Apreensões</label><textarea id="regRelatorio" rows="3" required placeholder="Relato da abordagem..."></textarea></div>
-                <button type="submit" class="btn-login">Concluir Registo Criminal</button>
+                <button type="submit" class="btn-main">Entrar no Sistema CAD</button>
             </form>
-        </div>
 
-        <!-- 3. MULTAS -->
-        <div id="aba-multas" class="conteudo-aba" style="display: none;">
-            <h2>Emissão de Multa Isolada</h2>
-            <form class="form-cad" onsubmit="registarMultaIsolada(event)">
-                <div class="input-grid">
-                    <div class="input-group"><label>Nome do Cidadão</label><input type="text" id="multaNome" placeholder="Ex: PedroSantos" required></div>
-                    <div class="input-group"><label>Valor ($)</label><input type="text" id="multaValor" placeholder="Ex: $5.000" required></div>
-                </div>
-                <div class="input-group"><label>Motivo da Multa</label><input type="text" id="multaMotivo" placeholder="Ex: Excesso de Velocidade" required></div>
-                <button type="submit" class="btn-login">Emitir e Registar Multa</button>
-            </form>
-            <h3 style="font-size: 16px; color: #cbd5e1; margin-top: 25px; margin-bottom: 15px;">Histórico de Multas Emitidas</h3>
-            <div class="tabela-box">
-                <table>
-                    <thead><tr><th>Data</th><th>Agente</th><th>Cidadão</th><th>Valor</th><th>Motivo</th></tr></thead>
-                    <tbody id="tabelaHistoricoMultas">
-                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Sem multas registadas.</td></tr>
-                    </tbody>
-                </table>
+            <a class="link-alternativo" onclick="mostrarOcorrencia()">← Voltar ao Registo de Ocorrências</a>
+        </div>
+    </div>
+
+    <!-- VISTA 3: PAINEL DE CONTROLO OPERACIONAL (CAD COMPARTILHADO) -->
+    <div id="painelAdmin">
+        <div class="sidebar">
+            <div>
+                <h2>CAD Multipolar</h2>
+                <p class="user-info" id="infoUtilizador">Operador: -</p>
+                <ul class="menu-list">
+                    <li><a href="#" class="active" onclick="mudarAba('despacho', event)">📟 Dispatch / Ocorrências</a></li>
+                    <li><a href="#" onclick="mudarAba('unidades', event)">🚓 Unidades em Patrulha</a></li>
+                    <li><a href="#" onclick="mudarAba('historico', event)">📂 Arquivo Geral</a></li>
+                    <li><a href="#" onclick="mudarAba('mandados', event)">⚖️ Mandados & Procurados</a></li>
+                </ul>
+            </div>
+            <div>
+                <a class="btn-sair" onclick="sairDaConta()">Desconectar CAD</a>
             </div>
         </div>
 
-        <!-- 4. MANDADOS -->
-        <div id="aba-mandados" class="conteudo-aba" style="display: none;">
-            <h2>Mandados de Prisão Ativos</h2>
-            <div class="tabela-box">
-                <table>
-                    <thead><tr><th>Alvo</th><th>Motivo / Crime</th><th>Estado</th></tr></thead>
-                    <tbody id="tabelaMandadosAtivos">
-                        <tr><td colspan="3" style="text-align: center; color: #94a3b8;">A carregar mandados...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 5. VEÍCULOS E GARAGEM -->
-        <div id="aba-veiculos" class="conteudo-aba" style="display: none;">
-            <h2>Garagem & Veículos Apreendidos</h2>
-            <form class="form-cad" style="margin-bottom: 20px;" onsubmit="registarVeiculo(event)">
-                <div class="input-grid">
-                    <div class="input-group"><label>Modelo do Veículo</label><input type="text" id="veiculoModelo" placeholder="Ex: Sultan" required></div>
-                    <div class="input-group"><label>Matrícula / Placa</label><input type="text" id="veiculoPlaca" placeholder="Ex: 40ABC123" required></div>
-                </div>
-                <div class="input-group"><label>Proprietário / Dono</label><input type="text" id="veiculoDono" placeholder="Ex: JoaoSilva" required></div>
-                <button type="submit" class="btn-login" style="margin-top: 10px;">Registar Veículo</button>
-            </form>
-            <div class="tabela-box">
-                <table>
-                    <thead><tr><th>Placa</th><th>Modelo</th><th>Proprietário</th><th>Ação</th></tr></thead>
-                    <tbody id="tabelaListaVeiculos">
-                        <tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum veículo registado.</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 6. INVESTIGAÇÃO -->
-        <div id="aba-investigacao" class="conteudo-aba" style="display: none;">
-            <h2>Registo de Investigação & Inteligência</h2>
-            <form class="form-cad" style="margin-bottom: 20px;" onsubmit="registarInvestigacao(event)">
-                <div class="input-grid">
-                    <div class="input-group"><label>Codinome / Alvo da Investigação</label><input type="text" id="invCodinome" placeholder="Ex: Operação Fantasma" required></div>
-                    <div class="input-group"><label>Responsável</label><input type="text" id="invResponsavel" placeholder="Ex: Inspetor Silva" required></div>
-                </div>
-                <div class="input-group"><label>Detalhes, Pistas & Notas da Investigação</label><textarea id="invDetalhes" rows="4" required placeholder="Escreva as anotações confidenciais..."></textarea></div>
-                <button type="submit" class="btn-login">Guardar Investigação</button>
-            </form>
-            <div class="tabela-box">
-                <table>
-                    <thead><tr><th>Data</th><th>Codinome</th><th>Responsável</th><th>Detalhes</th><th>Ação</th></tr></thead>
-                    <tbody id="tabelaListaInvestigacoes">
-                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Nenhuma investigação registada.</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 7. BATER PONTO (TURNO) -->
-        <div id="aba-ponto" class="conteudo-aba" style="display: none;">
-            <h2>Controlo de Turno & Bater Ponto</h2>
-            <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 25px;">
-                <h3 id="statusPontoText" style="color: #f87171; margin-bottom: 20px;">Estado Atual: Fora de Serviço</h3>
-                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                    <button type="button" onclick="baterPonto('Entrada')" class="btn-login" style="background-color: #16a34a; width: 200px; margin-top: 0;">🟢 Iniciar Turno</button>
-                    <button type="button" onclick="baterPonto('Saida')" class="btn-login" style="background-color: #dc2626; width: 200px; margin-top: 0;">🔴 Terminar Turno</button>
-                </div>
-            </div>
-            <div class="tabela-box">
-                <table>
-                    <thead><tr><th>Data e Hora</th><th>Agente</th><th>Cargo</th><th>Ação</th></tr></thead>
-                    <tbody id="tabelaGlobalPontos">
-                        <tr><td colspan="4" style="text-align: center; color: #94a3b8;">A carregar...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 8. ZONA DO ALTO COMANDO -->
-        <div id="aba-altocomando" class="conteudo-aba" style="display: none;">
-            <div id="conteudoProtegidoAC">
-                <h2>⭐ Zona do Alto Comando - Auditoria & Histórico por Oficial</h2>
-                <p>Pesquise por um oficial para visualizar tudo o que ele fez no sistema (prisões, relatórios, etc.).</p>
-                
-                <div style="display: flex; gap: 15px; margin-bottom: 25px;">
-                    <input type="text" id="pesquisaOficialInput" placeholder="Ex: Proença" style="flex: 1; padding: 12px; background-color: #131b2e; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 14px;">
-                    <button type="button" onclick="pesquisarAtividadeOficial()" class="btn-login" style="width: 180px; margin-top: 0;">Pesquisar Oficial</button>
-                </div>
-
-                <div id="resultadoAtividadeOficial" style="display: none; background-color: #131b2e; border: 1px solid #1f293d; border-radius: 10px; padding: 20px; margin-bottom: 25px;">
-                    <h3 id="nomeOficialPesquisado" style="color: #3b82f6; margin-bottom: 10px; font-size: 18px;">Atividade do Oficial</h3>
-                    <div id="listaAtividadesOficial" style="max-height: 200px; overflow-y: auto; font-size: 12px; color: #cbd5e1;"></div>
-                </div>
-
-                <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Auditoria Geral de Prisões & Ocorrências</h3>
+        <div class="main">
+            <!-- 1. DESPACHO / OCORRÊNCIAS -->
+            <div id="aba-despacho" class="aba active">
+                <h3>Ocorrências Ativas na Cidade (Visível para todas as forças)</h3>
                 <div class="tabela-box">
                     <table>
-                        <thead><tr><th>Data</th><th>Oficial</th><th>Crime / Alvo</th><th>Tempo</th><th>Relatório</th></tr></thead>
-                        <tbody id="tabelaAuditoriaAltoComando">
-                            <tr><td colspan="5" style="text-align: center; color: #94a3b8;">A carregar...</td></tr>
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Força Alvo</th>
+                                <th>Requerente</th>
+                                <th>Local</th>
+                                <th>Descrição</th>
+                                <th>Estado</th>
+                                <th>Ação / Conclusão</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaOcorrencias">
+                            <tr><td colspan="7" style="text-align: center; color: #9ca3af;">Sem ocorrências pendentes.</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            
-            <div id="mensagemBloqueioAC" style="display: none; background-color: #131b2e; border: 1px solid #dc2626; padding: 30px; border-radius: 10px; text-align: center;">
-                <h3 style="color: #dc2626; font-size: 20px; margin-bottom: 10px;">⛔ Acesso Restrito</h3>
-                <p style="color: #94a3b8; font-size: 14px;">Esta área é exclusiva para membros do **Alto Comando** e **Chefe de Polícia**.</p>
-            </div>
-        </div>
 
-        <!-- 9. GESTÃO DE EFETIVO -->
-        <div id="aba-membros" class="conteudo-aba" style="display: none;">
-            <div id="conteudoProtegidoGestao">
-                <h2>👥 Oficiais Online & Gestão de Efetivo</h2>
-                <p>Crie credenciais ou remova oficiais incorretos.</p>
-                
-                <div style="background-color: #131b2e; border: 1px solid #1f293d; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
-                    <h3 style="font-size: 16px; color: #3b82f6; margin-bottom: 15px;">Criar Conta de Oficial</h3>
-                    <form class="form-cad" onsubmit="registarNovoOficial(event)">
-                        <div class="input-grid">
-                            <div class="input-group"><label>Nome / Nick</label><input type="text" id="novoUser" placeholder="Ex: InspetorSilva" required></div>
-                            <div class="input-group"><label>Password</label><input type="password" id="novoPass" required></div>
+            <!-- 2. UNIDADES EM PATRULHA -->
+            <div id="aba-unidades" class="aba">
+                <h3>Registo de Unidades Operacionais no Terreno</h3>
+                <form class="form-admin" onsubmit="registarUnidade(event)">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Indicativo da Viatura / Unidade</label>
+                            <input type="text" id="uniIndicativo" placeholder="Ex: Alfa-01, Charlie-12" required>
                         </div>
-                        <div class="input-grid">
-                            <div class="input-group">
-                                <label>Cargo</label>
-                                <select id="novoCargo" style="width: 100%; padding: 12px; background-color: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: #fff;">
-                                    <option value="Oficial de Patrulha">Oficial de Patrulha</option>
-                                    <option value="Investigador">Investigador</option>
-                                    <option value="Alto Comando">Alto Comando</option>
-                                    <option value="Chefe de Polícia">Chefe de Polícia</option>
-                                </select>
-                            </div>
-                            <div class="input-group"><label>Passaporte ID</label><input type="text" id="novoID" placeholder="Ex: #9921" required></div>
+                        <div class="input-group">
+                            <label>Efetivo / Elementos</label>
+                            <input type="text" id="uniElementos" placeholder="Ex: Agt. Silva / Agt. Costa" required>
                         </div>
-                        <button type="submit" class="btn-login" style="margin-top: 10px;">Criar Credencial</button>
-                    </form>
-                </div>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Estado Atual</label>
+                            <select id="uniEstado">
+                                <option value="Em Patrulhamento">Em Patrulhamento</option>
+                                <option value="Em Ocorrência">Em Ocorrência</option>
+                                <option value="Disponível (Q-1)">Disponível (Q-1)</option>
+                                <option value="Fora de Serviço">Fora de Serviço</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Área / Setor</label>
+                            <input type="text" id="uniSetor" placeholder="Ex: Zona Norte / Autoestrada" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-acao">Registar / Atualizar Unidade</button>
+                </form>
 
-                <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">Quadro de Agentes Registados</h3>
                 <div class="tabela-box">
                     <table>
-                        <thead><tr><th>Passaporte</th><th>Agente</th><th>Cargo</th><th>Ação</th></tr></thead>
-                        <tbody id="tabelaQuadroEfetivo"></tbody>
+                        <thead>
+                            <tr>
+                                <th>Corporação</th>
+                                <th>Indicativo</th>
+                                <th>Elementos</th>
+                                <th>Setor</th>
+                                <th>Estado</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaListaUnidades">
+                            <tr><td colspan="6" style="text-align: center; color: #9ca3af;">Sem unidades ativas.</td></tr>
+                        </tbody>
                     </table>
                 </div>
-                
-                <button type="button" onclick="reporListaOficiais()" style="margin-top: 20px; background-color: #475569; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 12px;">🔄 Repor Lista Padrão de Oficiais</button>
             </div>
 
-            <div id="mensagemBloqueioGestao" style="display: none; background-color: #131b2e; border: 1px solid #dc2626; padding: 30px; border-radius: 10px; text-align: center;">
-                <h3 style="color: #dc2626; font-size: 20px; margin-bottom: 10px;">⛔ Acesso Restrito</h3>
-                <p style="color: #94a3b8; font-size: 14px;">A área de gestão de oficiais é exclusiva para membros do **Alto Comando** e **Chefe de Polícia**.</p>
+            <!-- 3. HISTÓRICO / ARQUIVO -->
+            <div id="aba-historico" class="aba">
+                <h3>Arquivo Geral de Ocorrências Concluídas</h3>
+                <div class="tabela-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Força Encarregue</th>
+                                <th>Local</th>
+                                <th>Resumo</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaHistorico">
+                            <tr><td colspan="5" style="text-align: center; color: #9ca3af;">Sem histórico registado.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4. MANDADOS -->
+            <div id="aba-mandados" class="aba">
+                <h3>Base de Dados Compartilhada: Mandados & Procurados</h3>
+                <form class="form-admin" onsubmit="registarMandado(event)">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Nome do Suspeito</label>
+                            <input type="text" id="manNome" placeholder="Nome completo" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Motivo / Crime</label>
+                            <input type="text" id="manCrime" placeholder="Ex: Mandado de Captura / Furto Qualificado" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-acao">Emitir Mandado para o CAD</button>
+                </form>
+
+                <div class="tabela-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Emitido por</th>
+                                <th>Suspeito</th>
+                                <th>Motivo</th>
+                                <th>Data</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaListaMandados">
+                            <tr><td colspan="5" style="text-align: center; color: #9ca3af;">Nenhum mandado ativo.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        let agenteLogado = JSON.parse(localStorage.getItem('agenteLogado'));
-        if (!agenteLogado) {
-            alert('Faça login primeiro.');
-            window.location.href = 'login.html';
-        } else {
-            document.getElementById('sidebarAgente').innerText = `Agente: ${agenteLogado.nome} (${agenteLogado.cargo})`;
-        }
+        // Configuração de credenciais institucionais válidas para todas as polícias
+        const credenciaisPolicias = {
+            "Polícia Civil": "civil123",
+            "Polícia Militar": "militar123",
+            "PRF": "prf123",
+            "Polícia Federal": "pf123"
+        };
 
-        let baseDadosPrisoes = JSON.parse(localStorage.getItem('baseDadosPrisoesCAD')) || {};
-        let historicoAuditoria = JSON.parse(localStorage.getItem('historicoAuditoriaCAD')) || [];
-        let historicoPontos = JSON.parse(localStorage.getItem('historicoPontosCAD')) || [];
-        let historicoMultas = JSON.parse(localStorage.getItem('historicoMultasCAD')) || [];
-        let listaVeiculos = JSON.parse(localStorage.getItem('listaVeiculosCAD')) || [];
-        let listaInvestigacoes = JSON.parse(localStorage.getItem('listaInvestigacoesCAD')) || [];
-        let listaOficiais = JSON.parse(localStorage.getItem('listaOficiaisCAD')) || [
-            { id: '#4020', nome: 'Proença', pass: '7576', cargo: 'Alto Comando', estado: 'Ativo' }
-        ];
+        let ocorrencias = JSON.parse(localStorage.getItem('cadOcorrencias')) || [];
+        let unidades = JSON.parse(localStorage.getItem('cadUnidades')) || [];
+        let historico = JSON.parse(localStorage.getItem('cadHistorico')) || [];
+        let mandados = JSON.parse(localStorage.getItem('cadMandados')) || [];
 
-        let cidadaoAtualPesquisado = null;
-
-        function mudarAba(aba) {
-            document.querySelectorAll('.conteudo-aba').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.sidebar ul li a').forEach(el => el.classList.remove('active'));
-            
-            if(aba === 'mdt') document.getElementById('aba-mdt').style.display = 'block';
-            if(aba === 'prisao') document.getElementById('aba-prisao').style.display = 'block';
-            if(aba === 'multas') { document.getElementById('aba-multas').style.display = 'block'; atualizarTabelaMultas(); }
-            if(aba === 'mandados') { document.getElementById('aba-mandados').style.display = 'block'; atualizarMandadosAtivos(); }
-            if(aba === 'veiculos') { document.getElementById('aba-veiculos').style.display = 'block'; atualizarTabelaVeiculos(); }
-            if(aba === 'investigacao') { document.getElementById('aba-investigacao').style.display = 'block'; atualizarTabelaInvestigacoes(); }
-            if(aba === 'ponto') { document.getElementById('aba-ponto').style.display = 'block'; atualizarTabelaPontos(); }
-            if(aba === 'altocomando') {
-                document.getElementById('aba-altocomando').style.display = 'block';
-                verificarPermissaoAltoComando();
-            }
-            if(aba === 'membros') {
-                document.getElementById('aba-membros').style.display = 'block';
-                verificarPermissaoGestao();
-            }
-            
-            event.currentTarget.classList.add('active');
-        }
-
-        function verificarPermissaoAltoComando() {
-            const cargo = (agenteLogado.cargo || '').toLowerCase();
-            const temAcesso = cargo.includes('alto comando') || cargo.includes('chefe de polícia') || cargo.includes('chefe de policia');
-            if(temAcesso) {
-                document.getElementById('conteudoProtegidoAC').style.display = 'block';
-                document.getElementById('mensagemBloqueioAC').style.display = 'none';
-                atualizarTabelaAuditoria();
+        window.onload = function() {
+            let logado = localStorage.getItem('cadUtilizadorLogado');
+            if (logado) {
+                entrarNoPainelAdmin(logado);
             } else {
-                document.getElementById('conteudoProtegidoAC').style.display = 'none';
-                document.getElementById('mensagemBloqueioAC').style.display = 'block';
+                mostrarOcorrencia();
             }
+        };
+
+        function mostrarOcorrencia() {
+            document.getElementById('viewLogin').style.display = 'none';
+            document.getElementById('painelAdmin').style.display = 'none';
+            document.getElementById('viewOcorrencia').style.display = 'flex';
         }
 
-        function verificarPermissaoGestao() {
-            const cargo = (agenteLogado.cargo || '').toLowerCase();
-            const temAcesso = cargo.includes('alto comando') || cargo.includes('chefe de polícia') || cargo.includes('chefe de policia');
-            if(temAcesso) {
-                document.getElementById('conteudoProtegidoGestao').style.display = 'block';
-                document.getElementById('mensagemBloqueioGestao').style.display = 'none';
-                atualizarTabelaEfetivo();
-            } else {
-                document.getElementById('conteudoProtegidoGestao').style.display = 'none';
-                document.getElementById('mensagemBloqueioGestao').style.display = 'block';
-            }
+        function mostrarLogin() {
+            document.getElementById('viewOcorrencia').style.display = 'none';
+            document.getElementById('painelAdmin').style.display = 'none';
+            document.getElementById('viewLogin').style.display = 'flex';
         }
 
-        function baterPonto(tipo) {
-            const dataAtual = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            historicoPontos.unshift({ data: dataAtual, agente: agenteLogado.nome, cargo: agenteLogado.cargo, tipo: tipo });
-            localStorage.setItem('historicoPontosCAD', JSON.stringify(historicoPontos));
-            alert('Ponto registado com sucesso!');
-            atualizarTabelaPontos();
-        }
-
-        function atualizarTabelaPontos() {
-            const tbody = document.getElementById('tabelaGlobalPontos');
-            if(historicoPontos.length === 0) { tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Sem registos.</td></tr>`; return; }
-            let html = '';
-            historicoPontos.forEach(p => {
-                html += `<tr><td>${p.data}</td><td><strong>${p.agente}</strong></td><td>${p.cargo}</td><td>${p.tipo}</td></tr>`;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function registarPrisao(event) {
-            event.preventDefault();
-            const nome = document.getElementById('regNome').value.trim();
-            const novaPassagem = {
-                data: new Date().toLocaleDateString(),
-                oficial: agenteLogado.nome + ' (' + agenteLogado.cargo + ')',
-                oficialNome: agenteLogado.nome,
-                crime: document.getElementById('regCrime').value,
-                tempo: document.getElementById('regTempo').value,
-                multa: document.getElementById('regMulta').value,
-                relatorio: document.getElementById('regRelatorio').value
+        function enviarOcorrenciaPublica(e) {
+            e.preventDefault();
+            let novaOc = {
+                id: Date.now(),
+                data: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                forca: document.getElementById('ocForca').value,
+                requerente: document.getElementById('ocNome').value.trim(),
+                telefone: document.getElementById('ocTelefone').value.trim(),
+                local: document.getElementById('ocLocal').value.trim(),
+                descricao: document.getElementById('ocDescricao').value.trim(),
+                estado: 'Pendente'
             };
-            historicoAuditoria.unshift(novaPassagem);
-            localStorage.setItem('historicoAuditoriaCAD', JSON.stringify(historicoAuditoria));
 
-            if(!baseDadosPrisoes[nome.toLowerCase()]) {
-                baseDadosPrisoes[nome.toLowerCase()] = {
-                    nome: nome, id: Math.floor(1000 + Math.random() * 9000),
-                    foto: document.getElementById('regFoto').value,
-                    estado: document.getElementById('regEstado').value,
-                    faccao: document.getElementById('regFaccao').value || 'Nenhuma',
-                    carta: document.getElementById('regCarta').value,
-                    porte: document.getElementById('regPorte').value,
-                    passagens: []
-                };
+            ocorrencias.unshift(novaOc);
+            localStorage.setItem('cadOcorrencias', JSON.stringify(ocorrencias));
+
+            document.getElementById('sucessoCli').style.display = 'block';
+            e.target.reset();
+            setTimeout(() => { document.getElementById('sucessoCli').style.display = 'none'; }, 4000);
+        }
+
+        function fazerLogin(e) {
+            e.preventDefault();
+            let corporacao = document.getElementById('loginCorporacao').value;
+            let senha = document.getElementById('loginSenha').value;
+
+            if (credenciaisPolicias[corporacao] && credenciaisPolicias[corporacao] === senha) {
+                localStorage.setItem('cadUtilizadorLogado', corporacao);
+                entrarNoPainelAdmin(corporacao);
             } else {
-                baseDadosPrisoes[nome.toLowerCase()].estado = document.getElementById('regEstado').value;
-            }
-            baseDadosPrisoes[nome.toLowerCase()].passagens.push(novaPassagem);
-            localStorage.setItem('baseDadosPrisoesCAD', JSON.stringify(baseDadosPrisoes));
-            alert('Prisão registada com sucesso!');
-            mudarAba('mdt');
-        }
-
-        function registarMultaIsolada(event) {
-            event.preventDefault();
-            const novaMulta = {
-                data: new Date().toLocaleDateString(),
-                agente: agenteLogado.nome,
-                cidadao: document.getElementById('multaNome').value.trim(),
-                valor: document.getElementById('multaValor').value.trim(),
-                motivo: document.getElementById('multaMotivo').value.trim()
-            };
-            historicoMultas.unshift(novaMulta);
-            localStorage.setItem('historicoMultasCAD', JSON.stringify(historicoMultas));
-            alert('Multa emitida e registada com sucesso!');
-            document.querySelector('#aba-multas form').reset();
-            atualizarTabelaMultas();
-        }
-
-        function atualizarTabelaMultas() {
-            const tbody = document.getElementById('tabelaHistoricoMultas');
-            if(historicoMultas.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Sem multas registadas.</td></tr>`; return; }
-            let html = '';
-            historicoMultas.forEach(m => {
-                html += `<tr><td>${m.data}</td><td>${m.agente}</td><td><strong>${m.cidadao}</strong></td><td>${m.valor}</td><td>${m.motivo}</td></tr>`;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function atualizarMandadosAtivos() {
-            const tbody = document.getElementById('tabelaMandadosAtivos');
-            let html = '';
-            let encontrados = false;
-            for(let key in baseDadosPrisoes) {
-                let cid = baseDadosPrisoes[key];
-                if(cid.estado === 'Procurado') {
-                    encontrados = true;
-                    let ultimaPassagem = cid.passagens[cid.passagens.length - 1] ? cid.passagens[cid.passagens.length - 1].crime : 'Mandado Ativo';
-                    html += `<tr><td><strong>${cid.nome}</strong> (#${cid.id})</td><td>${ultimaPassagem}</td><td><span style="color: #f87171; font-weight: bold;">Procurado</span></td></tr>`;
-                }
-            }
-            tbody.innerHTML = encontrados ? html : `<tr><td colspan="3" style="text-align: center; color: #94a3b8;">Nenhum mandado ativo de momento.</td></tr>`;
-        }
-
-        function registarVeiculo(event) {
-            event.preventDefault();
-            listaVeiculos.push({
-                modelo: document.getElementById('veiculoModelo').value.trim(),
-                placa: document.getElementById('veiculoPlaca').value.trim(),
-                dono: document.getElementById('veiculoDono').value.trim()
-            });
-            localStorage.setItem('listaVeiculosCAD', JSON.stringify(listaVeiculos));
-            alert('Veículo registado com sucesso!');
-            document.querySelector('#aba-veiculos form').reset();
-            atualizarTabelaVeiculos();
-        }
-
-        function atualizarTabelaVeiculos() {
-            const tbody = document.getElementById('tabelaListaVeiculos');
-            if(listaVeiculos.length === 0) { tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Nenhum veículo registado.</td></tr>`; return; }
-            let html = '';
-            listaVeiculos.forEach((v, index) => {
-                html += `<tr><td><strong>${v.placa}</strong></td><td>${v.modelo}</td><td>${v.dono}</td><td><button type="button" onclick="removerVeiculo(${index})" style="background-color: #dc2626; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">Remover</button></td></tr>`;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function removerVeiculo(index) {
-            listaVeiculos.splice(index, 1);
-            localStorage.setItem('listaVeiculosCAD', JSON.stringify(listaVeiculos));
-            atualizarTabelaVeiculos();
-        }
-
-        function registarInvestigacao(event) {
-            event.preventDefault();
-            const novaInv = {
-                data: new Date().toLocaleDateString(),
-                codinome: document.getElementById('invCodinome').value.trim(),
-                responsavel: document.getElementById('invResponsavel').value.trim(),
-                detalhes: document.getElementById('invDetalhes').value.trim()
-            };
-            listaInvestigacoes.unshift(novaInv);
-            localStorage.setItem('listaInvestigacoesCAD', JSON.stringify(listaInvestigacoes));
-            alert('Investigação guardada com sucesso!');
-            document.querySelector('#aba-investigacao form').reset();
-            atualizarTabelaInvestigacoes();
-        }
-
-        function atualizarTabelaInvestigacoes() {
-            const tbody = document.getElementById('tabelaListaInvestigacoes');
-            if(listaInvestigacoes.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhuma investigação registada.</td></tr>`; return; }
-            let html = '';
-            listaInvestigacoes.forEach((inv, index) => {
-                html += `<tr><td>${inv.data}</td><td><strong>${inv.codinome}</strong></td><td>${inv.responsavel}</td><td>${inv.detalhes}</td><td><button type="button" onclick="removerInvestigacao(${index})" style="background-color: #dc2626; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">Apagar</button></td></tr>`;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function removerInvestigacao(index) {
-            listaInvestigacoes.splice(index, 1);
-            localStorage.setItem('listaInvestigacoesCAD', JSON.stringify(listaInvestigacoes));
-            atualizarTabelaInvestigacoes();
-        }
-
-        function atualizarTabelaAuditoria() {
-            const tbody = document.getElementById('tabelaAuditoriaAltoComando');
-            if(historicoAuditoria.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Sem registos.</td></tr>`; return; }
-            let html = '';
-            historicoAuditoria.forEach(item => {
-                html += `<tr><td>${item.data}</td><td>${item.oficial}</td><td>${item.crime}</td><td>${item.tempo}</td><td>${item.relatorio}</td></tr>`;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function pesquisarAtividadeOficial() {
-            const termo = document.getElementById('pesquisaOficialInput').value.trim().toLowerCase();
-            const boxResult = document.getElementById('resultadoAtividadeOficial');
-            const listaBox = document.getElementById('listaAtividadesOficial');
-            const nomeBox = document.getElementById('nomeOficialPesquisado');
-
-            if(!termo) { alert('Insira o nome de um oficial para pesquisar.'); return; }
-
-            let atividadesEncontradas = historicoAuditoria.filter(item => item.oficial.toLowerCase().includes(termo));
-            
-            if(atividadesEncontradas.length > 0) {
-                nomeBox.innerText = `Atividade do Oficial: ${atividadesEncontradas[0].oficial}`;
-                let html = '';
-                atividadesEncontradas.forEach((at, idx) => {
-                    html += `<div style="margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #1f293d;">
-                        <b>#${idx+1} [${at.data}]</b> - Crime: <b>${at.crime}</b> (Pena: ${at.tempo})<br>
-                        Relatório: ${at.relatorio}
-                    </div>`;
-                });
-                listaBox.innerHTML = html;
-                boxResult.style.display = 'block';
-            } else {
-                nomeBox.innerText = 'Nenhum registo encontrado para este oficial.';
-                listaBox.innerHTML = '';
-                boxResult.style.display = 'block';
+                alert('Palavra-passe incorreta para a corporação selecionada!');
             }
         }
 
-        function registarNovoOficial(event) {
-            event.preventDefault();
-            listaOficiais.push({
-                id: document.getElementById('novoID').value.trim(),
-                nome: document.getElementById('novoUser').value.trim(),
-                pass: document.getElementById('novoPass').value,
-                cargo: document.getElementById('novoCargo').value,
-                estado: 'Ativo'
-            });
-            localStorage.setItem('listaOficiaisCAD', JSON.stringify(listaOficiais));
-            alert('Oficial adicionado com sucesso!');
-            document.querySelector('#aba-membros form').reset();
-            atualizarTabelaEfetivo();
+        function entrarNoPainelAdmin(corporacao) {
+            document.getElementById('viewOcorrencia').style.display = 'none';
+            document.getElementById('viewLogin').style.display = 'none';
+            document.getElementById('painelAdmin').style.display = 'flex';
+            document.getElementById('infoUtilizador').innerText = `Operador: ${corporacao}`;
+            mudarAba('despacho');
         }
 
-        function eliminarOficial(index) {
-            if(confirm('Tem a certeza que deseja remover este oficial?')) {
-                listaOficiais.splice(index, 1);
-                localStorage.setItem('listaOficiaisCAD', JSON.stringify(listaOficiais));
-                atualizarTabelaEfetivo();
-                alert('Oficial removido com sucesso!');
+        function sairDaConta() {
+            localStorage.removeItem('cadUtilizadorLogado');
+            mostrarOcorrencia();
+        }
+
+        function mudarAba(abaId, event) {
+            document.querySelectorAll('.aba').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-list a').forEach(el => el.classList.remove('active'));
+            document.getElementById('aba-' + abaId).classList.add('active');
+            if(event) event.currentTarget.classList.add('active');
+
+            if(abaId === 'despacho') atualizarTabelaOcorrencias();
+            if(abaId === 'unidades') atualizarTabelaUnidades();
+            if(abaId === 'historico') atualizarTabelaHistorico();
+            if(abaId === 'mandados') atualizarTabelaMandados();
+        }
+
+        function obterClasseBadge(forca) {
+            if(forca.includes('Civil')) return 'pc';
+            if(forca.includes('Militar')) return 'pm';
+            if(forca.includes('PRF')) return 'prf';
+            if(forca.includes('Federal')) return 'pf';
+            return 'pc';
+        }
+
+        function atualizarTabelaOcorrencias() {
+            let tbody = document.getElementById('tabelaOcorrencias');
+            if(ocorrencias.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #9ca3af;">Sem ocorrências ativas.</td></tr>`;
+                return;
             }
-        }
-
-        function reporListaOficiais() {
-            if(confirm('Deseja limpar os oficiais adicionados e repor a lista inicial?')) {
-                localStorage.removeItem('listaOficiaisCAD');
-                listaOficiais = [{ id: '#4020', nome: 'Proença', pass: '7576', cargo: 'Alto Comando', estado: 'Ativo' }];
-                atualizarTabelaEfetivo();
-                alert('Lista reposta com sucesso!');
-            }
-        }
-
-        function atualizarTabelaEfetivo() {
-            const tbody = document.getElementById('tabelaQuadroEfetivo');
-            if(listaOficiais.length === 0) { tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Nenhum oficial.</td></tr>`; return; }
             let html = '';
-            listaOficiais.forEach((oficial, index) => {
+            ocorrencias.forEach((oc, index) => {
+                let badgeClass = obterClasseBadge(oc.forca);
                 html += `<tr>
-                    <td>${oficial.id}</td>
-                    <td><strong>${oficial.nome}</strong></td>
-                    <td>${oficial.cargo}</td>
-                    <td><button type="button" onclick="eliminarOficial(${index})" style="background-color: #dc2626; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">🗑️ Remover</button></td>
+                    <td>${oc.data}</td>
+                    <td><span class="badge-corporacao ${badgeClass}">${oc.forca}</span></td>
+                    <td>${oc.requerente} (${oc.telefone})</td>
+                    <td>${oc.local}</td>
+                    <td>${oc.descricao}</td>
+                    <td><span style="color: #f59e0b; font-weight: bold;">${oc.estado}</span></td>
+                    <td><button class="btn-apagar" onclick="concluirOcorrencia(${index})">Concluir</button></td>
                 </tr>`;
             });
             tbody.innerHTML = html;
         }
 
-        function pesquisarCID() {
-            const termo = document.getElementById('inputPesquisa').value.trim().toLowerCase();
-            const cidadao = baseDadosPrisoes[termo];
-            if(cidadao) {
-                cidadaoAtualPesquisado = termo;
-                document.getElementById('perfilNome').innerText = cidadao.nome;
-                document.getElementById('perfilID').innerText = '#' + cidadao.id;
-                document.getElementById('perfilFaccao').innerText = cidadao.faccao;
-                document.getElementById('perfilEstadoBadge').innerText = cidadao.estado;
-                document.getElementById('perfilFotoBox').style.backgroundImage = `url('${cidadao.foto}')`;
-                document.getElementById('perfilFotoBox').innerText = '';
-                
-                let htmlPassagens = '';
-                cidadao.passagens.forEach((p, i) => {
-                    htmlPassagens += `<div><b>#${i+1}</b> - ${p.crime} (${p.tempo}) | Relatório: ${p.relatorio}</div><hr style="border-color:#1f293d; margin:5,0px 0;">`;
-                });
-                document.getElementById('perfilHistorico').innerHTML = htmlPassagens;
-                document.getElementById('fichaCriminal').style.display = 'block';
-            } else {
-                alert('Cidadão não encontrado.');
-                document.getElementById('fichaCriminal').style.display = 'none';
-            }
+        function concluirOcorrencia(index) {
+            let oc = ocorrencias.splice(index, 1)[0];
+            oc.estado = 'Concluído';
+            historico.unshift(oc);
+            localStorage.setItem('cadOcorrencias', JSON.stringify(ocorrencias));
+            localStorage.setItem('cadHistorico', JSON.stringify(historico));
+            atualizarTabelaOcorrencias();
         }
 
-        function eliminarCID() {
-            if(cidadaoAtualPesquisado && confirm('Eliminar cidadão do cadastro?')) {
-                delete baseDadosPrisoes[cidadaoAtualPesquisado];
-                localStorage.setItem('baseDadosPrisoesCAD', JSON.stringify(baseDadosPrisoes));
-                alert('Cidadão eliminado!');
-                document.getElementById('fichaCriminal').style.display = 'none';
+        function registarUnidade(e) {
+            e.preventDefault();
+            let corporacaoAtual = localStorage.getItem('cadUtilizadorLogado') || 'Polícia';
+            unidades.unshift({
+                corporacao: corporacaoAtual,
+                indicativo: document.getElementById('uniIndicativo').value.trim(),
+                elementos: document.getElementById('uniElementos').value.trim(),
+                setor: document.getElementById('uniSetor').value.trim(),
+                estado: document.getElementById('uniEstado').value
+            });
+            localStorage.setItem('cadUnidades', JSON.stringify(unidades));
+            alert('Unidade registada com sucesso no terreno!');
+            e.target.reset();
+            atualizarTabelaUnidades();
+        }
+
+        function atualizarTabelaUnidades() {
+            let tbody = document.getElementById('tabelaListaUnidades');
+            if(unidades.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af;">Sem unidades em patrulha.</td></tr>`;
+                return;
             }
+            let html = '';
+            unidades.forEach((uni, index) => {
+                let badgeClass = obterClasseBadge(uni.corporacao);
+                html += `<tr>
+                    <td><span class="badge-corporacao ${badgeClass}">${uni.corporacao}</span></td>
+                    <td><strong>${uni.indicativo}</strong></td>
+                    <td>${uni.elementos}</td>
+                    <td>${uni.setor}</td>
+                    <td>${uni.estado}</td>
+                    <td><button class="btn-apagar" onclick="unidades.splice(${index},1);localStorage.setItem('cadUnidades',JSON.stringify(unidades));atualizarTabelaUnidades();">Remover</button></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function atualizarTabelaHistorico() {
+            let tbody = document.getElementById('tabelaHistorico');
+            if(historico.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9ca3af;">Sem histórico registado.</td></tr>`;
+                return;
+            }
+            let html = '';
+            historico.forEach(h => {
+                let badgeClass = obterClasseBadge(h.forca);
+                html += `<tr>
+                    <td>${h.data}</td>
+                    <td><span class="badge-corporacao ${badgeClass}">${h.forca}</span></td>
+                    <td>${h.local}</td>
+                    <td>${h.descricao}</td>
+                    <td style="color: #22c55e; font-weight: bold;">${h.estado}</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function registarMandado(e) {
+            e.preventDefault();
+            let corporacaoAtual = localStorage.getItem('cadUtilizadorLogado') || 'Polícia';
+            mandados.unshift({
+                emitente: corporacaoAtual,
+                nome: document.getElementById('manNome').value.trim(),
+                crime: document.getElementById('manCrime').value.trim(),
+                data: new Date().toLocaleDateString()
+            });
+            localStorage.setItem('cadMandados', JSON.stringify(mandados));
+            alert('Mandado emitido com sucesso na rede CAD!');
+            e.target.reset();
+            atualizarTabelaMandados();
+        }
+
+        function atualizarTabelaMandados() {
+            let tbody = document.getElementById('tabelaListaMandados');
+            if(mandados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9ca3af;">Nenhum mandado registado.</td></tr>`;
+                return;
+            }
+            let html = '';
+            mandados.forEach((m, index) => {
+                let badgeClass = obterClasseBadge(m.emitente);
+                html += `<tr>
+                    <td><span class="badge-corporacao ${badgeClass}">${m.emitente}</span></td>
+                    <td><strong>${m.nome}</strong></td>
+                    <td>${m.crime}</td>
+                    <td>${m.data}</td>
+                    <td><button class="btn-apagar" onclick="mandados.splice(${index},1);localStorage.setItem('cadMandados',JSON.stringify(mandados));atualizarTabelaMandados();">Anular</button></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
         }
     </script>
 </body>

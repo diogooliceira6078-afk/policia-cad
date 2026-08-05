@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD - Autenticação de Operadores</title>
+    <title>CAD - Autenticação Segura</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #070a12; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .box { background-color: #0f172a; padding: 35px; border-radius: 14px; width: 100%; max-width: 440px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid #1e293b; }
+        body { background-color: #05070d; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .box { background-color: #0f172a; padding: 35px; border-radius: 14px; width: 100%; max-width: 440px; box-shadow: 0 20px 40px rgba(0,0,0,0.7); border: 1px solid #1e293b; }
         h2 { color: #3b82f6; text-align: center; margin-bottom: 8px; font-size: 24px; font-weight: 700; }
         p { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 25px; }
         .input-group { margin-bottom: 18px; }
@@ -25,7 +25,7 @@
 
     <div class="box">
         <h2>🛡️ CAD Policial - Acesso</h2>
-        <p>Central de Operações Integrada de Segurança</p>
+        <p>Sistema Integrado de Operações Táticas</p>
         
         <form onsubmit="fazerLogin(event)">
             <div class="input-group">
@@ -52,15 +52,14 @@
         </form>
 
         <div class="info-teste">
-            🔑 <strong>Acesso Inicial Teste:</strong><br>
-            Utilizador: <code>proenca</code> | Senha: <code>6323</code> (PC)
+            🔑 <strong>Conta Master:</strong><br>
+            Utilizador: <code>proenca</code> | Senha: <code>6323</code> (PC - Alto Comando)
         </div>
 
         <a class="link-voltar" href="index.html">← Voltar à Central Pública de Emergência</a>
     </div>
 
     <script>
-        // Inicializar base de dados de utilizadores e dados padrão se não existirem
         let listaAtual = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
         if (!listaAtual.some(u => u.nome.toLowerCase() === 'proenca')) {
             listaAtual.push({ 
@@ -86,13 +85,11 @@
                 let dadosSessao = {
                     corporacao: corp,
                     nome: valido.nome,
-                    patente: valido.patente || 'Agente / Soldado',
+                    patente: valido.patente || 'Agente',
                     cargo: valido.cargo || 'Operacional'
                 };
                 localStorage.setItem('cadUtilizadorLogado', JSON.stringify(dadosSessao));
-                
-                // Registar Log de Acesso
-                registarLogSistema(`Operador ${valido.nome} (${corp} - ${dadosSessao.patente}) efetuou login no sistema.`);
+                registarLogSistema(`Operador ${valido.nome} (${corp} - ${dadosSessao.patente}) iniciou sessão.`);
 
                 window.location.href = 'index.html';
             } else {

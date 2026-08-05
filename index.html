@@ -8,7 +8,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #090d16; color: #f8fafc; min-height: 100vh; }
         
-        /* ECRÃ DE LOGIN / PÚBLICO */
+        /* ECRÃ PÚBLICO / REGISTO DE OCORRÊNCIAS */
         .public-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .box { background-color: #111827; padding: 30px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #1f2937; }
         h2 { color: #3b82f6; text-align: center; margin-bottom: 5px; font-size: 22px; }
@@ -23,7 +23,7 @@
         .link-alternativo:hover { text-decoration: underline; }
         #sucessoCli { color: #22c55e; font-size: 13px; text-align: center; margin-top: 15px; display: none; font-weight: bold; }
 
-        /* PAINEL OPERACIONAL / CAD */
+        /* PAINEL OPERACIONAL */
         #painelAdmin { display: none; flex-direction: column; }
         @media(min-width: 768px) { #painelAdmin { flex-direction: row; } }
         
@@ -70,15 +70,15 @@
 </head>
 <body>
 
-    <!-- VISTA 1: ABRIR OCORRÊNCIA / CIDADÃO -->
+    <!-- VISTA PÚBLICA (Registar Ocorrência) -->
     <div id="viewOcorrencia" class="public-container">
         <div class="box">
             <h2>🚨 Central de Emergência</h2>
-            <p>Registo de Ocorrências / Chamadas CAD</p>
+            <p>Registo de Ocorrências para as Forças de Segurança</p>
             
             <form onsubmit="enviarOcorrenciaPublica(event)">
                 <div class="input-group">
-                    <label>Nome do Requerente / Vítima</label>
+                    <label>Nome do Requerente</label>
                     <input type="text" id="ocNome" placeholder="Ex: João Silva" required>
                 </div>
                 
@@ -110,35 +110,13 @@
                 <button type="submit" class="btn-main">Transmitir para as Patrulhas</button>
             </form>
 
-            <div id="sucessoCli">Ocorrência despachada para todas as corporações!</div>
+            <div id="sucessoCli">Ocorrência despachada com sucesso!</div>
 
-            <a class="link-alternativo" onclick="mostrarLogin()">Aceder ao CAD (Login de Operador)</a>
+            <a class="link-alternativo" href="login.html">🔐 Aceder ao CAD (Login de Operador)</a>
         </div>
     </div>
 
-    <!-- VISTA 2: ECRÃ DE LOGIN DOS OPERADORES -->
-    <div id="viewLogin" class="public-container" style="display: none;">
-        <div class="box">
-            <h2>🛡️ CAD - Login Operador</h2>
-            <p>Insira a sua pessoa (utilizador) e palavra-passe</p>
-            
-            <form onsubmit="fazerLogin(event)">
-                <div class="input-group">
-                    <label>Utilizador (Nome)</label>
-                    <input type="text" id="loginUser" placeholder="Ex: proenca" required>
-                </div>
-                <div class="input-group">
-                    <label>Palavra-Passe</label>
-                    <input type="password" id="loginSenha" placeholder="Sua palavra-passe" required>
-                </div>
-                <button type="submit" class="btn-main">Entrar no Sistema CAD</button>
-            </form>
-
-            <a class="link-alternativo" onclick="mostrarOcorrencia()">← Voltar ao Registo de Ocorrências</a>
-        </div>
-    </div>
-
-    <!-- VISTA 3: PAINEL DE CONTROLO OPERACIONAL (CAD COMPARTILHADO) -->
+    <!-- PAINEL OPERACIONAL INTERNO -->
     <div id="painelAdmin">
         <div class="sidebar">
             <div>
@@ -148,7 +126,7 @@
                     <li><a href="#" class="active" onclick="mudarAba('despacho', event)">📟 Dispatch / Ocorrências</a></li>
                     <li><a href="#" onclick="mudarAba('unidades', event)">🚓 Unidades em Patrulha</a></li>
                     <li><a href="#" onclick="mudarAba('mandados', event)">⚖️ Mandados & Procurados</a></li>
-                    <li><a href="#" onclick="mudarAba('utilizadores', event)">👥 Registar Pessoas/Pass</a></li>
+                    <li><a href="#" onclick="mudarAba('utilizadores', event)">👥 Gerir Pessoas/Pass</a></li>
                 </ul>
             </div>
             <div>
@@ -157,9 +135,9 @@
         </div>
 
         <div class="main">
-            <!-- 1. DESPACHO / OCORRÊNCIAS -->
+            <!-- 1. DESPACHO -->
             <div id="aba-despacho" class="aba active">
-                <h3>Ocorrências Ativas na Cidade (Visível para todas as forças)</h3>
+                <h3>Ocorrências Ativas na Cidade</h3>
                 <div class="tabela-box">
                     <table>
                         <thead>
@@ -170,7 +148,7 @@
                                 <th>Local</th>
                                 <th>Descrição</th>
                                 <th>Estado</th>
-                                <th>Ação / Conclusão</th>
+                                <th>Ação</th>
                             </tr>
                         </thead>
                         <tbody id="tabelaOcorrencias">
@@ -180,18 +158,18 @@
                 </div>
             </div>
 
-            <!-- 2. UNIDADES EM PATRULHA -->
+            <!-- 2. UNIDADES -->
             <div id="aba-unidades" class="aba">
                 <h3>Registo de Unidades Operacionais no Terreno</h3>
                 <form class="form-admin" onsubmit="registarUnidade(event)">
                     <div class="input-grid">
                         <div class="input-group">
                             <label>Indicativo da Viatura / Unidade</label>
-                            <input type="text" id="uniIndicativo" placeholder="Ex: Alfa-01, Charlie-12" required>
+                            <input type="text" id="uniIndicativo" placeholder="Ex: Alfa-01" required>
                         </div>
                         <div class="input-group">
                             <label>Efetivo / Elementos</label>
-                            <input type="text" id="uniElementos" placeholder="Ex: Agt. Silva / Agt. Costa" required>
+                            <input type="text" id="uniElementos" placeholder="Ex: Agt. Silva" required>
                         </div>
                     </div>
                     <div class="input-grid">
@@ -206,10 +184,10 @@
                         </div>
                         <div class="input-group">
                             <label>Área / Setor</label>
-                            <input type="text" id="uniSetor" placeholder="Ex: Zona Norte / Autoestrada" required>
+                            <input type="text" id="uniSetor" placeholder="Ex: Zona Norte" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn-acao">Registar / Atualizar Unidade</button>
+                    <button type="submit" class="btn-acao">Registar Unidade</button>
                 </form>
 
                 <div class="tabela-box">
@@ -233,7 +211,7 @@
 
             <!-- 3. MANDADOS -->
             <div id="aba-mandados" class="aba">
-                <h3>Base de Dados Compartilhada: Mandados & Procurados</h3>
+                <h3>Base de Dados Compartilhada: Mandados</h3>
                 <form class="form-admin" onsubmit="registarMandado(event)">
                     <div class="input-grid">
                         <div class="input-group">
@@ -242,10 +220,10 @@
                         </div>
                         <div class="input-group">
                             <label>Motivo / Crime</label>
-                            <input type="text" id="manCrime" placeholder="Ex: Mandado de Captura / Furto Qualificado" required>
+                            <input type="text" id="manCrime" placeholder="Ex: Mandado de Captura" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn-acao">Emitir Mandado para o CAD</button>
+                    <button type="submit" class="btn-acao">Emitir Mandado</button>
                 </form>
 
                 <div class="tabela-box">
@@ -266,13 +244,13 @@
                 </div>
             </div>
 
-            <!-- 4. REGISTAR UTILIZADORES -->
+            <!-- 4. GERIR UTILIZADORES -->
             <div id="aba-utilizadores" class="aba">
-                <h3>Registar Pessoa e Palavra-Passe</h3>
+                <h3>Registar Novo Operador / Pessoa e Pass</h3>
                 <form class="form-admin" onsubmit="registarUtilizador(event)">
                     <div class="input-grid">
                         <div class="input-group">
-                            <label>Corporação / Polícia</label>
+                            <label>Corporação</label>
                             <select id="novoUserCorp" required>
                                 <option value="Polícia Civil">Polícia Civil (PC)</option>
                                 <option value="Polícia Militar">Polícia Militar (PM)</option>
@@ -281,13 +259,13 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <label>Nome / Utilizador (Ex: proenca)</label>
-                            <input type="text" id="novoUserNome" placeholder="Nome para login" required>
+                            <label>Nome de Utilizador</label>
+                            <input type="text" id="novoUserNome" placeholder="Ex: proenca" required>
                         </div>
                     </div>
                     <div class="input-group">
                         <label>Palavra-Passe (Pass)</label>
-                        <input type="password" id="novoUserSenha" placeholder="Palavra-passe de acesso" required>
+                        <input type="password" id="novoUserSenha" placeholder="Palavra-passe" required>
                     </div>
                     <button type="submit" class="btn-acao">Guardar Novo Acesso</button>
                 </form>
@@ -297,7 +275,7 @@
                         <thead>
                             <tr>
                                 <th>Corporação</th>
-                                <th>Utilizador / Pessoa</th>
+                                <th>Utilizador</th>
                                 <th>Ação</th>
                             </tr>
                         </thead>
@@ -311,13 +289,6 @@
     </div>
 
     <script>
-        // Utilizador inicial padrão (ex: proenca / 6323)
-        if (!localStorage.getItem('cadUtilizadoresLista')) {
-            localStorage.setItem('cadUtilizadoresLista', JSON.stringify([
-                { corporacao: "Polícia Civil", nome: "proenca", senha: "6323" }
-            ]));
-        }
-
         let ocorrencias = JSON.parse(localStorage.getItem('cadOcorrencias')) || [];
         let unidades = JSON.parse(localStorage.getItem('cadUnidades')) || [];
         let historico = JSON.parse(localStorage.getItem('cadHistorico')) || [];
@@ -327,23 +298,17 @@
         window.onload = function() {
             let logado = localStorage.getItem('cadUtilizadorLogado');
             if (logado) {
-                entrarNoPainelAdmin(logado);
+                // Mostrar painel operacional
+                document.getElementById('viewOcorrencia').style.display = 'none';
+                document.getElementById('painelAdmin').style.display = 'flex';
+                document.getElementById('infoUtilizador').innerText = `Operador: ${logado}`;
+                mudarAba('despacho');
             } else {
-                mostrarOcorrencia();
+                // Mostrar ecrã público normal
+                document.getElementById('viewOcorrencia').style.display = 'flex';
+                document.getElementById('painelAdmin').style.display = 'none';
             }
         };
-
-        function mostrarOcorrencia() {
-            document.getElementById('viewLogin').style.display = 'none';
-            document.getElementById('painelAdmin').style.display = 'none';
-            document.getElementById('viewOcorrencia').style.display = 'flex';
-        }
-
-        function mostrarLogin() {
-            document.getElementById('viewOcorrencia').style.display = 'none';
-            document.getElementById('painelAdmin').style.display = 'none';
-            document.getElementById('viewLogin').style.display = 'flex';
-        }
 
         function enviarOcorrenciaPublica(e) {
             e.preventDefault();
@@ -366,34 +331,9 @@
             setTimeout(() => { document.getElementById('sucessoCli').style.display = 'none'; }, 4000);
         }
 
-        function fazerLogin(e) {
-            e.preventDefault();
-            let userInserido = document.getElementById('loginUser').value.trim().toLowerCase();
-            let senhaInserida = document.getElementById('loginSenha').value;
-
-            let utilizadores = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
-            let encontrado = utilizadores.find(u => u.nome.toLowerCase() === userInserido && u.senha === senhaInserida);
-
-            if (encontrado) {
-                let sessaoInfo = `${encontrado.corporacao} (${encontrado.nome})`;
-                localStorage.setItem('cadUtilizadorLogado', sessaoInfo);
-                entrarNoPainelAdmin(sessaoInfo);
-            } else {
-                alert('Utilizador ou palavra-passe incorretos!');
-            }
-        }
-
-        function entrarNoPainelAdmin(sessaoInfo) {
-            document.getElementById('viewOcorrencia').style.display = 'none';
-            document.getElementById('viewLogin').style.display = 'none';
-            document.getElementById('painelAdmin').style.display = 'flex';
-            document.getElementById('infoUtilizador').innerText = `Operador: ${sessaoInfo}`;
-            mudarAba('despacho');
-        }
-
         function sairDaConta() {
             localStorage.removeItem('cadUtilizadorLogado');
-            mostrarOcorrencia();
+            window.location.href = 'index.html';
         }
 
         function mudarAba(abaId, event) {
@@ -450,7 +390,7 @@
         function registarUnidade(e) {
             e.preventDefault();
             let sessaoAtual = localStorage.getItem('cadUtilizadorLogado') || 'Polícia';
-            let corp = sessaoAtual.split(' ')[0] + ' ' + (sessaoAtual.split(' ')[1] || '');
+            let corp = sessaoAtual.split(' - ')[0];
             unidades.unshift({
                 corporacao: corp.trim(),
                 indicativo: document.getElementById('uniIndicativo').value.trim(),
@@ -526,29 +466,39 @@
             let nome = document.getElementById('novoUserNome').value.trim();
             let senha = document.getElementById('novoUserSenha').value;
 
-            listaUtilizadores.push({ corporacao: corp, nome: nome, senha: senha });
-            localStorage.setItem('cadUtilizadoresLista', JSON.stringify(listaUtilizadores));
-            alert(`Acesso criado para ${nome} (${corp})!`);
+            let lista = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
+            lista.push({ corporacao: corp, nome: nome, senha: senha });
+            localStorage.setItem('cadUtilizadoresLista', JSON.stringify(lista));
+            
+            alert(`Acesso criado com sucesso para ${nome} (${corp})!`);
             e.target.reset();
             atualizarTabelaUtilizadores();
         }
 
         function atualizarTabelaUtilizadores() {
             let tbody = document.getElementById('tabelaListaUtilizadores');
-            if(listaUtilizadores.length === 0) {
+            let lista = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
+            if(lista.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #9ca3af;">Sem operadores registados.</td></tr>`;
                 return;
             }
             let html = '';
-            listaUtilizadores.forEach((u, index) => {
+            lista.forEach((u, index) => {
                 let badgeClass = obterClasseBadge(u.corporacao);
                 html += `<tr>
                     <td><span class="badge-corporacao ${badgeClass}">${u.corporacao}</span></td>
                     <td><strong>${u.nome}</strong></td>
-                    <td><button class="btn-apagar" onclick="listaUtilizadores.splice(${index},1);localStorage.setItem('cadUtilizadoresLista',JSON.stringify(listaUtilizadores));atualizarTabelaUtilizadores();">Remover</button></td>
+                    <td><button class="btn-apagar" onclick="removerUtilizador(${index})">Remover</button></td>
                 </tr>`;
             });
             tbody.innerHTML = html;
+        }
+
+        function removerUtilizador(index) {
+            let lista = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
+            lista.splice(index, 1);
+            localStorage.setItem('cadUtilizadoresLista', JSON.stringify(lista));
+            atualizarTabelaUtilizadores();
         }
     </script>
 </body>

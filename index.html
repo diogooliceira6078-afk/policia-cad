@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAD Policial - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white flex items-center justify-center h-screen">
+
+    <div class="bg-slate-800 p-8 rounded-xl shadow-2xl w-96 border border-slate-700">
+        <h1 class="text-2xl font-bold text-center mb-6 text-blue-400">CAD POLICIAL UNIFICADO</h1>
+        
+        <form id="loginForm" class="space-space-y-4">
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Corporação</label>
+                <select id="corporacao" class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white">
+                    <option value="PM">Polícia Militar (PM)</option>
+                    <option value="PC">Polícia Civil (PC)</option>
+                    <option value="PF">Polícia Federal (PF)</option>
+                    <option value="PRF">Polícia Rodoviária Federal (PRF)</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Nome / Identificação</label>
+                <input type="text" id="nome" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white" placeholder="Ex: Soldado Silva">
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-1">Palavra-Passe</label>
+                <input type="password" id="senha" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white" placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-2 rounded transition">Entrar no CAD</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const corporacao = document.getElementById('corporacao').value;
+            
+            // Guardar sessão básica no navegador
+            localStorage.setItem('cad_user', nome);
+            localStorage.setItem('cad_corp', corporacao);
+            
+            // Redirecionar para o painel principal
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>

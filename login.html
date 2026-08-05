@@ -7,9 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-box">
+    <div class="public-container">
+        <div class="box">
             <h2>Central de Operações Policiais - CAD</h2>
+            <p>Insira as suas credenciais para aceder ao sistema operacional.</p>
+            
             <form id="loginForm">
                 <div class="input-group">
                     <label>Nome</label>
@@ -24,12 +26,12 @@
                 <button type="submit" class="btn-main">Entrar no Sistema CAD</button>
             </form>
 
-            <a class="link-voltar" href="index.html">← Voltar à Central Pública de Emergência</a>
+            <a class="link-alternativo" href="index.html">← Voltar à Central Pública de Emergência</a>
         </div>
     </div>
 
     <script>
-        // Garante que a conta master continua a existir no sistema para conseguires entrar
+        // Garante que a conta master proenca / 6323 existe no localStorage
         let listaAtual = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
         if (!listaAtual.some(u => u.nome.toLowerCase() === 'proenca')) {
             listaAtual.push({
@@ -42,6 +44,7 @@
             localStorage.setItem('cadUtilizadoresLista', JSON.stringify(listaAtual));
         }
 
+        // Lógica de submissão do login
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const user = document.getElementById('loginUser').value.trim();

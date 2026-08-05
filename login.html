@@ -3,108 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAD - Autenticação Segura</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #05070d; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .box { background-color: #0f172a; padding: 35px; border-radius: 14px; width: 100%; max-width: 440px; box-shadow: 0 20px 40px rgba(0,0,0,0.7); border: 1px solid #1e293b; }
-        h2 { color: #3b82f6; text-align: center; margin-bottom: 8px; font-size: 24px; font-weight: 700; }
-        p { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 25px; }
-        .input-group { margin-bottom: 18px; }
-        label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        input, select { width: 100%; padding: 12px 15px; background-color: #020617; border: 1px solid #334155; border-radius: 8px; color: #fff; font-size: 14px; transition: 0.2s; }
-        input:focus, select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
-        button.btn-main { width: 100%; padding: 13px; background-color: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        button.btn-main:hover { background-color: #1d4ed8; }
-        .link-voltar { display: block; text-align: center; margin-top: 20px; color: #60a5fa; font-size: 13px; text-decoration: none; }
-        .link-voltar:hover { text-decoration: underline; }
-        .info-teste { background-color: #1e293b; padding: 12px; border-radius: 8px; font-size: 12px; color: #cbd5e1; margin-top: 20px; border-left: 4px solid #3b82f6; }
-    </style>
+    <title>Login - CAD Polícia</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Central de Operações Policiais - CAD</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>Nome</label>
+                    <input type="text" id="loginUser" placeholder="Nome" required>
+                </div>
 
-    <div class="box">
-        <h2>🛡️ CAD Policial - Acesso</h2>
-        <p>Sistema Integrado de Operações Táticas</p>
-        
-        <form onsubmit="fazerLogin(event)">
-            <div class="input-group">
-                <label>Instituição / Corporação</label>
-                <select id="loginCorp" required>
-                    <option value="Polícia Civil">Polícia Civil (PC)</option>
-                    <option value="Polícia Militar">Polícia Militar (PM)</option>
-                    <option value="PRF">Polícia Rodoviária Federal (PRF)</option>
-                    <option value="Polícia Federal">Polícia Federal (PF)</option>
-                </select>
+                <div class="input-group">
+                    <label>Sua senha</label>
+                    <input type="password" id="loginPass" placeholder="Sua senha" required>
+                </div>
+
+                <button type="submit" class="btn-main">Entrar no Sistema CAD</button>
+            </form>
+
+            <div class="info-teste">
+                🔑 <strong>Conta Master:</strong><br>
+                Utilizador: <code>proenca</code> | Senha: <code>6323</code> (PC - Alto Comando)
             </div>
 
-            <div class="input-group">
-                <label>Digite o seu nome</label>
-                <input type="text" id="loginUser" placeholder="Ex: proenca" required>
-            </div>
-
-            <div class="input-group">
-                <label>Digite a sua senha</label>
-                <input type="password" id="loginPass" placeholder="Ex: 6323" required>
-            </div>
-
-            <button type="submit" class="btn-main">Entrar no Sistema CAD</button>
-        </form>
-
-        <div class="info-teste">
-            🔑 <strong>Conta Master:</strong><br>
-            Utilizador: <code>proenca</code> | Senha: <code>6323</code> (PC - Alto Comando)
+            <a class="link-voltar" href="index.html">← Voltar à Central Pública de Emergência</a>
         </div>
-
-        <a class="link-voltar" href="index.html">← Voltar à Central Pública de Emergência</a>
     </div>
 
     <script>
         let listaAtual = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
         if (!listaAtual.some(u => u.nome.toLowerCase() === 'proenca')) {
-            listaAtual.push({ 
-                corporacao: "Polícia Civil", 
-                nome: "proenca", 
-                senha: "6323", 
-                patente: "Delegado Geral", 
-                cargo: "Alto Comando" 
+            listaAtual.push({
+                corporacao: "Polícia Civil",
+                nome: "proenca",
+                senha: "6323",
+                patente: "Delegado Geral",
+                cargo: "Alto Comando"
             });
             localStorage.setItem('cadUtilizadoresLista', JSON.stringify(listaAtual));
         }
 
-        function fazerLogin(e) {
+        // Exemplo básico de manipulação do formulário de login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            let corp = document.getElementById('loginCorp').value;
-            let user = document.getElementById('loginUser').value.trim().toLowerCase();
-            let pass = document.getElementById('loginPass').value;
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            
+            // Validação simples contra o localStorage
+            let utilizadores = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
+            let encontrado = utilizadores.find(u => u.nome.toLowerCase() === user.toLowerCase() && u.senha === pass);
 
-            let lista = JSON.parse(localStorage.getItem('cadUtilizadoresLista')) || [];
-            let valido = lista.find(u => u.corporacao === corp && u.nome.toLowerCase() === user && u.senha === pass);
-
-            if (valido) {
-                let dadosSessao = {
-                    corporacao: corp,
-                    nome: valido.nome,
-                    patente: valido.patente || 'Agente',
-                    cargo: valido.cargo || 'Operacional'
-                };
-                localStorage.setItem('cadUtilizadorLogado', JSON.stringify(dadosSessao));
-                registarLogSistema(`Operador ${valido.nome} (${corp} - ${dadosSessao.patente}) iniciou sessão.`);
-
+            if (encontrado) {
+                localStorage.setItem('utilizadorLogado', JSON.stringify(encontrado));
                 window.location.href = 'index.html';
             } else {
-                alert('Dados incorretos! Verifique a corporação, o nome e a senha digitados.');
+                alert('Nome ou senha incorretos!');
             }
-        }
-
-        function registarLogSistema(descricao) {
-            let logs = JSON.parse(localStorage.getItem('cadLogs')) || [];
-            logs.unshift({
-                data: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}),
-                descricao: descricao
-            });
-            localStorage.setItem('cadLogs', JSON.stringify(logs));
-        }
+        });
     </script>
 </body>
 </html>
